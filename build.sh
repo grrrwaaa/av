@@ -32,7 +32,7 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	LIBRARIES="-lluajit-5.1 -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL"
 	
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
-	$LINK *.o $LDFLAGS $LIBRARIES -o $PRODUCT_NAME 
+	$LINK $LDFLAGS $LIBRARIES *.o -o $PRODUCT_NAME 
 
 elif [[ $PLATFORM == 'Linux' ]]; then
 	
