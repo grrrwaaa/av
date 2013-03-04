@@ -21,12 +21,12 @@ rm -f *.d
 if [[ $PLATFORM == 'Darwin' ]]; then
 	
 	CC='g++'
-	CFLAGS="-x c++ -arch $ARCH -O3 -Wall -fno-stack-protector -O3 -Wall -fPIC"
+	CFLAGS="-x c++ -arch $ARCH -fno-stack-protector -O3 -Wall -fPIC"
 	DEFINES=""
 	INCLUDEPATHS="-I/usr/local/include/luajit-2.0"
 	
-	LDFLAGS="-w -rdynamic -keep_private_externs"
 	LINK=$CC
+	LDFLAGS="-arch $ARCH -w -rdynamic -keep_private_externs"
 	
 	if [[ $ARCH == 'x86_64' ]]; then
 	
@@ -41,7 +41,8 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
 	echo link
 	$LINK $LDFLAGS $LINKERPATHS $LIBRARIES *.o -o $PRODUCT_NAME 
-
+	#g++ $LDFLAGS -L/usr/local/lib -L/usr/lib *.o -lluajit-5.1 -framework GLUT -framework Carbon -framework Cocoa -framework CoreAudio -framework OpenGL -o av
+	
 elif [[ $PLATFORM == 'Linux' ]]; then
 	
 	CC='g++'
