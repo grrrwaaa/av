@@ -41,7 +41,6 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
 	echo link
 	$LINK $LDFLAGS $LINKERPATHS $LIBRARIES *.o -o $PRODUCT_NAME 
-	#g++ $LDFLAGS -L/usr/local/lib -L/usr/lib *.o -lluajit-5.1 -framework GLUT -framework Carbon -framework Cocoa -framework CoreAudio -framework OpenGL -o av
 	
 elif [[ $PLATFORM == 'Linux' ]]; then
 	
