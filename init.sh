@@ -21,7 +21,7 @@ make clean
 if [[ $ARCH == 'i386' ]]; then
 	
 	# this was necessary on some OSX machines
-	make "CC=\"gcc -m32\""
+	make CC="gcc -m32"
 
 else
 
@@ -29,8 +29,7 @@ else
 	
 fi
 
-echo $MAKELUAJIT
-$MAKELUAJIT
+lipo -info src/libluajit.a
 
 echo installing luajit
 sudo make install
