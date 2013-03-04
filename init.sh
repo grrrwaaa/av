@@ -21,7 +21,7 @@ make clean
 if [[ $ARCH == 'i386' ]]; then
 	
 	# this was necessary on some OSX machines
-	make CC="gcc -m32"
+	make "CC=\"gcc -m32\""
 
 else
 
