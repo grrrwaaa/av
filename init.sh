@@ -17,7 +17,8 @@ MAKEFLAGS=""
 
 if [[ $ARCH == 'i386' ]]; then
 	
-	MAKEFLAGS="gcc -m32"
+	# this was necessary on OSX
+	MAKEFLAGS='CC="gcc -m32"'
 fi
 
 pushd luajit-2.0
