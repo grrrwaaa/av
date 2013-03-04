@@ -32,12 +32,17 @@
 		362BFFC016E369EC00405F7A /* glfw3.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = glfw3.lua; sourceTree = "<group>"; };
 		362BFFC116E369EC00405F7A /* sdl.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = sdl.lua; sourceTree = "<group>"; };
 		362BFFCE16E36A7F00405F7A /* window.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = window.lua; sourceTree = "<group>"; };
+		36C3E0B016E4400A007407CF /* devnotes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = devnotes.txt; sourceTree = "<group>"; };
+		36C6556E16E4419600FDE98B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = SOURCE_ROOT; };
+		36C6558416E4442000FDE98B /* field2D.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = field2D.lua; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		362BFE7F16E3586E00405F7A = {
 			isa = PBXGroup;
 			children = (
+				36C6556E16E4419600FDE98B /* README.md */,
+				36C3E0B016E4400A007407CF /* devnotes.txt */,
 				362BFFBD16E369EC00405F7A /* modules */,
 				362BFECB16E35D3500405F7A /* start.lua */,
 				362BFFB816E369C600405F7A /* src */,
@@ -65,6 +70,7 @@
 				362BFFBF16E369EC00405F7A /* glfw.lua */,
 				362BFFC016E369EC00405F7A /* glfw3.lua */,
 				362BFFC116E369EC00405F7A /* sdl.lua */,
+				36C6558416E4442000FDE98B /* field2D.lua */,
 			);
 			name = modules;
 			path = ../modules;

@@ -288,20 +288,20 @@ void initGLUT() {
 //	glutIgnoreKeyRepeat(1);
 //	glutSetCursor(GLUT_CURSOR_NONE);
 
-	glutKeyboardFunc(onkeydown);
-	glutKeyboardUpFunc(onkeyup);
-	glutMouseFunc(onmouse);
-	glutMotionFunc(onmotion);
-	glutPassiveMotionFunc(onpassivemotion);
-	glutSpecialFunc(onspecialkeydown);
-	glutSpecialUpFunc(onspecialkeyup);
-	glutVisibilityFunc(onvisibility);
-	glutReshapeFunc(onreshape);
+//	glutKeyboardFunc(onkeydown);
+//	glutKeyboardUpFunc(onkeyup);
+//	glutMouseFunc(onmouse);
+//	glutMotionFunc(onmotion);
+//	glutPassiveMotionFunc(onpassivemotion);
+//	glutSpecialFunc(onspecialkeydown);
+//	glutSpecialUpFunc(onspecialkeyup);
+//	glutVisibilityFunc(onvisibility);
+//	glutReshapeFunc(onreshape);
 	glutDisplayFunc(ondisplay);
 	
 	glutTimerFunc((unsigned int)(1000.0/win.fps), timerfunc, 0);
 	
-	atexit(terminate);
+	//atexit(terminate);
 	
 	initializedGLUT = true;
 }
