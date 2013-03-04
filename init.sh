@@ -23,7 +23,7 @@ fi
 
 pushd luajit-2.0
 
-echo building luajit
+echo luajit make $MAKEFLAGS
 make $MAKEFLAGS
 
 echo installing luajit
