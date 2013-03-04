@@ -14,6 +14,7 @@ git submodule init && git submodule update
 
 
 pushd luajit-2.0
+make clean
 
 MAKELUAJIT="make"
 
