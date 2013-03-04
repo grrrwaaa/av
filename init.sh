@@ -12,16 +12,19 @@ git pull
 echo requesting submodules
 git submodule init && git submodule update
 
-
+echo build LuaJIT
 pushd luajit-2.0
 make clean
 
-MAKELUAJIT="make"
-
 if [[ $ARCH == 'i386' ]]; then
 	
-	# this was necessary on OSX
-	MAKELUAJIT='make CC="gcc -m32"'
+	# this was necessary on some OSX machines
+	make CC="gcc -m32"
+
+else
+
+	make
+	
 fi
 
 echo $MAKELUAJIT
