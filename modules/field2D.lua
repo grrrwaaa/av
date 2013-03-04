@@ -7,13 +7,13 @@ local field2D = {}
 field2D.__index = field2D
 
 function field2D:index(x, y)
-	x = floor(x and (x % self.dim[1]) or 0)
-	y = floor(y and (y % self.dim[2]) or 0)
-	return y*self.dim[1] + x
+	x = floor(x and (x % self.width) or 0)
+	y = floor(y and (y % self.height) or 0)
+	return y*self.width + x
 end
 
 function field2D:index_raw(x, y)
-	return y*self.dim[1] + x
+	return y*self.width + x
 end
 
 function field2D:set(v, x, y)
@@ -27,8 +27,8 @@ function field2D:get(x, y)
 end
 
 function field2D:apply(func)
-	for y = 0, self.dim[2]-1 do
-		for x = 0, self.dim[1]-1 do
+	for y = 0, self.height-1 do
+		for x = 0, self.width-1 do
 			local v = func(x, y)
 			if v then
 				local idx = self:index_raw(x, y)
@@ -42,7 +42,7 @@ end
 -- NOTE: this also leaves the texture bound
 function field2D:send(unit)
 	self:bind(unit)
-	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, self.dim[1], self.dim[2], 0, gl.LUMINANCE, gl.FLOAT, self.data)
+	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, self.width, self.height, 0, gl.LUMINANCE, gl.FLOAT, self.data)
 end
 
 function field2D:create()
@@ -56,7 +56,7 @@ function field2D:create()
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP)
-		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, self.dim[1], self.dim[2], 0, gl.LUMINANCE, gl.FLOAT, self.data)
+		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, self.width, self.height, 0, gl.LUMINANCE, gl.FLOAT, self.data)
 		gl.BindTexture(gl.TEXTURE_2D, 0)		
 	end
 end
@@ -80,8 +80,14 @@ return setmetatable(field2D, {
 		local data = ffi.new("float[?]", dimx*dimy)
 		
 		return setmetatable({
-			dim = { dimx, dimy },
 			data = data,
+			-- dimensions:
+			dim = { dimx, dimy },
+			-- human-readable...
+			width = dimx,
+			height = dimy,
+			-- size in bytes:
+			size = ffi.sizeof(data),
 		}, field2D)
 	end,
 })
