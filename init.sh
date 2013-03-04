@@ -21,7 +21,7 @@ MAKELUAJIT="make"
 if [[ $ARCH == 'i386' ]]; then
 	
 	# this was necessary on OSX
-	MAKELUAJIT='make "CC="gcc -m32"'
+	MAKELUAJIT='make CC="gcc -m32"'
 fi
 
 echo luajit make $MAKELUAJIT
