@@ -13,18 +13,18 @@ echo requesting submodules
 git submodule init && git submodule update
 
 
-MAKEFLAGS=""
+pushd luajit-2.0
+
+MAKELUAJIT="make"
 
 if [[ $ARCH == 'i386' ]]; then
 	
 	# this was necessary on OSX
-	MAKEFLAGS='CC="gcc -m32"'
+	MAKELUAJIT='make "CC="gcc -m32"'
 fi
 
-pushd luajit-2.0
-
-echo luajit make $MAKEFLAGS
-make $MAKEFLAGS
+echo luajit make $MAKELUAJIT
+$MAKELUAJIT
 
 echo installing luajit
 sudo make install
