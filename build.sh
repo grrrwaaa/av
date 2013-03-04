@@ -53,7 +53,7 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	LDFLAGS="-w -rdynamic -Wl,-E "
 	LINKERPATHS="-L/usr/local/lib -L/usr/lib"
 	#LIBRARIES="-lluajit-5.1 -lfreeimage -lGLEW -lGLU -lGL -lglut -lasound ../externs/libuv/libuv.a -lrt -lpthread"
-	LIBRARIES="-lluajit-5.1 -lGLEW -lGLU -lGL -lglut -lrt -lpthread"
+	LIBRARIES="-lluajit-5.1 -lGLU -lGL -lglut"
 	
 	echo compile
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
