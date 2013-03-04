@@ -24,6 +24,7 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	CFLAGS="-x c++ -arch $ARCH -O3 -Wall -fno-stack-protector -O3 -Wall -fPIC"
 	DEFINES=""
 	INCLUDEPATHS="-I/usr/local/include/luajit-2.0"
+	
 	LDFLAGS="-w -rdynamic -keep_private_externs"
 	LINK=$CC
 	
@@ -39,7 +40,7 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	echo compile
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
 	echo link
-	$LINK $LDFLAGS $LIBRARIES *.o -o $PRODUCT_NAME 
+	$LINK $LDFLAGS $LINKERPATHS $LIBRARIES *.o -o $PRODUCT_NAME 
 
 elif [[ $PLATFORM == 'Linux' ]]; then
 	
