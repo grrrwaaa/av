@@ -1,5 +1,7 @@
-local ffi = require 'ffi'
+local ffi = require "ffi"
 local lib = ffi.C
+
+local gl = require "gl"
 
 local ok, builtin = pcall(require, "builtin")
 if not ok then
@@ -42,12 +44,25 @@ function Window:__newindex(k, v)
 		end)
 		
 	elseif k == "draw" then
-		self.ondraw:set(function(self)		
+		self.ondraw:set(function(self)
+			
+			collectgarbage()
+			
 			local t1 = lib.av_time()
 			dt = t1 - t
 			t = t1
 			
-			local ok, err = pcall(v, self, self.width, self.height, dt)
+			local w, h = self.width, self.height
+			
+			-- set up 2D mode by default:
+			gl.Viewport(0, 0, w, h)
+			gl.MatrixMode(lib.GL_PROJECTION)
+			gl.LoadIdentity()
+			gl.Ortho(0, w, h, 0, -100, 100)
+			gl.MatrixMode(lib.GL_MODELVIEW)
+			gl.LoadIdentity()
+
+			local ok, err = pcall(v, self, w, h, dt)
 			if not ok then print(debug.traceback(err)) end	
 		end)
 		
@@ -59,6 +74,7 @@ function Window:__newindex(k, v)
 		
 	elseif k == "resize" then
 		self.onresize:set(function(self, w, h)
+			print("resize", w, h)
 			local ok, err = pcall(v, self, w, h)
 			if not ok then print(debug.traceback(err)) end
 		end)
@@ -71,7 +87,7 @@ function Window:__newindex(k, v)
 		
 	elseif k == "mouse" then
 		self.onmouse:set(function(self, e, b, x, y)
-			local ok, err = pcall(v, self, mouse_events[e], b, x, y)
+			local ok, err = pcall(v, self, mouse_events[e], b, x, self.height-y-1)
 			if not ok then print(debug.traceback(err)) end
 		end)
 		

@@ -2307,6 +2307,7 @@ function sketch.enter_ortho(x, y, w, h)
 		lib.glPushMatrix()
 		lib.glLoadIdentity()
 		lib.glOrtho(0, x, y, 0, -100, 100)
+		print("ortho", x, y)
 
 		lib.glMatrixMode(lib.GL_MODELVIEW);
 		lib.glPushMatrix()
