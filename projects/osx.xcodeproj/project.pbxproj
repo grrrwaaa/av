@@ -21,7 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXFileReference section */
-		362BFEB216E358D700405F7A /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = build.sh; path = ../build.sh; sourceTree = "<group>"; };
+		362BFEB216E358D700405F7A /* init.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = init.sh; path = ../init.sh; sourceTree = "<group>"; };
 		362BFEB316E3598800405F7A /* av.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = av.cpp; sourceTree = "<group>"; };
 		362BFECB16E35D3500405F7A /* start.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = start.lua; path = ../start.lua; sourceTree = "<group>"; };
 		362BFF3C16E3616900405F7A /* av.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = av.h; sourceTree = "<group>"; };
@@ -35,6 +35,7 @@
 		36C3E0B016E4400A007407CF /* devnotes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = devnotes.txt; sourceTree = "<group>"; };
 		36C6556E16E4419600FDE98B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = SOURCE_ROOT; };
 		36C6558416E4442000FDE98B /* field2D.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = field2D.lua; sourceTree = "<group>"; };
+		36C6558E16E4557800FDE98B /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = build.sh; path = ../build.sh; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -43,8 +44,10 @@
 			children = (
 				36C6556E16E4419600FDE98B /* README.md */,
 				36C3E0B016E4400A007407CF /* devnotes.txt */,
-				362BFFBD16E369EC00405F7A /* modules */,
+				362BFEB216E358D700405F7A /* init.sh */,
+				36C6558E16E4557800FDE98B /* build.sh */,
 				362BFECB16E35D3500405F7A /* start.lua */,
+				362BFFBD16E369EC00405F7A /* modules */,
 				362BFFB816E369C600405F7A /* src */,
 			);
 			sourceTree = "<group>";
@@ -55,7 +58,6 @@
 				362BFF3C16E3616900405F7A /* av.h */,
 				362BFF5216E3643D00405F7A /* av_ffi_header.cpp */,
 				362BFEB316E3598800405F7A /* av.cpp */,
-				362BFEB216E358D700405F7A /* build.sh */,
 				362BFF4A16E3627B00405F7A /* h2ffi.lua */,
 			);
 			name = src;
