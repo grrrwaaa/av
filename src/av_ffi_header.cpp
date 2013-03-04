@@ -1,6 +1,6 @@
 const char * av_ffi_header = ""
 "local header = [[ \n"
-"// generated from av.h on Mon Mar  4 13:14:55 2013 \n"
+"// generated from av.h on Mon Mar  4 13:22:33 2013 \n"
 "void av_sleep(double seconds); \n"
 "double av_time(); \n"
 "enum { \n"
