@@ -24,7 +24,7 @@ if [[ $ARCH == 'i386' ]]; then
 	MAKELUAJIT='make CC="gcc -m32"'
 fi
 
-echo luajit make $MAKELUAJIT
+echo $MAKELUAJIT
 $MAKELUAJIT
 
 echo installing luajit
