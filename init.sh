@@ -6,6 +6,9 @@ ARCH=`uname -m`
 PRODUCT_NAME="av"
 echo Initializing $PRODUCT_NAME for $PLATFORM $ARCH from $ROOT
 
+echo updating repository
+git pull
+
 echo requesting submodules
 git submodule init && git submodule update
 

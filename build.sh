@@ -8,13 +8,12 @@ PLATFORM=`uname`
 ARCH=`uname -m`
 PRODUCT_NAME="av"
 echo Building $PRODUCT_NAME for $PLATFORM $ARCH from $ROOT
-
 pushd src
 
-# create FFI header
+echo generate FFI code
 luajit h2ffi.lua av.h av_ffi_header
 
-# clean
+echo clean
 rm -f $PRODUCT_NAME 
 rm -f *.o
 rm -f *.d
@@ -25,13 +24,21 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	CFLAGS="-x c++ -arch $ARCH -O3 -Wall -fno-stack-protector -O3 -Wall -fPIC"
 	DEFINES=""
 	INCLUDEPATHS="-I/usr/local/include/luajit-2.0"
-	
+	LDFLAGS="-w -rdynamic -keep_private_externs"
 	LINK=$CC
-	LDFLAGS="-w -rdynamic -pagezero_size 10000 -image_base 100000000 -keep_private_externs"
+	
+	if [[ $ARCH == 'x86_64' ]]; then
+	
+		LDFLAGS="$LDFLAGS -pagezero_size 10000 -image_base 100000000"
+		
+	fi
+	
 	LINKERPATHS="-L/usr/local/lib -L/usr/lib"
 	LIBRARIES="-lluajit-5.1 -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL"
 	
+	echo compile
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
+	echo link
 	$LINK $LDFLAGS $LIBRARIES *.o -o $PRODUCT_NAME 
 
 elif [[ $PLATFORM == 'Linux' ]]; then
@@ -47,7 +54,9 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	#LIBRARIES="-lluajit-5.1 -lfreeimage -lGLEW -lGLU -lGL -lglut -lasound ../externs/libuv/libuv.a -lrt -lpthread"
 	LIBRARIES="-lluajit-5.1 -lGLEW -lGLU -lGL -lglut -lrt -lpthread"
 	
+	echo compile
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
+	echo link
 	$LINK $LDFLAGS $LINKERPATHS $LIBRARIES -Wl,-whole-archive *.o -Wl,-no-whole-archive $LIBRARIES -o $PRODUCT_NAME
 
 else
@@ -58,5 +67,6 @@ fi
 
 popd
 
+echo copy
 cp src/av .
 
