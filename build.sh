@@ -22,10 +22,17 @@ rm -f *.d
 if [[ $PLATFORM == 'Darwin' ]]; then
 	
 	CC='g++'
-	$CC -c -x c++ -arch $ARCH -O3 -Wall -I$ALLOCOREPATH/build/include -fno-stack-protector av.cpp
-
-	$CC *.o -w -rdynamic -pagezero_size 10000 -image_base 100000000 -keep_private_externs -lluajit-5.1 -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL -o $PRODUCT_NAME 
-#-force_load $ALLOCOREPATH/build/lib/liballocore.a -force_load $ALLOCOREPATH/build/lib/liballoutil.a 
+	CFLAGS="-x c++ -arch $ARCH -O3 -Wall -fno-stack-protector -O3 -Wall -fPIC"
+	DEFINES=""
+	INCLUDEPATHS="-I/usr/local/include/luajit-2.0"
+	
+	LINK=$CC
+	LDFLAGS="-w -rdynamic -pagezero_size 10000 -image_base 100000000 -keep_private_externs"
+	LINKERPATHS="-L/usr/local/lib -L/usr/lib"
+	LIBRARIES="-lluajit-5.1 -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL"
+	
+	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
+	$LINK *.o $LDFLAGS $LIBRARIES -o $PRODUCT_NAME 
 
 elif [[ $PLATFORM == 'Linux' ]]; then
 	
@@ -33,15 +40,16 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	CFLAGS="-O3 -Wall -fPIC -ffast-math -Wno-unknown-pragmas -MMD"
 	DEFINES="-D_GNU_SOURCE -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__"
 	INCLUDEPATHS="-I/usr/local/include/luajit-2.0 -I/usr/include/luajit-2.0"
+	
+	LINK=$CC
 	LDFLAGS="-w -rdynamic -Wl,-E "
 	LINKERPATHS="-L/usr/local/lib -L/usr/lib"
 	#LIBRARIES="-lluajit-5.1 -lfreeimage -lGLEW -lGLU -lGL -lglut -lasound ../externs/libuv/libuv.a -lrt -lpthread"
 	LIBRARIES="-lluajit-5.1 -lGLEW -lGLU -lGL -lglut -lrt -lpthread"
 	
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
-	$CC $LDFLAGS $LINKERPATHS $LIBRARIES -Wl,-whole-archive *.o -Wl,-no-whole-archive $LIBRARIES -o $PRODUCT_NAME
+	$LINK $LDFLAGS $LINKERPATHS $LIBRARIES -Wl,-whole-archive *.o -Wl,-no-whole-archive $LIBRARIES -o $PRODUCT_NAME
 
-	
 else
 
 	echo "unknown platform" $PLATFORM
