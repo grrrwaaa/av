@@ -12,10 +12,18 @@ git pull
 echo requesting submodules
 git submodule init && git submodule update
 
+
+MAKEFLAGS=""
+
+if [[ $ARCH == 'i386' ]]; then
+	
+	MAKEFLAGS="gcc -m32"
+fi
+
 pushd luajit-2.0
 
 echo building luajit
-make
+make $MAKEFLAGS
 
 echo installing luajit
 sudo make install
