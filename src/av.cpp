@@ -1,23 +1,21 @@
-#include <unistd.h>
-#include <stdlib.h>
 
-#include "av.h"
-
-extern "C" {
-	#include "lua.h"
-	#include "lualib.h"
-	#include "lauxlib.h"
-
-	int luaopen_builtin(lua_State * L);
-}
-
-#if defined(WIN32) || defined(__WINDOWS_MM__) || defined(WIN64)
+#if defined(_WIN32) || defined(__WINDOWS_MM__) || defined(_WIN64)
 	#define AV_WINDOWS 1
 	// just placeholder really; Windows requires a bit more work yet.
 	#include <windows.h>
-
+	#include <direct.h>
+	
+	#include <gl\gl.h> 
+	#include <gl\glu.h> 
+	#include <glut.h>
+	
+	
+	#define AV_PATH_MAX MAX_PATH
+	#define AV_GETCWD _getcwd
+	#define AV_SNPRINTF _snprintf
 #else
 	// Unixen:
+	#include <unistd.h>
 	#include <sys/time.h>
 	#include <time.h>
 	#include <libgen.h>
@@ -32,67 +30,103 @@ extern "C" {
 		#include <GL/glut.h>
 		
 	#endif
+	
+	#define AV_PATH_MAX PATH_MAX
+	#define AV_GETCWD getcwd
+	#define AV_SNPRINTF snprintf
 #endif
 
+#include <stdlib.h>
+#include <stdio.h>
+
+extern "C" {
+	#include "lua.h"
+	#include "lualib.h"
+	#include "lauxlib.h"
+
+	int luaopen_builtin(lua_State * L);
+}
+
+#include "av.h"
+
 // the path from where it was invoked:
-char launchpath[PATH_MAX];
+char launchpath[AV_PATH_MAX+1];
 // the path where the binary actually resides, e.g. with modules:
-char apppath[PATH_MAX];
+char apppath[AV_PATH_MAX+1];
 // the path of the start file, e.g. user script / workspace:
-char workpath[PATH_MAX];
+char workpath[AV_PATH_MAX+1];
 // filename of the main script:
-char mainfile[PATH_MAX];
+char mainfile[AV_PATH_MAX+1];
 
 void getpaths(int argc, char ** argv) {
-	char wd[PATH_MAX];
-	if (getcwd(wd, PATH_MAX) == 0) {
+	char wd[AV_PATH_MAX];
+	if (AV_GETCWD(wd, AV_PATH_MAX) == 0) {
 		printf("could not derive working path\n");
 		exit(0);
 	}
-	snprintf(launchpath, PATH_MAX, "%s/", wd);
-	
 	
 	// get binary path:
-	char tmppath[PATH_MAX];
+	char tmppath[AV_PATH_MAX];
 	#ifdef AV_OSX
+		AV_SNPRINTF(launchpath, AV_PATH_MAX, "%s/", wd);
 		if (argc > 0) {
 			realpath(argv[0], tmppath);
 		}
-		snprintf(apppath, PATH_MAX, "%s/", dirname(tmppath));
+		AV_SNPRINTF(apppath, AV_PATH_MAX, "%s/", dirname(tmppath));
+		
 	#elif defined(AV_WINDOWS)
 		// Windows only:
-		// GetModuleFileName(NULL, apppath, PATH_MAX)
+		{
+		_splitpath(wd, NULL, wd, NULL, NULL);
+		AV_SNPRINTF(launchpath, AV_PATH_MAX, "%s", wd);
+		DWORD retval = GetFullPathName(argv[0],
+                 AV_PATH_MAX,
+                 tmppath,
+                 NULL);
+		_splitpath(tmppath, NULL, tmppath, NULL, NULL);
+		AV_SNPRINTF(apppath, AV_PATH_MAX, "%s", (tmppath));
+		}
 	#else
+		AV_SNPRINTF(launchpath, AV_PATH_MAX, "%s/", wd);
 		// Linux only?
-		int count = readlink("/proc/self/exe", tmppath, PATH_MAX);
+		int count = readlink("/proc/self/exe", tmppath, AV_PATH_MAX);
 		if (count > 0) {
 			tmppath[count] = '\0';
 		} else if (argc > 0) {
 			realpath(argv[0], tmppath);
 		}
-		snprintf(apppath, PATH_MAX, "%s/", dirname(tmppath));
+		AV_SNPRINTF(apppath, AV_PATH_MAX, "%s/", dirname(tmppath));
 	#endif
 	
-	char apath[PATH_MAX];
+	char apath[AV_PATH_MAX];
 	#if defined(AV_WINDOWS)
+		{
+		DWORD retval = GetFullPathName(argv[1],
+                 AV_PATH_MAX,
+                 tmppath,
+                 NULL);
+		_splitpath(tmppath, NULL, workpath, mainfile, NULL);
+		AV_SNPRINTF(apppath, AV_PATH_MAX, "%s", (tmppath));
+		}
 	#else
 	if (argc > 1) {
 		realpath(argv[1], apath);
 		
-		snprintf(mainfile, PATH_MAX, "%s", basename(apath));
-		snprintf(workpath, PATH_MAX, "%s/", dirname(apath));
+		AV_SNPRINTF(mainfile, AV_PATH_MAX, "%s", basename(apath));
+		AV_SNPRINTF(workpath, AV_PATH_MAX, "%s/", dirname(apath));
 	} else {
 		// just copy the current path:
-		snprintf(workpath, PATH_MAX, "%s", launchpath);
-		snprintf(mainfile, PATH_MAX, "%s", "main.lua");
+		AV_SNPRINTF(workpath, AV_PATH_MAX, "%s", launchpath);
+		AV_SNPRINTF(mainfile, AV_PATH_MAX, "%s", "main.lua");
 	}
 	#endif
 	
-//	printf("launchpath %s\n", launchpath);
-//	printf("apppath %s\n", apppath);
-//	printf("workpath %s\n", workpath);
-//	printf("mainfile %s\n", mainfile);
+	printf("launchpath %s\n", launchpath);
+	printf("apppath %s\n", apppath);
+	printf("workpath %s\n", workpath);
+	printf("mainfile %s\n", mainfile);
 }
+
 
 // implement av_Window using GLUT:
 struct av_Window_GLUT : public av_Window {
@@ -121,6 +155,7 @@ struct av_Window_GLUT : public av_Window {
 	}
 };
 
+
 // the window
 av_Window_GLUT win;
 
@@ -134,6 +169,10 @@ void timerfunc(int id) {
 		(win.oncreate)(&win);
 		win.reload = false;
 	}
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// ortho2d here?
+	
 	if (win.ondraw) {
 		(win.ondraw)(&win);
 	}	
@@ -156,6 +195,7 @@ void av_window_setfullscreen(av_Window * self, int b) {
 		glutReshapeWindow(win.non_fullscreen_width, win.non_fullscreen_height);
 	}
 }
+
 
 void av_window_setdim(av_Window * self, int x, int y) {
 	glutReshapeWindow(x, y);
@@ -263,17 +303,103 @@ void onreshape(int w, int h) {
 	}
 }
 
-void terminate() {
-	printf("exit -- bye\n");
+#ifdef AV_WINDOWS
+	#include < time.h >
+	#if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
+	  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000Ui64
+	#else
+	  #define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
+	#endif
+	 
+	struct timezone 
+	{
+	  int  tz_minuteswest; /* minutes W of Greenwich */
+	  int  tz_dsttime;     /* type of dst correction */
+	};
+	 
+	int gettimeofday(struct timeval *tv, struct timezone *tz)
+	{
+	  FILETIME ft;
+	  unsigned __int64 tmpres = 0;
+	  static int tzflag;
+	 
+	  if (NULL != tv)
+	  {
+		GetSystemTimeAsFileTime(&ft);
+	 
+		tmpres |= ft.dwHighDateTime;
+		tmpres <<= 32;
+		tmpres |= ft.dwLowDateTime;
+	 
+		/*converting file time to unix epoch*/
+		tmpres -= DELTA_EPOCH_IN_MICROSECS; 
+		tmpres /= 10;  /*convert into microseconds*/
+		tv->tv_sec = (long)(tmpres / 1000000UL);
+		tv->tv_usec = (long)(tmpres % 1000000UL);
+	  }
+	 
+	  if (NULL != tz)
+	  {
+		if (!tzflag)
+		{
+		  _tzset();
+		  tzflag++;
+		}
+		tz->tz_minuteswest = _timezone / 60;
+		tz->tz_dsttime = _daylight;
+	  }
+	 
+	  return 0;
+	}
+#endif
+
+double av_time() {
+		timeval t;
+		gettimeofday(&t, NULL);
+		return (double)t.tv_sec + (((double)t.tv_usec) * 1.0e-6);
+}	
+
+void av_sleep(double seconds) {
+	#ifdef AV_WINDOWS
+		Sleep((DWORD)(seconds * 1.0e3));
+	#else
+		time_t sec = (time_t)seconds;
+		long long int nsec = 1.0e9 * (seconds - (double)sec);
+		timespec tspec = { sec, nsec };
+		while (nanosleep(&tspec, &tspec) == -1) {
+			continue;
+		}
+	#endif
 }
 
-bool initializedGLUT = 0;
-void initGLUT() {
-	if (initializedGLUT) return;
-	int argc = 0;
-	char * argv[] = { NULL };
-	glutInit(&argc, argv);
+#include "av_ffi_header.cpp"
+
+int luaopen_builtin(lua_State * L) {
+
+	static struct luaL_reg lib[] = {
+		// { "name", func },
+		{ NULL, NULL },
+	};
+	luaL_register(L, "builtin", lib);
 	
+	luaL_loadstring(L, av_ffi_header);
+	lua_pcall(L, 0, 1, 0);
+	lua_setfield(L, -2, "header");
+	
+	return 1;
+}
+
+
+int main(int argc, char * argv[]) {
+	glutInit(&argc, argv);
+
+	// initialize paths:
+	getpaths(argc, argv);
+	
+	// execute in the context of wherever this is run from:
+	chdir(workpath);
+	
+	// configure GLUT:
 //	screen_width = glutGet(GLUT_SCREEN_WIDTH);
 //	screen_height = glutGet(GLUT_SCREEN_HEIGHT);	
 	
@@ -299,62 +425,6 @@ void initGLUT() {
 	glutReshapeFunc(onreshape);
 	glutDisplayFunc(ondisplay);
 	
-	glutTimerFunc((unsigned int)(1000.0/win.fps), timerfunc, 0);
-	
-	//atexit(terminate);
-	
-	initializedGLUT = true;
-}
-
-void av_sleep(double seconds) {
-	#ifdef AV_WINDOWS
-		Sleep((DWORD)(seconds * 1.0e3));
-	#else
-		time_t sec = (time_t)seconds;
-		long long int nsec = 1.0e9 * (seconds - (double)sec);
-		timespec tspec = { sec, nsec };
-		while (nanosleep(&tspec, &tspec) == -1) {
-			continue;
-		}
-	#endif
-}
-
-double av_time() {
-	timeval t;
-	gettimeofday(&t, NULL);
-	return (double)t.tv_sec + (((double)t.tv_usec) * 1.0e-6);
-}	
-
-#include "av_ffi_header.cpp"
-
-int luaopen_builtin(lua_State * L) {
-
-	initGLUT();
-
-	static struct luaL_reg lib[] = {
-		// { "name", func },
-		{ NULL, NULL },
-	};
-	luaL_register(L, "builtin", lib);
-	
-	luaL_loadstring(L, av_ffi_header);
-	lua_pcall(L, 0, 1, 0);
-	lua_setfield(L, -2, "header");
-	
-	return 1;
-}
-
-
-extern "C" int main(int argc, char * argv[]) {
-	
-	// initialize paths:
-	getpaths(argc, argv);
-	
-	// execute in the context of wherever this is run from:
-	chdir(workpath);
-	
-	//chdir("./");
-
 	lua_State * L = lua_open();
 	luaL_openlibs(L);
 	luaL_loadstring(L, "package.path = './modules/?.lua;./modules/?/init.lua;'..package.path; print(jit.version)");
@@ -373,7 +443,7 @@ extern "C" int main(int argc, char * argv[]) {
 	lua_setfield(L, LUA_REGISTRYINDEX, "debug.traceback");
 	
 	lua_settop(L, 0); // clean stack
-		
+	
 	const char * startfile = argc > 1 ? argv[1] : "./start.lua";
 	lua_getfield(L, LUA_REGISTRYINDEX, "debug.traceback");
 	int debugtraceback = lua_gettop(L);
@@ -389,8 +459,11 @@ extern "C" int main(int argc, char * argv[]) {
 		return 0;
 	}
 	
+	// start it up:
+	glutTimerFunc((unsigned int)(1000.0/win.fps), timerfunc, 0);
+	//atexit(terminate);
 	glutMainLoop();
 	
-	printf("bye\n");
+	lua_close(L);
 	return 0;
 }

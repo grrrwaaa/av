@@ -1,13 +1,19 @@
 #ifndef AV_H
 #define AV_H
 
+#ifdef _WIN32
+#define AV_EXPORT __declspec(dllexport)
+#else
+#define AV_EXPORT extern
+#endif
+
 #ifdef __cplusplus
 #include <stdint.h>
 extern "C" {
 #endif
 
-void av_sleep(double seconds);
-double av_time();
+AV_EXPORT void av_sleep(double seconds);
+AV_EXPORT double av_time();
 
 enum {
 	// Standard ASCII non-printable characters 
@@ -44,11 +50,11 @@ typedef struct av_Window {
 	
 } av_Window;
 
-av_Window * av_window_create();
+AV_EXPORT av_Window * av_window_create();
 
-void av_window_setfullscreen(av_Window * self, int b);
-void av_window_settitle(av_Window * self, const char * name);
-void av_window_setdim(av_Window * self, int x, int y);
+AV_EXPORT void av_window_setfullscreen(av_Window * self, int b);
+AV_EXPORT void av_window_settitle(av_Window * self, const char * name);
+AV_EXPORT void av_window_setdim(av_Window * self, int x, int y);
 
 #ifdef __cplusplus
 }
