@@ -8,6 +8,8 @@ Audio-visual creative coding with LuaJIT
 ```av``` is the launcher; it is a thin wrapper around LuaJIT 2.0. 
 The first argument should be a lua script to launch; otherwise it will attempt to find a file called "start.lua".
 
+If the launched file is edited & saved, it will reload automatically in *av*. 
+
 ## Building
 
 ### OSX

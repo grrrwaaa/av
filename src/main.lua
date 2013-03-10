@@ -43,15 +43,19 @@ function spawn(filename)
 	
 	-- 'prime' this state with the module search path and built-in FFI header:
 	L:dostring([[
-
+		-- also search in /modules for Lua modules:
 		package.path = './modules/?.lua;./modules/?/init.lua;'..package.path; 
 
+		-- define the AV header in FFI:
 		local builtin_header = ...
 		local ffi = require 'ffi'
 		ffi.cdef(builtin_header)
-		
-		print(string.rep("-", 80))
 
+		-- initialize the window bindings:
+		win = require "window"
+		
+		-- ready!
+		print(string.rep("-", 80))
 	]], builtin.header)
 
 	L:dofile(filename)

@@ -1,9 +1,7 @@
 local gl = require "gl"
-local win = require "window"
 local field2D = require "field2D"
 
-local random = math.random
-function coin() return random() < 0.5 and 1 or 0 end
+function coin() return math.random() < 0.5 and 1 or 0 end
 
 local dimx = 64
 local dimy = dimx * 3/4	-- assumes the window has a 4:3 aspect ratio...

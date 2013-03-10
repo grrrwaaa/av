@@ -10,6 +10,7 @@ build:
 	cl /MT /I$(DIR_INCLUDE) av.cpp /link /LIBPATH:$(DIR_LIB) lua51.lib glut32.lib
 	xcopy av.exe .. /Y
 	xcopy *.dll .. /Y
+	del *.exe 
 
 run: build
 	.\av.exe
