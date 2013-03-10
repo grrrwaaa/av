@@ -1,7 +1,15 @@
 
+
+
+
+
+
+
+
+
+
 Getting crashes (blue screen) on quitting sometimes, sounds like a problem with closing the GLUT window, perhaps a Lua callback that is no longer valid?
 
 Perhaps for now simplify Window to use lua_pcall instead of FFI callbacks?
-
 
 field2D: should it support multi-plane?

@@ -38,8 +38,8 @@
 		36228CEF16EC4C6D00BB8932 /* av.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = av.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36228CF216EC4C6D00BB8932 /* av-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "av-Info.plist"; sourceTree = "<group>"; };
 		36228D3416EC4F5300BB8932 /* makeluajitosx.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = makeluajitosx.sh; sourceTree = "<group>"; };
-		36228DE116EC563D00BB8932 /* test.command */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = test.command; path = ../test.command; sourceTree = SOURCE_ROOT; };
 		36228E4916EC769600BB8932 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
+		36228E5816EC781300BB8932 /* test.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = test.lua; path = ../test.lua; sourceTree = "<group>"; };
 		362BFEB316E3598800405F7A /* av.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = av.cpp; sourceTree = "<group>"; };
 		362BFECB16E35D3500405F7A /* start.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = start.lua; path = ../start.lua; sourceTree = "<group>"; };
 		362BFF3C16E3616900405F7A /* av.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = av.h; sourceTree = "<group>"; };
@@ -78,19 +78,19 @@
 			isa = PBXGroup;
 			children = (
 				36C6556E16E4419600FDE98B /* README.md */,
-				36C3E0B016E4400A007407CF /* devnotes.txt */,
 				362BFECB16E35D3500405F7A /* start.lua */,
+				36228E5816EC781300BB8932 /* test.lua */,
 				362BFFBD16E369EC00405F7A /* modules */,
 				362BFFB816E369C600405F7A /* src */,
 				36228CF016EC4C6D00BB8932 /* Products */,
-				36228CF216EC4C6D00BB8932 /* av-Info.plist */,
-				36228DE116EC563D00BB8932 /* test.command */,
 			);
 			sourceTree = "<group>";
 		};
 		362BFFB816E369C600405F7A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				36228CF216EC4C6D00BB8932 /* av-Info.plist */,
+				36C3E0B016E4400A007407CF /* devnotes.txt */,
 				36228D3416EC4F5300BB8932 /* makeluajitosx.sh */,
 				36228E4916EC769600BB8932 /* build.sh */,
 				362BFF4A16E3627B00405F7A /* h2ffi.lua */,
