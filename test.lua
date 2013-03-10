@@ -1,7 +1,6 @@
 local gl = require "gl"
 local sketch = gl.sketch
 local win = require "window"
-local ffi = require "ffi"
 local field2D = require "field2D"
 
 local min, max = math.min, math.max

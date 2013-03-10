@@ -5,8 +5,8 @@ local input = assert(args[1], "specify file to parse")
 local output = assert(args[2], "output name required")
 
 local r = {
+	string.format("-- generated from %s on %s", input, os.date()),
 	"local header = [[",
-	string.format("// generated from %s on %s", input, os.date()),
 }
 
 local h = io.popen(string.format("gcc -E %s", input))

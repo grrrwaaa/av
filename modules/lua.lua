@@ -275,6 +275,7 @@ lua.REFNIL      = (-1)
 function lua.upvalueindex(i)	return (lua.GLOBALSINDEX-(i)) end
 
 function lua.pop(L,n) return lib.lua_settop(L, -(n)-1) end
+function lua.settop(L,n) return lib.lua_settop(L, n) end
 function lua.newtable(L) return lib.lua_createtable(L, 0, 0) end
 
 function lua.register(L,n,f) 
@@ -282,6 +283,7 @@ function lua.register(L,n,f)
 	lib.lua_setglobal(L, (n))
 end
 
+function lua.pushstring(L, s) return lib.lua_pushstring(L, s) end
 function lua.pushcfunction(L,f)	return lib.lua_pushcclosure(L, (f), 0) end
 function lua.strlen(L,i)		return lib.lua_objlen(L, (i)) end
 
@@ -300,11 +302,17 @@ function lua.pushliteral(L, s)
 end
 --]]
 
+function lua.getfield(L,i,s) return lib.lua_getfield(L, i, s) end
+function lua.setfield(L,i,s) return lib.lua_setfield(L, i, s) end
+
 function lua.setglobal(L,s)	return lib.lua_setfield(L, lua.GLOBALSINDEX, (s)) end
 function lua.getglobal(L,s)	return lib.lua_getfield(L, lua.GLOBALSINDEX, (s)) end
 function lua.tostring(L,i)	return lib.lua_tolstring(L, (i), nil) end
 
+-- Note: this does not install a __gc handler (by intention)
+-- the state must be closed manually using L:close()
 function lua.open()	return lib.luaL_newstate() end
+function lua.close(L) return lib.lua_close(L) end
 function lua.openlibs(L) return lib.luaL_openlibs(L) end
 
 function lua.getregistry(L)	return lib.lua_pushvalue(L, lua.REGISTRYINDEX) end
@@ -329,26 +337,52 @@ function lua.typename(L,i)
 	return lib.lua_typename(L, lib.lua_type(L,(i))) 
 end
 
-function lua.dofile(L, fn)
+function lua.dofile(L, fn, ...)
 	local err = lib.luaL_loadfile(L, fn)
 	if err ~= 0 then
 		local errstr = lua.tostring(L, -1)
 		error(ffi.string(errstr))
 	end
-	err = lib.lua_pcall(L, 0, lua.MULTRET, 0) 
+	local argc = select("#", ...)
+	for i = 1, argc do
+		lua.push(L, (select(i, ...)))
+	end
+	err = lib.lua_pcall(L, argc, lua.MULTRET, 0) 
 	if err ~= 0 then
 		local errstr = lua.tostring(L, -1)
 		error(ffi.string(errstr))
 	end
 end
 
-function lua.dostring(L, s)
+function lua.push(L, v)
+	if type(v) == "number" then
+		lib.lua_pushnumber(L, v)
+	elseif type(v) == "string" then
+		lib.lua_pushstring(L, v)
+	elseif type(v) == "nil" then
+		lib.lua_pushnil(L)
+	elseif type(v) == "boolean" then
+		lib.lua_pushboolean(L, v)
+	elseif type(v) == "userdata" then
+		lib.lua_pushlightuserdata(L, v)
+	else
+		error("cannot push type " .. type(v))
+	end
+end
+
+function lua.dostring(L, s, ...)
 	local err = lib.luaL_loadstring(L, s)
 	if err ~= 0 then
 		local errstr = lua.tostring(L, -1)
-		error(ffi.string(errstr))
+		error(ffi.string(errstr),2)
 	end
-	err = lib.lua_pcall(L, 0, lua.MULTRET, 0) 
+	
+	local argc = select("#", ...)
+	for i = 1, argc do
+		lua.push(L, (select(i, ...)))
+	end
+	
+	err = lib.lua_pcall(L, argc, lua.MULTRET, 0) 
 	if err ~= 0 then
 		local errstr = lua.tostring(L, -1)
 		error(ffi.string(errstr))

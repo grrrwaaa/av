@@ -3,11 +3,6 @@ local lib = ffi.C
 
 local gl = require "gl"
 
-local ok, builtin = pcall(require, "builtin")
-if not ok then
-	error("running in native luajit is not yet supported")
-end
-
 local Window = {}
 
 function Window:__tostring()

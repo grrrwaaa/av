@@ -147,6 +147,10 @@ struct av_Window_GLUT : public av_Window {
 		width = 720;
 		height = 480;
 		is_fullscreen = 0;
+		reset();
+	}
+	
+	void reset() {
 		shift = alt = ctrl = 0;
 		fps = 60;
 		oncreate = 0;
@@ -210,6 +214,10 @@ void av_window_setdim(av_Window * self, int x, int y) {
 
 av_Window * av_window_create() {
 	return &win;
+}
+
+void av_state_reset(void * self) {
+	win.reset();
 }
 
 void getmodifiers() {
@@ -467,7 +475,12 @@ int main(int argc, char * argv[]) {
 		lua_pushcfunction(L, luaopen_builtin);
 		lua_setfield(L, -2, "builtin");
 	lua_pop(L, 2);
+	// run it!
+	luaL_dostring(L, "builtin = require 'builtin'");
 	
+//	luaL_loadstring(L, "local hdr = ...; local ffi = require 'ffi'; ffi.cdef(hdr)");
+//	lua_pushstring(L, av_ffi_header);
+//	lua_call(L, 1, 0);
 	
 	lua_getglobal(L, "debug");
 	lua_pushliteral(L, "traceback");
