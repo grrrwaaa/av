@@ -1,11 +1,13 @@
 -- this code gets baked into the av application
+
+-- add the modules search path:
+package.path = './modules/?.lua;./modules/?/init.lua;'..package.path
+
+-- load the modules we need:
 local ffi = require "ffi"
 local builtin = require "builtin"
 local lua = require "lua"
 	
--- add the modules search path:
-package.path = './modules/?.lua;./modules/?/init.lua;'..package.path
-
 -- a bit of helpful info:
 print(string.format("using %s on %s (%s)", jit.version, jit.os, jit.arch))
 

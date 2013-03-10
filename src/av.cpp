@@ -435,7 +435,7 @@ int main(int argc, char * argv[]) {
 	#endif
 	
 	// use this as the current working directory from now on:
-	//printf("running from %s\n", startpath);
+	printf("running from %s\n", startpath);
 	chdir(startpath);
 	
 	// configure GLUT:
