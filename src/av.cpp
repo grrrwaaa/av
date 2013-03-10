@@ -49,6 +49,7 @@ extern "C" {
 
 #include "av.h"
 
+/*
 // the path from where it was invoked:
 char launchpath[AV_PATH_MAX+1];
 // the path where the binary actually resides, e.g. with modules:
@@ -133,7 +134,7 @@ void getpaths(int argc, char ** argv) {
 	printf("workpath %s\n", workpath);
 	printf("mainfile %s\n", mainfile);
 }
-
+*/
 
 // implement av_Window using GLUT:
 struct av_Window_GLUT : public av_Window {
@@ -406,7 +407,7 @@ int luaopen_builtin(lua_State * L) {
 
 
 int main(int argc, char * argv[]) {
-	glutInit(&argc, argv);
+
 
 	// initialize paths:
 	// getpaths(argc, argv);	
@@ -438,7 +439,10 @@ int main(int argc, char * argv[]) {
 	printf("running from %s\n", startpath);
 	chdir(startpath);
 	
+	
 	// configure GLUT:
+	glutInit(&argc, argv);
+	
 //	screen_width = glutGet(GLUT_SCREEN_WIDTH);
 //	screen_height = glutGet(GLUT_SCREEN_HEIGHT);	
 	
