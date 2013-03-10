@@ -16,11 +16,13 @@ function spawn(filename)
 	L:openlibs()
 	L:dostring([[
 
-	package.path = './modules/?.lua;./modules/?/init.lua;'..package.path; 
+		package.path = './modules/?.lua;./modules/?/init.lua;'..package.path; 
 
-	local builtin_header = ...
-	local ffi = require 'ffi'
-	ffi.cdef(builtin_header)
+		local builtin_header = ...
+		local ffi = require 'ffi'
+		ffi.cdef(builtin_header)
+		
+		print(string.rep("-", 80))
 
 	]], builtin.header)
 
