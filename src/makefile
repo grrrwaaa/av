@@ -19,4 +19,4 @@ all:
 	run
 	
 clean:
-	del *.exe *.obj
+	del *.exe *.obj *.exp
