@@ -1,5 +1,5 @@
 const char * av_ffi_header = ""
-"-- generated from av.h on Sun Mar 10 19:14:54 2013 \n"
+"-- generated from av.h on Sun Mar 10 19:15:33 2013 \n"
 "local header = [[ \n"
 " void av_sleep(double seconds); \n"
 " double av_time(); \n"
@@ -79,4 +79,4 @@ const char * av_main = ""
 "	L:close() \n"
 "end \n"
 " \n"
-"spawn(\"first.lua\") \n";
+"spawn(\"start.lua\") \n";

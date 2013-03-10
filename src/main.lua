@@ -37,4 +37,4 @@ function cancel(L)
 	L:close()
 end
 
-spawn("first.lua")
+spawn("start.lua")
