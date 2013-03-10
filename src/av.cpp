@@ -431,13 +431,15 @@ double av_filetime(const char * filename) {
 		FILETIME modtime;
 		SYSTEMTIME st;
 		HANDLE fh = CreateFile(filename, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
+		double result = 0;
 		if (GetFileTime(fh, NULL, NULL, &modtime) == 0) {
-			printf, "failed to stat %s\n", filename);
-			return 0;
+			printf("failed to stat %s\n", filename);
 		} else {
 			FileTimeToSystemTime(&modtime, &st);
-			return TimeFromSystemTime(&st);
+			result = TimeFromSystemTime(&st);
 		}
+		CloseHandle(fh);
+		return result;
 	#else
 		struct stat foo;
 		time_t mtime;
