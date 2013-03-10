@@ -6,8 +6,8 @@ DIR_LIB = win32/lib
   
 build: 
 	cl /MT /I$(DIR_INCLUDE) av.cpp /link /LIBPATH:$(DIR_LIB) lua51.lib glut32.lib
-	xcopy av.exe .. /D /Y
-	xcopy *.dll .. /D /Y
+	xcopy av.exe .. /Y
+	xcopy *.dll .. /Y
 
 run: build
 	.\av.exe
