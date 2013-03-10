@@ -1,17 +1,22 @@
--- this code should be 'baked in' to the app?
+-- this code gets baked into the av application
+local ffi = require "ffi"
+local builtin = require "builtin"
+local lua = require "lua"
+	
+-- add the modules search path:
 package.path = './modules/?.lua;./modules/?/init.lua;'..package.path
-print("using", jit.version)
+
+-- a bit of helpful info:
+print(string.format("using %s on %s (%s)", jit.version, jit.os, jit.arch))
 
 -- basic file spawning. 
 -- this will allow us to scale up to filewatching and multiple states in the future
 
 function spawn(filename)
 	-- create a child Lua state to run user code in:
-	local lua = require "lua"
 	L = lua.open()
 	L:openlibs()
 	-- 'prime' this state with the module search path and built-in FFI header:
-	local builtin = require "builtin"
 	L:dostring([[
 
 		package.path = './modules/?.lua;./modules/?/init.lua;'..package.path; 
@@ -31,7 +36,6 @@ end
 
 function cancel(L)
 	-- before calling L:close(), we need to unregister any application callbacks!
-	local ffi = require "ffi"
 	ffi.C.av_state_reset(L)
 	-- should be safe to shutdown now:
 	L:close()
