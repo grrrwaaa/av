@@ -467,20 +467,12 @@ int main(int argc, char * argv[]) {
 	
 	lua_State * L = lua_open();
 	luaL_openlibs(L);
-	luaL_loadstring(L, "package.path = './modules/?.lua;./modules/?/init.lua;'..package.path; print(jit.version)");
-	lua_call(L, 0, 0);
 
 	lua_getglobal(L, "package");
 	lua_getfield(L, -1, "preload");
 		lua_pushcfunction(L, luaopen_builtin);
 		lua_setfield(L, -2, "builtin");
 	lua_pop(L, 2);
-	// run it!
-	luaL_dostring(L, "builtin = require 'builtin'");
-	
-//	luaL_loadstring(L, "local hdr = ...; local ffi = require 'ffi'; ffi.cdef(hdr)");
-//	lua_pushstring(L, av_ffi_header);
-//	lua_call(L, 1, 0);
 	
 	lua_getglobal(L, "debug");
 	lua_pushliteral(L, "traceback");
@@ -492,7 +484,9 @@ int main(int argc, char * argv[]) {
 	const char * startfile = argc > 1 ? argv[1] : "./start.lua";
 	lua_getfield(L, LUA_REGISTRYINDEX, "debug.traceback");
 	int debugtraceback = lua_gettop(L);
-	int err = luaL_loadfile(L, startfile);
+	
+	int err = luaL_loadstring(L, av_main);
+	//int err = luaL_loadfile(L, startfile);
 	if (err == 0) {
 		for (int i=0; i<argc; i++) {
 			lua_pushstring(L, argv[i]);
@@ -507,7 +501,6 @@ int main(int argc, char * argv[]) {
 	// start it up:
 	glutTimerFunc((unsigned int)(1000.0/win.fps), timerfunc, 0);
 	//atexit(terminate);
-	
 	glutMainLoop();
 	
 	lua_close(L);

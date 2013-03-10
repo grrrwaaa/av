@@ -29,19 +29,13 @@ for i, line in ipairs(r) do
 end
 c[#c] = c[#c]..";"
 
-local ccode = table.concat(c, "\n")
 
-io.open(output .. ".cpp", "w"):write(ccode)
-
-
---[[
-local code = table.concat(r, "\n")
-
-if output then
-	io.open(output, "w"):write(code)
-else
-	print(code)
+c[#c+1] = 'const char * av_main = ""'
+local h = io.open("main.lua")
+for line in h:lines() do
+	c[#c+1] = string.format('"%s \\n"', line:gsub('\"', '\\"'))
 end
---]]
+c[#c] = c[#c]..";"
 
-
+local ccode = table.concat(c, "\n")
+io.open(output .. ".cpp", "w"):write(ccode)
