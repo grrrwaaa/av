@@ -1,5 +1,6 @@
 local ffi = require "ffi"
 local gl = require "gl"
+local sketch = gl.sketch
 
 local floor = math.floor
 
@@ -26,6 +27,10 @@ function field2D:get(x, y)
 	return self.data[self:index(x, y)]
 end
 
+function field2D:clear()
+	ffi.fill(self.data, self.size)
+end
+
 function field2D:apply(func)
 	for y = 0, self.height-1 do
 		for x = 0, self.width-1 do
@@ -43,6 +48,12 @@ end
 function field2D:send(unit)
 	self:bind(unit)
 	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, self.width, self.height, 0, gl.LUMINANCE, gl.FLOAT, self.data)
+end
+
+-- NOTE: this also leaves the texture bound
+function field2D:draw(x, y, w, h, unit)
+	self:send(unit)
+	sketch.quad(x or 0, y or 0, w or 1, h or 1)
 end
 
 function field2D:create()

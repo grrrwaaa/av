@@ -1,47 +1,40 @@
 local gl = require "gl"
-local sketch = gl.sketch
 local win = require "window"
 local field2D = require "field2D"
 
-local min, max = math.min, math.max
-local floor, ceil = math.floor, math.ceil
 local random = math.random
-function srandom() return random()*2-1 end
-function round(x) return floor(x+0.5) end
-function coin()
-	return random() < 0.5 and 1 or 0
-end
+function coin() return random() < 0.5 and 1 or 0 end
 
-local updating = true
-
-local dimx = 512
-local dimy = dimx * 3/4	-- assume the window has a 4:3 aspect ratio...
+local dimx = 64
+local dimy = dimx * 3/4	-- assumes the window has a 4:3 aspect ratio...
 
 -- allocate the current & next fields:
-local field0 = field2D(dimx, dimy)
-local field1 = field2D(dimx, dimy)
+local field = field2D(dimx, dimy)
+local field_old = field2D(dimx, dimy)
 
--- initialize randomly:
-field0:apply(coin)
-field1:apply(coin)
+-- randomize initially:
+field:apply(coin)
+
+function draw(w, h)	
+	-- draw the field:
+	field:draw()
+end
 
 function game_of_life(x, y)
 
-	local old = field0
-	
 	-- check out the neighbors:
-	local N = old:get(x, y+1)
-	local NE = old:get(x+1, y+1)
-	local E = old:get(x+1, y)
-	local SE = old:get(x+1, y-1)
-	local S = old:get(x, y-1)
-	local SW = old:get(x-1, y-1)
-	local W = old:get(x-1, y)
-	local NW = old:get(x-1, y+1)
+	local N  = field_old:get(x  , y+1)
+	local NE = field_old:get(x+1, y+1)
+	local E  = field_old:get(x+1, y  )
+	local SE = field_old:get(x+1, y-1)
+	local S  = field_old:get(x  , y-1)
+	local SW = field_old:get(x-1, y-1)
+	local W  = field_old:get(x-1, y  )
+	local NW = field_old:get(x-1, y+1)
 	local near = N + E + S + W + NE + NW + SE + SW
 	
 	-- current state:
-	local C = old:get(x, y)
+	local C = field_old:get(x, y)
 	if C == 1 then
 		-- live cell
 		if near < 2 then
@@ -58,41 +51,33 @@ function game_of_life(x, y)
 			C = 1
 		end
 	end
-	--new:set(C, x, y)
 	return C
 end
 
-function win:draw(w, h, dt)
-	
-	field0:send()
-	sketch.quad(0, 0, w, h)
-	
-	if updating then
-		-- apply the rule:
-		field1:apply(game_of_life)
+function update(dt)
+	-- swap front/back:
+	field, field_old = field_old, field
+	-- apply the rule:
+	field:apply(game_of_life)
+end
 
-		-- swap:
-		field0, field1 = field1, field0
+function keydown(k)
+	if k == string.byte("c") then
+		field:clear()
+	elseif k == string.byte("r") then
+		field:apply(coin)
 	end
 end
 
-function win:key(e, k)
-	if e == "down" and k == 32 then
-		updating = not updating
-	end
-end
-
-
-function win:mouse(e, b, mx, my)
+function mouse(e, btn, mx, my)
 	-- scale window coords to texture cords:
-	local tx = mx * field0.width/self.width
-	local ty = my * field1.height/self.height
-	
+	local tx = mx * field.width
+	local ty = my * field_old.height
 	if e == "down" or e == "drag" then
-		local span = 5
+		local span = 3
 		for x = tx-span, tx+span do
 			for y = ty-span, ty+span do
-				field0:set(random() < 0.5 and 1 or 0, x, y)
+				field:set(coin(), x, y)
 			end
 		end
 	end

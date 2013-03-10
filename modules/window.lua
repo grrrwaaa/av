@@ -25,6 +25,7 @@ local t = lib.av_time()
 
 function Window:__newindex(k, v)
 	if k == "key" then
+		--[[
 		self.onkey:set(function(self, e, k)
 			e = key_events[e]
 			
@@ -37,8 +38,9 @@ function Window:__newindex(k, v)
 			local ok, err = pcall(v, self, e, k)
 			if not ok then print(debug.traceback(err)) end
 		end)
-		
+		--]]
 	elseif k == "draw" then
+		--[[
 		self.ondraw:set(function(self)
 			
 			collectgarbage()
@@ -60,7 +62,7 @@ function Window:__newindex(k, v)
 			local ok, err = pcall(v, self, w, h, dt)
 			if not ok then print(debug.traceback(err)) end	
 		end)
-		
+		--]]
 	elseif k == "create" then
 		self.oncreate:set(function(self)
 			local ok, err = pcall(v, self)
@@ -81,11 +83,13 @@ function Window:__newindex(k, v)
 		end)
 		
 	elseif k == "mouse" then
+		--[[
 		self.onmouse:set(function(self, e, b, x, y)
 			local ok, err = pcall(v, self, mouse_events[e], b, x, self.height-y-1)
 			if not ok then print(debug.traceback(err)) end
 		end)
-		
+		--]]
+	--[[
 	elseif k == "fullscreen" then
 		self:setfullscreen(v)
 		
@@ -94,7 +98,7 @@ function Window:__newindex(k, v)
 		
 	elseif k == "dim" then
 		self:setdim(unpack(v))
-		
+	--]]	
 	else
 		error("cannot assign to Window: "..k)
 	end
@@ -120,12 +124,79 @@ setmetatable(Window, {
 ffi.metatype("av_Window", Window)
 
 local win = lib.av_window_create()
+local updating = true
 
 -- set default callbacks:
-win.ondraw = function(self) end
+win.ondraw = function(self) 
+	collectgarbage()
+			
+	local t1 = lib.av_time()
+	dt = t1 - t
+	t = t1
+	
+	if updating and update and type(update) == "function" then
+		local ok, err = pcall(update, dt)
+		if not ok then 
+			print(debug.traceback(err)) 
+			-- prevent error spew:
+			update = nil
+		end	
+	end
+
+	local w, h = self.width, self.height
+	
+	-- set up 2D mode by default
+	-- (should we use 0..1 instead?)
+	gl.Viewport(0, 0, w, h)
+	gl.MatrixMode(lib.GL_PROJECTION)
+	gl.LoadIdentity()
+	gl.Ortho(0, 1, 1, 0, -100, 100)
+	gl.MatrixMode(lib.GL_MODELVIEW)
+	gl.LoadIdentity()
+
+	if draw and type(draw) == "function" then
+		local ok, err = pcall(draw, w, h)
+		if not ok then 
+			print(debug.traceback(err)) 
+			-- prevent error spew:
+			draw = nil
+		end	
+	end
+end
 win.oncreate = function(self) end
-win.onkey = function(self, e, k) end
-win.onmouse = function(self, e, b, x, y) end
+win.onkey = function(self, e, k) 
+	e = key_events[e]
+	if e == "down" then
+		-- built-in keys:
+		if k == 27 then
+			-- fullscreen flip:
+			self.fullscreen = not self.fullscreen
+		elseif k == 32 then
+			-- pause/play:
+			updating = not updating
+		end
+		if keydown and type(keydown) == "function" then
+			local ok, err = pcall(keydown, k)
+			if not ok then print(debug.traceback(err)) end
+		end
+	elseif e == "up" then
+		if keyup and type(keyup) == "function" then
+			local ok, err = pcall(keyup, k)
+			if not ok then print(debug.traceback(err)) end
+		end
+	end
+	
+	if key and type(key) == "function" then
+		local ok, err = pcall(key, e, k)
+		if not ok then print(debug.traceback(err)) end
+	end
+end
+win.onmouse = function(self, e, b, x, y) 
+	if mouse and type(mouse) == "function" then
+		local ok, err = pcall(mouse, mouse_events[e], b, x / win.width, (self.height-y-1) / win.height)
+		if not ok then print(debug.traceback(err)) end
+	end
+end
 win.onvisible = function(self, s) end
 win.onresize = function(self, w, h) end
 
