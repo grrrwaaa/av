@@ -13,6 +13,7 @@ local field_old = field2D(dimx, dimy)
 -- randomize initially:
 field:apply(coin)
 
+-- how to render the scene (toggle fullscreen with the Esc key):
 function draw(w, h)	
 	-- draw the field:
 	field:draw()
@@ -52,6 +53,7 @@ function game_of_life(x, y)
 	return C
 end
 
+-- update the state of the scene (toggle this on and off with spacebar):
 function update(dt)
 	-- swap front/back:
 	field, field_old = field_old, field
@@ -59,6 +61,7 @@ function update(dt)
 	field:apply(game_of_life)
 end
 
+-- handle keypress events:
 function keydown(k)
 	if k == string.byte("c") then
 		field:clear()
@@ -67,6 +70,8 @@ function keydown(k)
 	end
 end
 
+
+-- handle mouse events:
 function mouse(e, btn, mx, my)
 	-- scale window coords to texture cords:
 	local tx = mx * field.width
