@@ -17,8 +17,11 @@
 	// Unixen:
 	#include <unistd.h>
 	#include <sys/time.h>
+	#include <sys/stat.h>
 	#include <time.h>
 	#include <libgen.h>
+	#include <utime.h>
+	
 	#if defined( __APPLE__ ) && defined( __MACH__ )
 		#define AV_OSX 1
 		#include <OpenGL/OpenGL.h>
@@ -171,10 +174,31 @@ struct av_Window_GLUT : public av_Window {
 // the window
 av_Window_GLUT win;
 
-void timerfunc(int id) {
+// the application Lua state (not used by user scripts):
+lua_State * L = 0;
 
-	// TODO: trigger scheduled events... 
-	//av_tick();
+void av_tick() {
+	lua_getfield(L, LUA_REGISTRYINDEX, "debug.traceback");
+	int debugtraceback = lua_gettop(L);
+
+	lua_getglobal(L, "av_tick");
+	if (lua_isfunction(L, -1)) {
+		int err = lua_pcall(L, 0, LUA_MULTRET, debugtraceback);
+		if (err) {
+			printf("error: %s\n", lua_tostring(L, -1));
+		}
+	}
+	lua_settop(L, 0);
+}
+
+void timerfunc(int id) {
+	static int f = 0;
+
+	// trigger filewatching etc:
+	if (f++ > 10) {
+		av_tick();
+		f = 0;
+	}
 	
 	// update window:
 	if (win.reload && win.oncreate) {
@@ -388,6 +412,45 @@ void av_sleep(double seconds) {
 	#endif
 }
 
+#ifdef AV_WINDOWS
+	time_t TimeFromSystemTime(const SYSTEMTIME * pTime) {
+		struct tm tm;
+		memset(&tm, 0, sizeof(tm));
+		tm.tm_year = pTime->wYear - 1900;
+		tm.tm_mon = pTime->wMonth - 1;
+		tm.tm_mday = pTime->wDay;
+		tm.tm_hour = pTime->wHour;
+		tm.tm_min = pTime->wMinute;
+		tm.tm_sec = pTime->wSecond;
+		return mktime(&tm);
+	}
+#endif
+
+double av_filetime(const char * filename) {
+	#ifdef AV_WINDOWS
+		FILETIME modtime;
+		SYSTEMTIME st;
+		HANDLE fh = CreateFile(filename, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
+		if (GetFileTime(fh, NULL, NULL, &modtime) == 0) {
+			printf, "failed to stat %s\n", filename);
+			return 0;
+		} else {
+			FileTimeToSystemTime(&modtime, &st);
+			return TimeFromSystemTime(&st);
+		}
+	#else
+		struct stat foo;
+		time_t mtime;
+		if (stat(filename, &foo) < 0) {
+			fprintf(stderr, "failed to stat %s\n", filename);
+			return 0;
+		} else {
+			mtime = foo.st_mtime; /* seconds since the epoch */
+			return mtime;
+		}
+	#endif
+}
+
 #include "av_ffi_header.cpp"
 
 int luaopen_builtin(lua_State * L) {
@@ -469,7 +532,7 @@ int main(int argc, char * argv[]) {
 	glutReshapeFunc(onreshape);
 	glutDisplayFunc(ondisplay);
 	
-	lua_State * L = lua_open();
+	L = lua_open();
 	luaL_openlibs(L);
 
 	lua_getglobal(L, "package");

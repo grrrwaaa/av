@@ -12,7 +12,6 @@ function coin()
 	return random() < 0.5 and 1 or 0
 end
 
-
 local updating = true
 
 local dimx = 512

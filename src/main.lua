@@ -11,13 +11,36 @@ local lua = require "lua"
 -- a bit of helpful info:
 print(string.format("using %s on %s (%s)", jit.version, jit.os, jit.arch))
 
+local filename = "start.lua"
+
+local watched = {}
+local states = {}
+
+function av_tick()
+	-- filewatch:
+	for filename, mtime in pairs(watched) do
+		local t = ffi.C.av_filetime(filename)
+		if t > mtime then
+			print('canceling', filename)
+			cancel(states[filename])
+			
+			print('spawning', filename)
+			spawn(filename)
+		end
+	end
+end
+
 -- basic file spawning. 
 -- this will allow us to scale up to filewatching and multiple states in the future
 
 function spawn(filename)
+	watched[filename] = ffi.C.av_filetime(filename)
+	
 	-- create a child Lua state to run user code in:
 	L = lua.open()
 	L:openlibs()
+	states[filename] = L
+	
 	-- 'prime' this state with the module search path and built-in FFI header:
 	L:dostring([[
 
@@ -33,6 +56,7 @@ function spawn(filename)
 
 	L:dofile(filename)
 	
+	
 	return L
 end
 
@@ -43,4 +67,4 @@ function cancel(L)
 	L:close()
 end
 
-spawn("start.lua")
+spawn(filename)

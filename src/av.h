@@ -14,6 +14,7 @@ extern "C" {
 
 AV_EXPORT void av_sleep(double seconds);
 AV_EXPORT double av_time();
+AV_EXPORT double av_filetime(const char * filename);
 
 enum {
 	// Standard ASCII non-printable characters 
