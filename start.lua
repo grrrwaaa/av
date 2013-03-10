@@ -76,12 +76,12 @@ function win:draw(w, h, dt)
 	end
 end
 
-
 function win:key(e, k)
 	if e == "down" and k == 32 then
 		updating = not updating
 	end
 end
+
 
 function win:mouse(e, b, mx, my)
 	-- scale window coords to texture cords:
