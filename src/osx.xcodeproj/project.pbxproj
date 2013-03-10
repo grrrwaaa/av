@@ -40,6 +40,7 @@
 		36228D3416EC4F5300BB8932 /* makeluajitosx.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = makeluajitosx.sh; sourceTree = "<group>"; };
 		36228E4916EC769600BB8932 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
 		36228E5816EC781300BB8932 /* test.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = test.lua; path = ../test.lua; sourceTree = "<group>"; };
+		36228E9316EC7C7000BB8932 /* makefile */ = {isa = PBXFileReference; fileEncoding = 2147484672; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 		362BFEB316E3598800405F7A /* av.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = av.cpp; sourceTree = "<group>"; };
 		362BFECB16E35D3500405F7A /* start.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = start.lua; path = ../start.lua; sourceTree = "<group>"; };
 		362BFF3C16E3616900405F7A /* av.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = av.h; sourceTree = "<group>"; };
@@ -74,6 +75,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		36228E9216EC7C4800BB8932 /* windows */ = {
+			isa = PBXGroup;
+			children = (
+				36228E9316EC7C7000BB8932 /* makefile */,
+			);
+			name = windows;
+			sourceTree = "<group>";
+		};
 		362BFE7F16E3586E00405F7A = {
 			isa = PBXGroup;
 			children = (
@@ -82,6 +91,7 @@
 				36228E5816EC781300BB8932 /* test.lua */,
 				362BFFBD16E369EC00405F7A /* modules */,
 				362BFFB816E369C600405F7A /* src */,
+				36228E9216EC7C4800BB8932 /* windows */,
 				36228CF016EC4C6D00BB8932 /* Products */,
 			);
 			sourceTree = "<group>";
