@@ -20,7 +20,14 @@
 		};
 /* End PBXAggregateTarget section */
 
+/* Begin PBXBuildFile section */
+		36228CF916EC4C9800BB8932 /* av.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 362BFEB316E3598800405F7A /* av.cpp */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		36228CEF16EC4C6D00BB8932 /* av.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = av.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		36228CF216EC4C6D00BB8932 /* av-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "av-Info.plist"; sourceTree = "<group>"; };
+		36228D3416EC4F5300BB8932 /* makeluajitosx.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = makeluajitosx.sh; sourceTree = "<group>"; };
 		362BFEB216E358D700405F7A /* init.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = init.sh; path = ../init.sh; sourceTree = "<group>"; };
 		362BFEB316E3598800405F7A /* av.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = av.cpp; sourceTree = "<group>"; };
 		362BFECB16E35D3500405F7A /* start.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = start.lua; path = ../start.lua; sourceTree = "<group>"; };
@@ -38,7 +45,25 @@
 		36C6558E16E4557800FDE98B /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = build.sh; path = ../build.sh; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		36228CED16EC4C6C00BB8932 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
+		36228CF016EC4C6D00BB8932 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				36228CEF16EC4C6D00BB8932 /* av.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		362BFE7F16E3586E00405F7A = {
 			isa = PBXGroup;
 			children = (
@@ -49,6 +74,8 @@
 				362BFECB16E35D3500405F7A /* start.lua */,
 				362BFFBD16E369EC00405F7A /* modules */,
 				362BFFB816E369C600405F7A /* src */,
+				36228CF016EC4C6D00BB8932 /* Products */,
+				36228CF216EC4C6D00BB8932 /* av-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -59,6 +86,7 @@
 				362BFF5216E3643D00405F7A /* av_ffi_header.cpp */,
 				362BFEB316E3598800405F7A /* av.cpp */,
 				362BFF4A16E3627B00405F7A /* h2ffi.lua */,
+				36228D3416EC4F5300BB8932 /* makeluajitosx.sh */,
 			);
 			name = src;
 			path = ../src;
@@ -80,6 +108,26 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXNativeTarget section */
+		36228CEE16EC4C6C00BB8932 /* av */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 36228CF516EC4C7500BB8932 /* Build configuration list for PBXNativeTarget "av" */;
+			buildPhases = (
+				36228CEB16EC4C6C00BB8932 /* Resources */,
+				36228CEC16EC4C6C00BB8932 /* Sources */,
+				36228CED16EC4C6C00BB8932 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = av;
+			productName = av;
+			productReference = 36228CEF16EC4C6D00BB8932 /* av.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
 /* Begin PBXProject section */
 		362BFE8116E3586E00405F7A /* Project object */ = {
 			isa = PBXProject;
@@ -94,13 +142,25 @@
 				German,
 			);
 			mainGroup = 362BFE7F16E3586E00405F7A;
+			productRefGroup = 36228CF016EC4C6D00BB8932 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				362BFEA216E358BE00405F7A /* build.sh */,
+				36228CEE16EC4C6C00BB8932 /* av */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		36228CEB16EC4C6C00BB8932 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		362BFEA116E358BE00405F7A /* ShellScript */ = {
@@ -118,7 +178,88 @@
 		};
 /* End PBXShellScriptBuildPhase section */
 
+/* Begin PBXSourcesBuildPhase section */
+		36228CEC16EC4C6C00BB8932 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				36228CF916EC4C9800BB8932 /* av.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
 /* Begin XCBuildConfiguration section */
+		36228CF316EC4C7400BB8932 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/osx/include";
+				INFOPLIST_FILE = "av-Info.plist";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/osx/lib";
+				OBJROOT = build;
+				OTHER_LDFLAGS = (
+					"-lluajit",
+					"-framework",
+					Carbon,
+					"-framework",
+					Cocoa,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					GLUT,
+					"-framework",
+					OpenGL,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = av;
+				SYMROOT = ..;
+				VALID_ARCHS = x86_64;
+			};
+			name = Debug;
+		};
+		36228CF416EC4C7400BB8932 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/osx/include";
+				INFOPLIST_FILE = "av-Info.plist";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/osx/lib";
+				OBJROOT = build;
+				OTHER_LDFLAGS = (
+					"-lluajit",
+					"-framework",
+					Carbon,
+					"-framework",
+					Cocoa,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					GLUT,
+					"-framework",
+					OpenGL,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = av;
+				SYMROOT = ..;
+				VALID_ARCHS = x86_64;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		362BFE8216E3586E00405F7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -157,6 +298,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		36228CF516EC4C7500BB8932 /* Build configuration list for PBXNativeTarget "av" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				36228CF316EC4C7400BB8932 /* Debug */,
+				36228CF416EC4C7400BB8932 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		362BFE8416E3586E00405F7A /* Build configuration list for PBXProject "osx" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
