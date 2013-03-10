@@ -60,9 +60,9 @@ function update(dt)
 end
 
 function keydown(k)
-	if k == string.byte("c") then
+	if k == "c" then
 		field:clear()
-	elseif k == string.byte("r") then
+	elseif k == "r" then
 		field:apply(coin)
 	end
 end

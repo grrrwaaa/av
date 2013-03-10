@@ -89,10 +89,10 @@ function Window:__newindex(k, v)
 			if not ok then print(debug.traceback(err)) end
 		end)
 		--]]
-	--[[
 	elseif k == "fullscreen" then
 		self:setfullscreen(v)
 		
+	--[[
 	elseif k == "title" then
 		self:settitle(v)
 		
@@ -166,12 +166,16 @@ end
 win.oncreate = function(self) end
 win.onkey = function(self, e, k) 
 	e = key_events[e]
+	if k > 31 and k < 127 then
+		-- convert printable characters:
+		k = string.char(k)
+	end
 	if e == "down" then
 		-- built-in keys:
 		if k == 27 then
 			-- fullscreen flip:
 			self.fullscreen = not self.fullscreen
-		elseif k == 32 then
+		elseif k == " " then
 			-- pause/play:
 			updating = not updating
 		end
