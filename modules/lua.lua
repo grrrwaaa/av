@@ -305,6 +305,7 @@ function lua.getglobal(L,s)	return lib.lua_getfield(L, lua.GLOBALSINDEX, (s)) en
 function lua.tostring(L,i)	return lib.lua_tolstring(L, (i), nil) end
 
 function lua.open()	return lib.luaL_newstate() end
+function lua.openlibs(L) return lib.luaL_openlibs(L) end
 
 function lua.getregistry(L)	return lib.lua_pushvalue(L, lua.REGISTRYINDEX) end
 function lua.getgccount(L)	return lib.lua_gc(L, lua.GCCOUNT, 0) end
@@ -379,13 +380,17 @@ function lua.getref(L,ref)       return lib.lua_rawgeti(L, lua.REGISTRYINDEX, (r
 
 lua.reg	= ffi.typeof("luaL_Reg")
 
---[[
-local Lua = {
-	-- TODO
-}
-Lua.__index = Lua
-ffi.metatype("struct lua_State", Lua)
+--[[ 
+Access using L:<method> style
+e.g.:
+
+	local L = lua.open()
+	L:openlibs)()
+	L:close()
+
 --]]
+lua.__index = lua
+ffi.metatype("struct lua_State", lua)
 
 local function index(t, k)
 	local prefixed = "lua_" .. k

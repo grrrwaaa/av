@@ -41,6 +41,7 @@
 		36228E4916EC769600BB8932 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
 		36228E5816EC781300BB8932 /* test.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = test.lua; path = ../test.lua; sourceTree = "<group>"; };
 		36228E9316EC7C7000BB8932 /* makefile */ = {isa = PBXFileReference; fileEncoding = 2147484672; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		36228E9416EC80EA00BB8932 /* lua.lua */ = {isa = PBXFileReference; fileEncoding = 2147484672; lastKnownFileType = sourcecode.lua; path = lua.lua; sourceTree = "<group>"; };
 		362BFEB316E3598800405F7A /* av.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = av.cpp; sourceTree = "<group>"; };
 		362BFECB16E35D3500405F7A /* start.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = start.lua; path = ../start.lua; sourceTree = "<group>"; };
 		362BFF3C16E3616900405F7A /* av.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = av.h; sourceTree = "<group>"; };
@@ -115,6 +116,7 @@
 		362BFFBD16E369EC00405F7A /* modules */ = {
 			isa = PBXGroup;
 			children = (
+				36228E9416EC80EA00BB8932 /* lua.lua */,
 				362BFFCE16E36A7F00405F7A /* window.lua */,
 				362BFFBE16E369EC00405F7A /* gl.lua */,
 				362BFFBF16E369EC00405F7A /* glfw.lua */,
