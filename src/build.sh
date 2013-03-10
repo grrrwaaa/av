@@ -3,12 +3,11 @@
 # debugging: 
 set -x
 
-ROOT=`pwd`
+SRCROOT=`pwd`
 PLATFORM=`uname`
 ARCH=`uname -m`
 PRODUCT_NAME="av"
-echo Building $PRODUCT_NAME for $PLATFORM $ARCH from $ROOT
-pushd src
+echo Building $PRODUCT_NAME for $PLATFORM $ARCH from $SRCROOT
 
 echo generate FFI code
 luajit h2ffi.lua av.h av_ffi_header
@@ -66,8 +65,6 @@ else
 	
 fi
 
-popd
-
 echo copy
-cp src/av .
+cp av ../
 

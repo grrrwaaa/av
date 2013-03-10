@@ -23,6 +23,7 @@ cp /usr/local/lib/libluajit-5.1.a ../src/osx/lib/libluajit64.a
 make clean
 make
 sudo make install
+sudo ln -sf /usr/local/bin/luajit-2.0.1 /usr/local/bin/luajit
 
 popd
 popd

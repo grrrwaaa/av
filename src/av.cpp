@@ -69,10 +69,17 @@ void getpaths(int argc, char ** argv) {
 	char tmppath[AV_PATH_MAX];
 	#ifdef AV_OSX
 		AV_SNPRINTF(launchpath, AV_PATH_MAX, "%s/", wd);
-		if (argc > 0) {
-			realpath(argv[0], tmppath);
-		}
-		AV_SNPRINTF(apppath, AV_PATH_MAX, "%s/", dirname(tmppath));
+		#ifdef AV_OSXAPP
+			// launched as a .app:
+			AV_SNPRINTF(apppath, AV_PATH_MAX, "%s", launchpath);
+		#else
+			// launched as a console app:
+			if (argc > 0) {
+				realpath(argv[0], tmppath);
+			}
+			AV_SNPRINTF(apppath, AV_PATH_MAX, "%s/", dirname(tmppath));
+		#endif
+		
 		
 	#elif defined(AV_WINDOWS)
 		// Windows only:
@@ -394,10 +401,33 @@ int main(int argc, char * argv[]) {
 	glutInit(&argc, argv);
 
 	// initialize paths:
-	getpaths(argc, argv);
+	// getpaths(argc, argv);	
 	
-	// execute in the context of wherever this is run from:
-	chdir(workpath);
+	// On Windows, how can we get the exe path when double-clicked?
+	// On OSX we can do equivalent of cd $(dirname $0) to go to current path
+	// whether launched from terminal or double-clicked
+	// does that work on Linux?
+	// next stage will be drag & drop startfile onto app...
+	char startpath[AV_PATH_MAX];
+	#ifdef AV_WINDOWS
+		if (AV_GETCWD(startpath, AV_PATH_MAX) == 0) {
+			printf("could not derive working path\n");
+			exit(0);
+		}
+	#else
+		// grab it from argv[0] (application name)
+		AV_SNPRINTF(startpath, AV_PATH_MAX, "%s", dirname(argv[0]));
+		#ifdef AV_OSXAPP
+			// if launched as app, then the path has /av.app/Contents/MacOS prefixed
+			// (which needs to be removed)
+			char tmp[AV_PATH_MAX];
+			AV_SNPRINTF(tmp, AV_PATH_MAX, "%s/../../../", startpath);
+			realpath(tmp, startpath);		
+		#endif
+	#endif
+	
+	// use this as the current working directory from now on:
+	chdir(startpath);
 	
 	// configure GLUT:
 //	screen_width = glutGet(GLUT_SCREEN_WIDTH);
@@ -410,6 +440,7 @@ int main(int argc, char * argv[]) {
 	win.id = glutCreateWindow("");	// << FAIL?
 	//printf("initializing window\n");
 	glutSetWindow(win.id);
+	
 	
 //	glutIgnoreKeyRepeat(1);
 //	glutSetCursor(GLUT_CURSOR_NONE);
@@ -429,7 +460,7 @@ int main(int argc, char * argv[]) {
 	luaL_openlibs(L);
 	luaL_loadstring(L, "package.path = './modules/?.lua;./modules/?/init.lua;'..package.path; print(jit.version)");
 	lua_call(L, 0, 0);
-	
+
 	lua_getglobal(L, "package");
 	lua_getfield(L, -1, "preload");
 		lua_pushcfunction(L, luaopen_builtin);
@@ -443,7 +474,7 @@ int main(int argc, char * argv[]) {
 	lua_setfield(L, LUA_REGISTRYINDEX, "debug.traceback");
 	
 	lua_settop(L, 0); // clean stack
-	
+		
 	const char * startfile = argc > 1 ? argv[1] : "./start.lua";
 	lua_getfield(L, LUA_REGISTRYINDEX, "debug.traceback");
 	int debugtraceback = lua_gettop(L);
@@ -462,8 +493,10 @@ int main(int argc, char * argv[]) {
 	// start it up:
 	glutTimerFunc((unsigned int)(1000.0/win.fps), timerfunc, 0);
 	//atexit(terminate);
+	
 	glutMainLoop();
 	
 	lua_close(L);
+	
 	return 0;
 }

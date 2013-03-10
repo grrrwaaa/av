@@ -24,11 +24,22 @@
 		36228CF916EC4C9800BB8932 /* av.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 362BFEB316E3598800405F7A /* av.cpp */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		36228DF116EC738100BB8932 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 362BFE8116E3586E00405F7A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 362BFEA216E358BE00405F7A /* build.sh */;
+			remoteInfo = build.sh;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		36228CEF16EC4C6D00BB8932 /* av.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = av.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36228CF216EC4C6D00BB8932 /* av-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "av-Info.plist"; sourceTree = "<group>"; };
 		36228D3416EC4F5300BB8932 /* makeluajitosx.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = makeluajitosx.sh; sourceTree = "<group>"; };
-		362BFEB216E358D700405F7A /* init.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = init.sh; path = ../init.sh; sourceTree = "<group>"; };
+		36228DE116EC563D00BB8932 /* test.command */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = test.command; path = ../test.command; sourceTree = SOURCE_ROOT; };
+		36228E4916EC769600BB8932 /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
 		362BFEB316E3598800405F7A /* av.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = av.cpp; sourceTree = "<group>"; };
 		362BFECB16E35D3500405F7A /* start.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = start.lua; path = ../start.lua; sourceTree = "<group>"; };
 		362BFF3C16E3616900405F7A /* av.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = av.h; sourceTree = "<group>"; };
@@ -42,7 +53,6 @@
 		36C3E0B016E4400A007407CF /* devnotes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = devnotes.txt; sourceTree = "<group>"; };
 		36C6556E16E4419600FDE98B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = SOURCE_ROOT; };
 		36C6558416E4442000FDE98B /* field2D.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = field2D.lua; sourceTree = "<group>"; };
-		36C6558E16E4557800FDE98B /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = build.sh; path = ../build.sh; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,24 +79,24 @@
 			children = (
 				36C6556E16E4419600FDE98B /* README.md */,
 				36C3E0B016E4400A007407CF /* devnotes.txt */,
-				362BFEB216E358D700405F7A /* init.sh */,
-				36C6558E16E4557800FDE98B /* build.sh */,
 				362BFECB16E35D3500405F7A /* start.lua */,
 				362BFFBD16E369EC00405F7A /* modules */,
 				362BFFB816E369C600405F7A /* src */,
 				36228CF016EC4C6D00BB8932 /* Products */,
 				36228CF216EC4C6D00BB8932 /* av-Info.plist */,
+				36228DE116EC563D00BB8932 /* test.command */,
 			);
 			sourceTree = "<group>";
 		};
 		362BFFB816E369C600405F7A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				36228D3416EC4F5300BB8932 /* makeluajitosx.sh */,
+				36228E4916EC769600BB8932 /* build.sh */,
+				362BFF4A16E3627B00405F7A /* h2ffi.lua */,
 				362BFF3C16E3616900405F7A /* av.h */,
 				362BFF5216E3643D00405F7A /* av_ffi_header.cpp */,
 				362BFEB316E3598800405F7A /* av.cpp */,
-				362BFF4A16E3627B00405F7A /* h2ffi.lua */,
-				36228D3416EC4F5300BB8932 /* makeluajitosx.sh */,
 			);
 			name = src;
 			path = ../src;
@@ -120,6 +130,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				36228DF216EC738100BB8932 /* PBXTargetDependency */,
 			);
 			name = av;
 			productName = av;
@@ -174,7 +185,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# shell script goes here\ncd ..\n./build.sh\nexit 0";
+			shellScript = "# shell script goes here\n./build.sh\nexit 0";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -188,6 +199,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		36228DF216EC738100BB8932 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 362BFEA216E358BE00405F7A /* build.sh */;
+			targetProxy = 36228DF116EC738100BB8932 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		36228CF316EC4C7400BB8932 /* Debug */ = {
@@ -205,7 +224,12 @@
 				INFOPLIST_FILE = "av-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/osx/lib";
 				OBJROOT = build;
+				OTHER_CFLAGS = "-DAV_OSXAPP";
 				OTHER_LDFLAGS = (
+					"-pagezero_size",
+					10000,
+					"-image_base",
+					100000000,
 					"-lluajit",
 					"-framework",
 					Carbon,
@@ -239,7 +263,12 @@
 				INFOPLIST_FILE = "av-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/osx/lib";
 				OBJROOT = build;
+				OTHER_CFLAGS = "-DAV_OSXAPP";
 				OTHER_LDFLAGS = (
+					"-pagezero_size",
+					10000,
+					"-image_base",
+					100000000,
 					"-lluajit",
 					"-framework",
 					Carbon,
