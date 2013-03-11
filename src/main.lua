@@ -1,9 +1,7 @@
 -- this code gets baked into the av application
-local args = ...
 
-for i, v in ipairs{ args } do
-	print(i, v)
-end
+local filename = select(2, ...) or "start.lua"
+local args = { select(3, ...) }
 
 -- add the modules search path:
 package.path = './modules/?.lua;./modules/?/init.lua;'..package.path
@@ -15,8 +13,6 @@ local lua = require "lua"
 	
 -- a bit of helpful info:
 print(string.format("using %s on %s (%s)", jit.version, jit.os, jit.arch))
-
-local filename = "start.lua"
 
 local watched = {}
 local states = {}
@@ -39,6 +35,7 @@ end
 -- this will allow us to scale up to filewatching and multiple states in the future
 
 function spawn(filename)
+	print(string.rep("-", 80))
 	watched[filename] = ffi.C.av_filetime(filename)
 	
 	-- create a child Lua state to run user code in:
@@ -59,12 +56,12 @@ function spawn(filename)
 		-- initialize the window bindings:
 		win = require "window"
 		
-		-- ready!
-		print(string.rep("-", 80))
 	]], builtin.header)
-
-	L:dofile(filename)
 	
+	print(string.format("running %s at %s", filename, os.date()))
+	print(string.rep("-", 80))
+
+	L:dofile(filename, unpack(args))
 	
 	return L
 end
@@ -74,6 +71,7 @@ function cancel(L)
 	ffi.C.av_state_reset(L)
 	-- should be safe to shutdown now:
 	L:close()
+	print(string.rep("-", 80))
 end
 
 spawn(filename)
