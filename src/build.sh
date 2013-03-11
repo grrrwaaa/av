@@ -19,27 +19,38 @@ rm -f *.d
 
 if [[ $PLATFORM == 'Darwin' ]]; then
 	
+	export MACOSX_DEPLOYMENT_TARGET=10.4
+	
+	# cross compile
+	
 	CC='g++'
-	CFLAGS="-x c++ -arch $ARCH -fno-stack-protector -O3 -Wall -fPIC"
+	CFLAGS="-x c++ -fno-stack-protector -O3 -Wall -fPIC"
 	DEFINES=""
 	INCLUDEPATHS="-I/usr/local/include/luajit-2.0"
 	
 	LINK=$CC
-	LDFLAGS="-arch $ARCH -w -rdynamic -keep_private_externs"
-	
-	if [[ $ARCH == 'x86_64' ]]; then
-	
-		LDFLAGS="$LDFLAGS -pagezero_size 10000 -image_base 100000000"
-		
-	fi
+	LDFLAGS32="-w -rdynamic -keep_private_externs"
+	LDFLAGS64="$LDFLAGS32 -pagezero_size 10000 -image_base 100000000"
 	
 	LINKERPATHS="-Losx/lib"
 	LIBRARIES="-lluajit -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL"
 	
-	echo compile
-	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
-	echo link
-	$LINK $LDFLAGS $LINKERPATHS $LIBRARIES *.o -o $PRODUCT_NAME 
+	echo compile 32
+	rm -f *.o
+	$CC -arch i386 -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
+	echo link 32
+	$LINK -arch i386 $LDFLAGS32 $LINKERPATHS $LIBRARIES *.o -o app32
+	
+	echo compile 64
+	rm -f *.o
+	$CC -arch x86_64 -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
+	echo link 64
+	$LINK -arch x86_64 $LDFLAGS64 $LINKERPATHS $LIBRARIES *.o -o app64
+	
+	# join them in fat love:
+	echo fatten
+	lipo -create app32 app64 -output $PRODUCT_NAME
+	rm app32 app64
 	
 elif [[ $PLATFORM == 'Linux' ]]; then
 	
