@@ -23,7 +23,7 @@ end
 
 -- use this to initialize the field with random values:
 -- (applies 'coin' to each cell of the field)
-field:apply(coin)
+field:set(coin)
 
 -- how to render the scene (toggle fullscreen with the Esc key):
 function draw()	
@@ -77,7 +77,7 @@ function update(dt)
 	field, field_old = field_old, field
 	
 	-- apply the game_of_life function to each cell of the field: 
-	field:apply(game_of_life)
+	field:set(game_of_life)
 end
 
 -- handle keypress events:
@@ -87,20 +87,17 @@ function keydown(k)
 		field:clear()
 	elseif k == "r" then
 		-- apply the coin rule to all cells of the field (randomizes)
-		field:apply(coin)
+		field:set(coin)
 	end
 end
-
 
 -- handle mouse events:
 function mouse(event, btn, x, y)
 	-- clicking & dragging should draw values into the field:
 	if event == "down" or event == "drag" then
-		
 		-- scale window coords (0..1) up to the size of the field:
 		local x = x * field.width
 		local y = y * field.height
-	
 		-- spread the updates over a wide area:
 		for i = 1, 10 do
 			-- pick a random cell near to the mouse position:
