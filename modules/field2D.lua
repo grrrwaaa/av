@@ -1,3 +1,5 @@
+--- Field2D: an object representing a 2D densely packed array.
+
 local ffi = require "ffi"
 local gl = require "gl"
 local sketch = gl.sketch
@@ -58,27 +60,33 @@ function field2D:index_raw(x, y)
 	return y*self.width + x
 end
 
-function field2D:set(v, x, y)
+--- set the value of a cell, or of all cells.
+-- If the x,y coordinate is not specified, it will apply the value for all cells.
+-- If the value to set is a function, this function is called (passing the x, y coordinates as arguments). If the function returns a value, the cell is set to this value; otherwise the cell is left unchanged.
+-- @tparam number|function value to set
+-- @tparam ?int x coordinate (row) to set a single cell
+-- @tparam ?int y coordinate (column) to set a single cell
+function field2D:set(value, x, y)
 	if x then
 		local idx = self:index(x, y or 0)
-		self.data[idx] = (type(v) == "function" and v(x, y)) or (v and tonumber(v)) or 0
+		self.data[idx] = (type(value) == "function" and value(x, y)) or (value and tonumber(value)) or 0
 		return self
-	elseif type(v) == "function" then
+	elseif type(value) == "function" then
 		for y = 0, self.height-1 do
 			for x = 0, self.width-1 do
 				local idx = self:index_raw(x, y)
-				local result = v(x, y)
+				local result = value(x, y)
 				if result then
 					self.data[idx] = result
 				end	
 			end
 		end
 	else
-		v = v and tonumber(v) or 0
+		value = value and tonumber(value) or 0
 		for y = 0, self.height-1 do
 			for x = 0, self.width-1 do
 				local idx = self:index_raw(x, y)
-				self.data[idx] = v
+				self.data[idx] = value
 			end
 		end
 	end

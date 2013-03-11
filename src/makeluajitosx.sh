@@ -35,3 +35,6 @@ lipo -create libluajit32.a libluajit64.a -output libluajit.a
 rm libluajit64.a
 rm libluajit32.a
 popd
+
+
+# sudo ln -sf /usr/local/share/lua/5.1/ldoc/doc.lua /usr/local/bin/ldoc
