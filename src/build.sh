@@ -33,8 +33,8 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 		
 	fi
 	
-	LINKERPATHS="-L/usr/local/lib -L/usr/lib"
-	LIBRARIES="-lluajit-5.1 -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL"
+	LINKERPATHS="-Losx/lib"
+	LIBRARIES="-lluajit -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL"
 	
 	echo compile
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
