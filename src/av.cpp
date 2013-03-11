@@ -551,12 +551,9 @@ int main(int argc, char * argv[]) {
 	lua_settop(L, 0); // clean stack
 	
 	// now start:
-	const char * startfile = argc > 1 ? argv[1] : "./start.lua";
 	lua_getfield(L, LUA_REGISTRYINDEX, "debug.traceback");
 	int debugtraceback = lua_gettop(L);
-	
 	int err = luaL_loadstring(L, av_main);
-	//int err = luaL_loadfile(L, startfile);
 	if (err == 0) {
 		for (int i=0; i<argc; i++) {
 			lua_pushstring(L, argv[i]);
