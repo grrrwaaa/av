@@ -6,9 +6,9 @@ Audio-visual creative coding with LuaJIT
 
 **Windows:** launch *av.exe*
 
-**Linux:** run ```./av``` (an optional argument specifies a different .lua file to run)
+**Linux:** run ```./av_linux``` (an optional argument specifies a different .lua file to run)
 
-**OSX:** run from a terminal as ```./av```, or just by double-clicking on **av**. 
+**OSX:** run from a terminal as ```./av_osx```, or just by double-clicking on **av_osx**. 
 
 When launched it will run the contents of ```start.lua```. If this file is edited & saved while *av* is running, it will be relaunched.
 

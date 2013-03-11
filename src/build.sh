@@ -6,18 +6,19 @@ set -x
 SRCROOT=`pwd`
 PLATFORM=`uname`
 ARCH=`uname -m`
-PRODUCT_NAME="av"
-echo Building $PRODUCT_NAME for $PLATFORM $ARCH from $SRCROOT
+echo Building for $PLATFORM $ARCH from $SRCROOT
 
 echo generate FFI code
 luajit h2ffi.lua av.h av_ffi_header
 
 echo clean
-rm -f $PRODUCT_NAME 
 rm -f *.o
 rm -f *.d
 
 if [[ $PLATFORM == 'Darwin' ]]; then
+
+	PRODUCT_NAME="av_osx"
+	rm -f $PRODUCT_NAME 
 	
 	export MACOSX_DEPLOYMENT_TARGET=10.4
 	
@@ -51,8 +52,17 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	echo fatten
 	lipo -create app32 app64 -output $PRODUCT_NAME
 	rm app32 app64
+
+	# documentation:
+	./ldoc.lua -v --format markdown --title "AV Reference" --project "LuaJIT AV" --dir ../docs --output reference ../modules	
+
+	echo copy
+	cp $PRODUCT_NAME ../
 	
 elif [[ $PLATFORM == 'Linux' ]]; then
+
+	PRODUCT_NAME="av_linux"
+	rm -f $PRODUCT_NAME 
 	
 	CC='g++'
 	CFLAGS="-O3 -Wall -fPIC -ffast-math -Wno-unknown-pragmas -MMD"
@@ -70,15 +80,12 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	echo link
 	$LINK $LDFLAGS $LINKERPATHS $LIBRARIES -Wl,-whole-archive *.o -Wl,-no-whole-archive $LIBRARIES -o $PRODUCT_NAME
 
+	echo copy
+	cp $PRODUCT_NAME ../
+	
 else
 
 	echo "unknown platform" $PLATFORM
 	
 fi
-
-# documentation:
-./ldoc.lua -v --format markdown --title "AV Reference" --project "LuaJIT AV" --dir ../docs --output reference ../modules
-
-echo copy
-cp av ../
 
