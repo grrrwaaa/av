@@ -1,3 +1,38 @@
+--[[-- 
+The Window module provides utilities for the OpenGL rendering window.
+
+The window module will automatically *call back* into user code for certain events, if the following global functions are defined:
+
+	function draw() 
+		-- code to render to the window, called at frame rate
+		-- the window can toggle full-screen mode using the Esc key
+	end
+	
+	function update(dt)
+		-- code to update simulation state, called at frame rate or faster
+		-- the dt argument is the time between updates in seconds
+		-- update can be toggled on and off using the spacebar
+	end
+	
+	function mouse(event, button, x, y)
+		-- event is either "down", "drag", "up" or "move"
+		-- button identifies the button pressed
+		-- x and y are the mouse coordinates (normalized to 0..1 in each axis)
+	end
+	
+	function keydown(key)
+		-- occurs when a key is pressed. 
+		-- if the key is a printable character, key will be a string
+		-- otherwise, key will be a numeric key code
+	end
+	
+	function keyup(key)
+		-- occurs when a key is released. 
+		-- if the key is a printable character, key will be a string
+		-- otherwise, key will be a numeric key code
+	end
+	
+--]]
 local ffi = require "ffi"
 local lib = ffi.C
 

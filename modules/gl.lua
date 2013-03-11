@@ -1,8 +1,28 @@
--- Forked from: https://github.com/malkia/ufo/
+--[[-- LuaJIT FFI based GL bindings
+(Forked from: https://github.com/malkia/ufo/)
 
--- FFI based GL bindings
--- supports both gl.glClear() and gl.Clear() calling modes
--- adds generic functions, such as gl.Vertex in place of gl.Vertex4f etc.
+Reproduces the OpenGL programming API within LuaJIT, and adds a friendlier layer on top to take advantage of Lua's dynamic typing and other capabilities. 
+
+Only a small part of the API is documented here; for full reference consult the OpenGL reference manual and convert the C calling style to Lua. For example, the C code:
+
+	glVertex3f(1.0, 1.0, 1.0);
+	
+Can be written in Lua in any of these ways:
+
+	local gl = require "gl"
+	
+	-- using the C style:
+	gl.glVertex3f(1, 1, 1)
+	
+	-- avoiding the gl.gl repetition:
+	gl.Vertex3f(1, 1, 1)
+	
+	-- using a friendlier wrapper provided by this module:
+	gl.Vertex(1, 1, 1)
+
+Enumerations from C such as ```GL_POINTS``` can be written in Lua as ```gl.POINTS```
+
+--]]
 
 local ffi = require 'ffi'
 local bit = require 'bit'
@@ -2028,6 +2048,8 @@ local gl = {
 	["debug"] = false,	-- automatically follow gl calls with glGetError()
 }
 
+--- Clear the buffers
+-- @param ... Enumerations (bitwise OR'ed), defaults to (gl.COLOR\_BUFFER\_BIT, gl.DEPTH\_BUFFER\_BIT)
 function gl.Clear(...)
 	if select('#', ...) > 0 then
 		lib.glClear(bit.bor(...))
@@ -2041,20 +2063,26 @@ function gl.ClearAccum(r, g, b, a)
 	lib.glClearAccum(r or 0, g or 0, b or 0, a or 1)
 end
 
+--- Set the background color used by @{gl.Clear}
+-- @param r red component (optional, defaults to 0)
+-- @param g green component (optional, defaults to 0)
+-- @param b blue component (optional, defaults to 0)
+-- @param a alpha component (optional, defaults to 1)
 function gl.ClearColor(r, g, b, a)
 	if type(r) == "table" then r, g, b, a = unpack(r) end
 	lib.glClearColor(r or 0, g or 0, b or 0, a or 1)
 end
 
-function gl.Color(r, g, b, a)
-	if type(r) == "table" then r, g, b, a = unpack(r) end
-	lib.glColor4f(r or 0, g or 0, b or 0, a or 1)
-end
-
+--- Set the color mask
+-- @param r red component (optional, defaults to 0)
+-- @param g green component (optional, defaults to 0)
+-- @param b blue component (optional, defaults to 0)
+-- @param a alpha component (optional, defaults to 1)
 function gl.ColorMask(r, g, b, a)
 	if type(r) == "table" then r, g, b, a = unpack(r) end
 	lib.glColorMask(r or 0, g or 0, b or 0, a or 1)
 end
+
 -- Why is this necessary? FFI bug? Clash with "End" and "end" ?
 function gl.End() lib.glEnd() end
 
@@ -2063,6 +2091,9 @@ function gl.Get(p) error("TODO for the array returns.") end
 
 function gl.GetString(p) return ffi.string(lib.glGetString(p)) end
 
+
+--- Set the current matrix
+-- @param t matrix (table with 16 values in the array)
 function gl.LoadMatrix(t) 
 	assert(type(t) == "table", "gl.LoadMatrix requires a table argument")
 	local m = ffi.new("GLdouble[?]", 16)
@@ -2070,51 +2101,53 @@ function gl.LoadMatrix(t)
 	lib.glLoadMatrixd(m)
 end
 
+--- Apply a matrix to the current matrix
+-- @param t matrix (table with 16 values in the array)
 function gl.MultMatrix(t) 
-	assert(type(t) == "table", "gl.LoadMatrix requires a table argument")
+	assert(type(t) == "table", "gl.MultMatrix requires a table argument")
 	local m = ffi.new("GLdouble[?]", 16)
 	for i = 1, 16 do m[i-1] = t[i] end
 	lib.glMultMatrixd(m)
 end
 
-function gl.Normal(x, y, z)
-	if type(x) == "table" then x, y, z = unpack(x) end
-	lib.glVertex3d(x, y, z)
-end
-
-function gl.PixelStore(p, v) lib.glPixelStoref(p, v) end
-
+--- Apply rotation transform to current matrix (angle axis format)
+-- @param a angle (optional, defaults to 0)
+-- @param x x component (optional, defaults to 0)
+-- @param y y component (optional, defaults to 0)
+-- @param z z component (optional, defaults to 1)
 function gl.Rotate(a, x, y, z)
-	if type(a) == "table" then a, x, y, z = unpack(a) end
-	lib.glRotated(a, x, y, z)
+	if type(a) == "table" then 
+		a, x, y, z = unpack(a) 
+	end
+	lib.glRotated(a or 0, x or 0, y or 0, z or 1)
 end
 
+--- Apply scale transform to current matrix
+-- @param x x component (optional, defaults to 1)
+-- @param y y component (optional, defaults to x)
+-- @param z z component (optional, defaults to x)
 function gl.Scale(x, y, z)
 	if type(x) == "table" then 
 		x, y, z = unpack(x) 
 	end
-	if not y then y, z = x, x end
+	x = x or 1
+	if not y then 
+		y, z = x, x 
+	end
 	lib.glScaled(x, y, z)
 end
 
-function gl.TexCoord(x, y, z, w)
-	if type(x) == "table" then x, y, z, w = unpack(x) end
-	if w then
-		lib.glTexCoord4d(x, y, z, w)
-	elseif z then
-		lib.glTexCoord3d(x, y, z)
-	elseif y then
-		lib.glTexCoord2d(x, y)
-	else
-		error("gl.Vertex: invalid arguments")
-	end
-end
-
+--- Apply translation transform to current matrix
+-- @param x x component (optional, defaults to 0)
+-- @param y y component (optional, defaults to 0)
+-- @param z z component (optional, defaults to 0)
 function gl.Translate(x, y, z)
 	if type(x) == "table" then x, y, z = unpack(x) end
-	lib.glTranslated(x, y, z)
+	lib.glTranslated(x or 0, y or 0, z or 0)
 end
 
+--- Add a vertex
+-- 2, 3 or 4D vertex depending on argument count
 function gl.Vertex(x, y, z, w)
 	if type(x) == "userdata" or type(x) == "cdata" then
 		x, y, z, w = x:unpack()
@@ -2130,6 +2163,44 @@ function gl.Vertex(x, y, z, w)
 	end
 end
 
+--- Set the current color for rendering
+-- @param r red component (optional, defaults to 0)
+-- @param g green component (optional, defaults to 0)
+-- @param b blue component (optional, defaults to 0)
+-- @param a alpha component (optional, defaults to 1)
+function gl.Color(r, g, b, a)
+	if type(r) == "table" then r, g, b, a = unpack(r) end
+	lib.glColor4f(r or 0, g or 0, b or 0, a or 1)
+end
+
+--- Add a normal vector
+-- @param x x component (optional, defaults to 0)
+-- @param y y component (optional, defaults to 0)
+-- @param z z component (optional, defaults to 1)
+function gl.Normal(x, y, z)
+	if type(x) == "table" then x, y, z = unpack(x) end
+	lib.glNormald(x or 0, y or 0, z or 1)
+end
+
+--- Add a texture coordinate 
+-- 2, 3 or 4D texcoord depending on argument count
+function gl.TexCoord(x, y, z, w)
+	if type(x) == "table" then x, y, z, w = unpack(x) end
+	if w then
+		lib.glTexCoord4d(x, y, z, w)
+	elseif z then
+		lib.glTexCoord3d(x, y, z)
+	elseif y then
+		lib.glTexCoord2d(x, y)
+	else
+		error("gl.Vertex: invalid arguments")
+	end
+end
+
+--- Get a parameter on a texture target
+-- @param target the texure target
+-- @param pname the parameter name
+-- @return the parameter value(s)
 function gl.TexParameter(target, pname)
 	if pname == lib.GL_TEXTURE_MAG_FILTER
 		or pname == lib.GL_TEXTURE_MIN_FILTER
@@ -2161,6 +2232,11 @@ function gl.TexParameter(target, pname)
 	end
 end
 
+function gl.PixelStore(p, v) lib.glPixelStoref(p, v) end
+
+--- Create one or more OpenGL FrameBufferObject IDs
+-- @tparam ?int n number of IDs to create (default 1)
+-- @return the generated IDs
 function gl.GenFramebuffers(n) 
 	n = n or 1
 	local arr = ffi.new("GLuint[?]", n)
@@ -2170,6 +2246,8 @@ function gl.GenFramebuffers(n)
 	return unpack(res)
 end
 
+--- Delete one or more FrameBufferObject IDs
+-- @param ... the IDs to delete
 function gl.DeleteFramebuffers(...)
 	local t = {...}
 	local n = #t
@@ -2178,6 +2256,9 @@ function gl.DeleteFramebuffers(...)
 	lib.glDeleteFramebuffers(n, arr)
 end
 
+--- Create one or more OpenGL RenderBufferObject IDs
+-- @tparam ?int n number of IDs to create (default 1)
+-- @return the generated IDs
 function gl.GenRenderbuffers(n) 
 	n = n or 1
 	local arr = ffi.new("GLuint[?]", n)
@@ -2187,6 +2268,8 @@ function gl.GenRenderbuffers(n)
 	return unpack(res)
 end
 
+--- Delete one or more RenderBufferObject IDs
+-- @param ... the IDs to delete
 function gl.DeleteRenderbuffers(...)
 	local t = {...}
 	local n = #t
@@ -2195,6 +2278,9 @@ function gl.DeleteRenderbuffers(...)
 	lib.glDeleteRenderbuffers(n, arr)
 end
 
+--- Create one or more OpenGL Buffer Object IDs
+-- @tparam ?int n number of IDs to create (default 1)
+-- @return the generated IDs
 function gl.GenBuffers(n) 
 	n = n or 1
 	local arr = ffi.new("GLuint[?]", n)
@@ -2204,6 +2290,9 @@ function gl.GenBuffers(n)
 	return unpack(res)
 end
 
+--- Create one or more texture IDs
+-- @tparam ?int n number of IDs to create (default 1)
+-- @return the generated IDs
 function gl.GenTextures(n) 
 	n = n or 1
 	local arr = ffi.new("GLuint[?]", n)
@@ -2213,6 +2302,8 @@ function gl.GenTextures(n)
 	return unpack(res)
 end
 
+--- Delete one or more texture IDs
+-- @param ... the IDs to delete
 function gl.DeleteTextures(...)
 	local t = {...}
 	local n = #t
@@ -2221,6 +2312,10 @@ function gl.DeleteTextures(...)
 	lib.glDeleteTextures(n, arr)
 end
 
+--- create a Shader
+-- @param kind, e.g. gl.VERTEX_SHADER, gl.FRAGMENT_SHADER, etc.
+-- @tparam string code the GLSL source code
+-- @return Shader object
 function gl.CreateShader(kind, code)
 	local shader = lib.glCreateShader(kind)
 	assert(shader ~= 0, "Failed to allocate shader; is the GL context ready?")
@@ -2253,6 +2348,9 @@ function gl.CreateShader(kind, code)
 	return shader
 end
 
+--- create a shader Program
+-- @param ... a list of Shader objects to attach
+-- @return program
 function gl.CreateProgram(...)
 	local program = lib.glCreateProgram()
 	assert(program ~= 0, "Failed to allocate shader program; is the GL context ready?")
@@ -2324,6 +2422,7 @@ function sketch.enter_ortho(x, y, w, h)
 	end
 end
 
+
 function sketch.leave_ortho()	
 	lib.glMatrixMode(lib.GL_PROJECTION);
 	lib.glPopMatrix();
@@ -2373,9 +2472,8 @@ function gl.extensions()
 	return gl.extensions_table
 end
 
--- load user-friendly symbols on demand:
--- i.e. gl.Clear() instead of gl.glClear()
-
+--- Throw an error if the GPU state is invalid
+-- @tparam string msg a string to include in the error
 function gl.assert(msg)
 	local err = lib.glGetError()
 	if err ~= lib.GL_NO_ERROR then

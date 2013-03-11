@@ -1,0 +1,724 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>AV Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>LuaJIT AV</h1>
+
+<ul>
+  <li><a href="../reference.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/field2D.html">field2D</a></li>
+  <li><strong>gl</strong></li>
+  <li><a href="../modules/io.html">io</a></li>
+  <li><a href="../modules/math.html">math</a></li>
+  <li><a href="../modules/os.html">os</a></li>
+  <li><a href="../modules/string.html">string</a></li>
+  <li><a href="../modules/table.html">table</a></li>
+  <li><a href="../modules/window.html">window</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>gl</code></h1>
+
+<p>LuaJIT FFI based GL bindings
+(Forked from: https://github.com/malkia/ufo/)</p>
+
+<p>Reproduces the OpenGL programming API within LuaJIT, and adds a friendlier layer on top to take advantage of Lua's dynamic typing and other capabilities.</p>
+<p> </p>
+
+<p>Only a small part of the API is documented here; for full reference consult the OpenGL reference manual and convert the C calling style to Lua. For example, the C code:</p>
+
+<pre><code>glVertex3f(1.0, 1.0, 1.0);
+</code></pre>
+
+<p>Can be written in Lua in any of these ways:</p>
+
+<pre><code>local gl = require "gl"
+
+-- using the C style:
+gl.glVertex3f(1, 1, 1)
+
+-- avoiding the gl.gl repetition:
+gl.Vertex3f(1, 1, 1)
+
+-- using a friendlier wrapper provided by this module:
+gl.Vertex(1, 1, 1)
+</code></pre>
+
+<p>Enumerations from C such as <code>GL_POINTS</code> can be written in Lua as <code>gl.POINTS</code></p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Clear">Clear&nbsp;(...)</a></td>
+	<td class="summary">Clear the buffers</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ClearColor">ClearColor&nbsp;(r, g, b, a)</a></td>
+	<td class="summary">Set the background color used by <a href="../modules/gl.html#Clear">gl.Clear</a></td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ColorMask">ColorMask&nbsp;(r, g, b, a)</a></td>
+	<td class="summary">Set the color mask</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LoadMatrix">LoadMatrix&nbsp;(t)</a></td>
+	<td class="summary">Set the current matrix</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#MultMatrix">MultMatrix&nbsp;(t)</a></td>
+	<td class="summary">Apply a matrix to the current matrix</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Rotate">Rotate&nbsp;(a, x, y, z)</a></td>
+	<td class="summary">Apply rotation transform to current matrix (angle axis format)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Scale">Scale&nbsp;(x, y, z)</a></td>
+	<td class="summary">Apply scale transform to current matrix</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Translate">Translate&nbsp;(x, y, z)</a></td>
+	<td class="summary">Apply translation transform to current matrix</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Vertex">Vertex&nbsp;(x, y, z, w)</a></td>
+	<td class="summary">Add a vertex
+ 2, 3 or 4D vertex depending on argument count</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Color">Color&nbsp;(r, g, b, a)</a></td>
+	<td class="summary">Set the current color for rendering</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Normal">Normal&nbsp;(x, y, z)</a></td>
+	<td class="summary">Add a normal vector</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TexCoord">TexCoord&nbsp;(x, y, z, w)</a></td>
+	<td class="summary">Add a texture coordinate
+ 2, 3 or 4D texcoord depending on argument count</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TexParameter">TexParameter&nbsp;(target, pname)</a></td>
+	<td class="summary">Get a parameter on a texture target</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GenFramebuffers">GenFramebuffers&nbsp;(n)</a></td>
+	<td class="summary">Create one or more OpenGL FrameBufferObject IDs</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DeleteFramebuffers">DeleteFramebuffers&nbsp;(...)</a></td>
+	<td class="summary">Delete one or more FrameBufferObject IDs</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GenRenderbuffers">GenRenderbuffers&nbsp;(n)</a></td>
+	<td class="summary">Create one or more OpenGL RenderBufferObject IDs</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DeleteRenderbuffers">DeleteRenderbuffers&nbsp;(...)</a></td>
+	<td class="summary">Delete one or more RenderBufferObject IDs</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GenBuffers">GenBuffers&nbsp;(n)</a></td>
+	<td class="summary">Create one or more OpenGL Buffer Object IDs</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#GenTextures">GenTextures&nbsp;(n)</a></td>
+	<td class="summary">Create one or more texture IDs</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DeleteTextures">DeleteTextures&nbsp;(...)</a></td>
+	<td class="summary">Delete one or more texture IDs</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CreateShader">CreateShader&nbsp;(kind, code)</a></td>
+	<td class="summary">create a Shader</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CreateProgram">CreateProgram&nbsp;(...)</a></td>
+	<td class="summary">create a shader Program</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#assert">assert&nbsp;(msg)</a></td>
+	<td class="summary">Throw an error if the GPU state is invalid</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "Clear"></a>
+    <strong>Clear&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Clear the buffers
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       Enumerations (bitwise OR'ed), defaults to (gl.COLOR_BUFFER_BIT, gl.DEPTH_BUFFER_BIT)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ClearColor"></a>
+    <strong>ClearColor&nbsp;(r, g, b, a)</strong>
+    </dt>
+    <dd>
+    Set the background color used by <a href="../modules/gl.html#Clear">gl.Clear</a>
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">r</span>
+       red component (optional, defaults to 0)</li>
+      <li><span class="parameter">g</span>
+       green component (optional, defaults to 0)</li>
+      <li><span class="parameter">b</span>
+       blue component (optional, defaults to 0)</li>
+      <li><span class="parameter">a</span>
+       alpha component (optional, defaults to 1)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ColorMask"></a>
+    <strong>ColorMask&nbsp;(r, g, b, a)</strong>
+    </dt>
+    <dd>
+    Set the color mask
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">r</span>
+       red component (optional, defaults to 0)</li>
+      <li><span class="parameter">g</span>
+       green component (optional, defaults to 0)</li>
+      <li><span class="parameter">b</span>
+       blue component (optional, defaults to 0)</li>
+      <li><span class="parameter">a</span>
+       alpha component (optional, defaults to 1)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LoadMatrix"></a>
+    <strong>LoadMatrix&nbsp;(t)</strong>
+    </dt>
+    <dd>
+    Set the current matrix
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">t</span>
+       matrix (table with 16 values in the array)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "MultMatrix"></a>
+    <strong>MultMatrix&nbsp;(t)</strong>
+    </dt>
+    <dd>
+    Apply a matrix to the current matrix
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">t</span>
+       matrix (table with 16 values in the array)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Rotate"></a>
+    <strong>Rotate&nbsp;(a, x, y, z)</strong>
+    </dt>
+    <dd>
+    Apply rotation transform to current matrix (angle axis format)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       angle (optional, defaults to 0)</li>
+      <li><span class="parameter">x</span>
+       x component (optional, defaults to 0)</li>
+      <li><span class="parameter">y</span>
+       y component (optional, defaults to 0)</li>
+      <li><span class="parameter">z</span>
+       z component (optional, defaults to 1)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Scale"></a>
+    <strong>Scale&nbsp;(x, y, z)</strong>
+    </dt>
+    <dd>
+    Apply scale transform to current matrix
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       x component (optional, defaults to 1)</li>
+      <li><span class="parameter">y</span>
+       y component (optional, defaults to x)</li>
+      <li><span class="parameter">z</span>
+       z component (optional, defaults to x)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Translate"></a>
+    <strong>Translate&nbsp;(x, y, z)</strong>
+    </dt>
+    <dd>
+    Apply translation transform to current matrix
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       x component (optional, defaults to 0)</li>
+      <li><span class="parameter">y</span>
+       y component (optional, defaults to 0)</li>
+      <li><span class="parameter">z</span>
+       z component (optional, defaults to 0)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Vertex"></a>
+    <strong>Vertex&nbsp;(x, y, z, w)</strong>
+    </dt>
+    <dd>
+    Add a vertex
+ 2, 3 or 4D vertex depending on argument count
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+
+
+</li>
+      <li><span class="parameter">y</span>
+
+
+</li>
+      <li><span class="parameter">z</span>
+
+
+</li>
+      <li><span class="parameter">w</span>
+
+
+</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Color"></a>
+    <strong>Color&nbsp;(r, g, b, a)</strong>
+    </dt>
+    <dd>
+    Set the current color for rendering
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">r</span>
+       red component (optional, defaults to 0)</li>
+      <li><span class="parameter">g</span>
+       green component (optional, defaults to 0)</li>
+      <li><span class="parameter">b</span>
+       blue component (optional, defaults to 0)</li>
+      <li><span class="parameter">a</span>
+       alpha component (optional, defaults to 1)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Normal"></a>
+    <strong>Normal&nbsp;(x, y, z)</strong>
+    </dt>
+    <dd>
+    Add a normal vector
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       x component (optional, defaults to 0)</li>
+      <li><span class="parameter">y</span>
+       y component (optional, defaults to 0)</li>
+      <li><span class="parameter">z</span>
+       z component (optional, defaults to 1)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TexCoord"></a>
+    <strong>TexCoord&nbsp;(x, y, z, w)</strong>
+    </dt>
+    <dd>
+    Add a texture coordinate
+ 2, 3 or 4D texcoord depending on argument count
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+
+
+</li>
+      <li><span class="parameter">y</span>
+
+
+</li>
+      <li><span class="parameter">z</span>
+
+
+</li>
+      <li><span class="parameter">w</span>
+
+
+</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TexParameter"></a>
+    <strong>TexParameter&nbsp;(target, pname)</strong>
+    </dt>
+    <dd>
+    Get a parameter on a texture target
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">target</span>
+       the texure target</li>
+      <li><span class="parameter">pname</span>
+       the parameter name</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the parameter value(s)
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GenFramebuffers"></a>
+    <strong>GenFramebuffers&nbsp;(n)</strong>
+    </dt>
+    <dd>
+    Create one or more OpenGL FrameBufferObject IDs
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">n</span>
+        <span class="types">optional <span class="type">int</span></span>
+       number of IDs to create (default 1)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the generated IDs
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DeleteFramebuffers"></a>
+    <strong>DeleteFramebuffers&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Delete one or more FrameBufferObject IDs
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       the IDs to delete</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GenRenderbuffers"></a>
+    <strong>GenRenderbuffers&nbsp;(n)</strong>
+    </dt>
+    <dd>
+    Create one or more OpenGL RenderBufferObject IDs
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">n</span>
+        <span class="types">optional <span class="type">int</span></span>
+       number of IDs to create (default 1)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the generated IDs
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DeleteRenderbuffers"></a>
+    <strong>DeleteRenderbuffers&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Delete one or more RenderBufferObject IDs
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       the IDs to delete</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GenBuffers"></a>
+    <strong>GenBuffers&nbsp;(n)</strong>
+    </dt>
+    <dd>
+    Create one or more OpenGL Buffer Object IDs
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">n</span>
+        <span class="types">optional <span class="type">int</span></span>
+       number of IDs to create (default 1)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the generated IDs
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "GenTextures"></a>
+    <strong>GenTextures&nbsp;(n)</strong>
+    </dt>
+    <dd>
+    Create one or more texture IDs
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">n</span>
+        <span class="types">optional <span class="type">int</span></span>
+       number of IDs to create (default 1)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        the generated IDs
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DeleteTextures"></a>
+    <strong>DeleteTextures&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Delete one or more texture IDs
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       the IDs to delete</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CreateShader"></a>
+    <strong>CreateShader&nbsp;(kind, code)</strong>
+    </dt>
+    <dd>
+    create a Shader
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">kind</span>
+      , e.g. gl.VERTEX<em>SHADER, gl.FRAGMENT</em>SHADER, etc.</li>
+      <li><span class="parameter">code</span>
+        <span class="types"><a class="type" href="../modules/string.html#">string</a></span>
+       the GLSL source code</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Shader object
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CreateProgram"></a>
+    <strong>CreateProgram&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    create a shader Program
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       a list of Shader objects to attach</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        program
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "assert"></a>
+    <strong>assert&nbsp;(msg)</strong>
+    </dt>
+    <dd>
+    Throw an error if the GPU state is invalid
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">msg</span>
+        <span class="types"><a class="type" href="../modules/string.html#">string</a></span>
+       a string to include in the error</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -77,7 +77,7 @@ else
 fi
 
 # documentation:
-./ldoc.lua -v --title "AV Reference" --project "LuaJIT AV" --dir ../docs --output reference ../modules
+./ldoc.lua -v --format markdown --title "AV Reference" --project "LuaJIT AV" --dir ../docs --output reference ../modules
 
 echo copy
 cp av ../

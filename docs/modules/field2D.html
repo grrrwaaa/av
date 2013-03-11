@@ -1,0 +1,358 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>AV Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>LuaJIT AV</h1>
+
+<ul>
+  <li><a href="../reference.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Class_Field_D">Class Field2D</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><strong>field2D</strong></li>
+  <li><a href="../modules/gl.html">gl</a></li>
+  <li><a href="../modules/io.html">io</a></li>
+  <li><a href="../modules/math.html">math</a></li>
+  <li><a href="../modules/os.html">os</a></li>
+  <li><a href="../modules/string.html">string</a></li>
+  <li><a href="../modules/table.html">table</a></li>
+  <li><a href="../modules/window.html">window</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>field2D</code></h1>
+
+<p>The Field2D module encapsulates typed byte array as a 2D field of densely packed cells, with several useful methods and fields.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#new">new&nbsp;(width, height)</a></td>
+	<td class="summary">Create a <a href="../modules/field2D.html#Class_Field2D">Field2D</a> object.</td>
+	</tr>
+</table>
+<h2><a href="#Class_Field_D">Class Field2D</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#field2D:clone">field2D:clone&nbsp;()</a></td>
+	<td class="summary">Create a duplicate copy of the field.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#field2D:clear">field2D:clear&nbsp;()</a></td>
+	<td class="summary">Set all cells to zero.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#field2D:set">field2D:set&nbsp;(value, x, y)</a></td>
+	<td class="summary">Set the value of a cell, or of all cells.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#field2D:get">field2D:get&nbsp;(x, y)</a></td>
+	<td class="summary">Get the value of a cell.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#field2D:draw">field2D:draw&nbsp;(x, y, w, h, unit)</a></td>
+	<td class="summary">Draw the field as an OpenGL textured quad.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#field2D:bind">field2D:bind&nbsp;(unit)</a></td>
+	<td class="summary">Bind the field as an OpenGL texture.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#field2D:unbind">field2D:unbind&nbsp;(unit)</a></td>
+	<td class="summary">Unbind the field as an OpenGL texture.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "new"></a>
+    <strong>new&nbsp;(width, height)</strong>
+    </dt>
+    <dd>
+    Create a <a href="../modules/field2D.html#Class_Field2D">Field2D</a> object.
+ The field will be initialized with zero values in all cells.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">width</span>
+        <span class="types">optional <span class="type">int</span></span>
+
+
+</li>
+      <li><span class="parameter">height</span>
+        <span class="types">optional <span class="type">int</span></span>
+
+
+</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <a href="../modules/field2D.html#Class_Field2D">Field2D</a>
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Field_D"></a>Class Field2D</h2>
+
+<p>The Field2D type encapsulates typed byte array as a 2D field of densely packed cells, with several useful methods and fields. </p>
+
+<p>Fields:</p>
+
+<ul>
+    <li><code>width:</code> <strong><em>int</em></strong> the horizontal dimension of the array</li>
+    <li><code>height:</code> <strong><em>int</em></strong> the vertical dimension of the array</li>
+    <li><code>length:</code> <strong><em>int</em></strong> the total number of cells in the array</li>
+    <li><code>size:</code> <strong><em>int</em></strong> the size of the array in bytes</li>
+    <li><code>data:</code> <strong><em>cdata</em></strong> the raw data pointer of the array</li>
+</ul>
+
+
+            <h3>Usage:</h3>
+            <pre class="example">
+	f = field2D.new(<span class="number">64</span>, <span class="number">64</span>)
+	<span class="comment">-- or simply:
+</span>	f = field2D(<span class="number">64</span>, <span class="number">64</span>)
+	</pre>
+    <dl class="function">
+    <dt>
+    <a name = "field2D:clone"></a>
+    <strong>field2D:clone&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create a duplicate copy of the field.
+ Returns a new <a href="../modules/field2D.html#Class_Field2D">Field2D</a> with the same dimensions and content.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <a href="../modules/field2D.html#Class_Field2D">Field2D</a>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "field2D:clear"></a>
+    <strong>field2D:clear&nbsp;()</strong>
+    </dt>
+    <dd>
+    Set all cells to zero.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "field2D:set"></a>
+    <strong>field2D:set&nbsp;(value, x, y)</strong>
+    </dt>
+    <dd>
+    Set the value of a cell, or of all cells.
+ If the x,y coordinate is not specified, it will apply the value for all cells.
+ If the value to set is a function, this function is called (passing the x, y coordinates as arguments). If the function returns a value, the cell is set to this value; otherwise the cell is left unchanged.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">value</span>
+        <span class="types"><span class="type">number</span> or <span class="type">function</span></span>
+       to set</li>
+      <li><span class="parameter">x</span>
+        <span class="types">optional <span class="type">int</span></span>
+       coordinate (row) to set a single cell</li>
+      <li><span class="parameter">y</span>
+        <span class="types">optional <span class="type">int</span></span>
+       coordinate (column) to set a single cell</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "field2D:get"></a>
+    <strong>field2D:get&nbsp;(x, y)</strong>
+    </dt>
+    <dd>
+    Get the value of a cell.
+ The x, y indices will safely wrap if they are out of range.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+        <span class="types"><span class="type">int</span></span>
+       coordinate (row)</li>
+      <li><span class="parameter">y</span>
+        <span class="types"><span class="type">int</span></span>
+       coordinate (column)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        value of the cell
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "field2D:draw"></a>
+    <strong>field2D:draw&nbsp;(x, y, w, h, unit)</strong>
+    </dt>
+    <dd>
+    Draw the field as an OpenGL textured quad.
+ if no coordinates are given, it will default to 0,0,1,1, which fills the screen in 2D rendering mode.
+ NOTE: this leaves the texture bound; it can be unbound using self:unbind(unit)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+        <span class="types">optional <span class="type">int</span></span>
+       coordinate of quad</li>
+      <li><span class="parameter">y</span>
+        <span class="types">optional <span class="type">int</span></span>
+       coordinate of quad</li>
+      <li><span class="parameter">w</span>
+        <span class="types">optional <span class="type">int</span></span>
+       of quad</li>
+      <li><span class="parameter">h</span>
+        <span class="types">optional <span class="type">int</span></span>
+       of quad</li>
+      <li><span class="parameter">unit</span>
+        <span class="types">optional <span class="type">int</span></span>
+       OpenGL texture unit to bind</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "field2D:bind"></a>
+    <strong>field2D:bind&nbsp;(unit)</strong>
+    </dt>
+    <dd>
+    Bind the field as an OpenGL texture.
+ Unbind the texture using self:unbind()
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">unit</span>
+        <span class="types">optional <span class="type">int</span></span>
+       OpenGL texture unit to bind</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "field2D:unbind"></a>
+    <strong>field2D:unbind&nbsp;(unit)</strong>
+    </dt>
+    <dd>
+    Unbind the field as an OpenGL texture.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">unit</span>
+        <span class="types">optional <span class="type">int</span></span>
+       OpenGL texture unit to unbind</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

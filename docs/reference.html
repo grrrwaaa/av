@@ -27,70 +27,65 @@
 <h1>LuaJIT AV</h1>
 
 
-<h2>Contents</h2>
-<ul>
-<li><a href="#Functions">Functions</a></li>
-</ul>
 
 
 <h2>Modules</h2>
 <ul>
-  <li><strong>field2D</strong></li>
+  <li><a href="modules/field2D.html">field2D</a></li>
+  <li><a href="modules/gl.html">gl</a></li>
+  <li><a href="modules/io.html">io</a></li>
+  <li><a href="modules/math.html">math</a></li>
+  <li><a href="modules/os.html">os</a></li>
+  <li><a href="modules/string.html">string</a></li>
+  <li><a href="modules/table.html">table</a></li>
+  <li><a href="modules/window.html">window</a></li>
 </ul>
 
 </div>
 
 <div id="content">
 
-<h1>Module <code>field2D</code></h1>
-
-<p>Field2D: an object representing a 2D densely packed array.</p>
-<p></p>
 
 
-<h2><a href="#Functions">Functions</a></h2>
-<table class="function_list">
+
+<h2>Modules</h2>
+<table class="module_list">
 	<tr>
-	<td class="name" nowrap><a href="#field2D:set">field2D:set&nbsp;(value, x, y)</a></td>
-	<td class="summary">set the value of a cell, or of all cells.</td>
+		<td class="name"  nowrap><a href="modules/field2D.html">field2D</a></td>
+		<td class="summary">The Field2D module encapsulates typed byte array as a 2D field of densely packed cells, with several useful methods and fields.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/gl.html">gl</a></td>
+		<td class="summary">LuaJIT FFI based GL bindings
+(Forked from: https://github.com/malkia/ufo/)</p>
+
+<p>Reproduces the OpenGL programming API within LuaJIT, and adds a friendlier layer on top to take advantage of Lua's dynamic typing and other capabilities.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/io.html">io</a></td>
+		<td class="summary">Reading and Writing Files.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/math.html">math</a></td>
+		<td class="summary">standard mathematical functions.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/os.html">os</a></td>
+		<td class="summary">Operating System facilities like date, time and program execution.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/string.html">string</a></td>
+		<td class="summary">string operations like searching and matching.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/table.html">table</a></td>
+		<td class="summary">manipulating Lua tables.</td>
+	</tr>
+	<tr>
+		<td class="name"  nowrap><a href="modules/window.html">window</a></td>
+		<td class="summary">The Window module provides utilities for the OpenGL rendering window.</td>
 	</tr>
 </table>
-
-<br/>
-<br/>
-
-
-    <h2><a name="Functions"></a>Functions</h2>
-    <dl class="function">
-    <dt>
-    <a name = "field2D:set"></a>
-    <strong>field2D:set&nbsp;(value, x, y)</strong>
-    </dt>
-    <dd>
-    set the value of a cell, or of all cells.
- If the x,y coordinate is not specified, it will apply the value for all cells.
- If the value to set is a function, this function is called (passing the x, y coordinates as arguments). If the function returns a value, the cell is set to this value; otherwise the cell is left unchanged.
-
-    <h3>Parameters:</h3>
-    <ul>
-      <li><span class="parameter">value</span>
-        <span class="types"><span class="type">number</span> or <span class="type">function</span></span>
-       to set</li>
-      <li><span class="parameter">x</span>
-        <span class="types">optional <span class="type">int</span></span>
-       coordinate (row) to set a single cell</li>
-      <li><span class="parameter">y</span>
-        <span class="types">optional <span class="type">int</span></span>
-       coordinate (column) to set a single cell</li>
-    </ul>
-
-
-
-
-
-</dd>
-</dl>
-
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->

@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>AV Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>LuaJIT AV</h1>
+
+<ul>
+  <li><a href="../reference.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><strong>coroutine</strong></li>
+  <li><a href="../modules/field2D.html">field2D</a></li>
+  <li><a href="../modules/gl.html">gl</a></li>
+  <li><a href="../modules/window.html">window</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>coroutine</code></h1>
+
+<p>creating and controlling coroutines.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#create">create&nbsp;(f)</a></td>
+	<td class="summary">Creates a new coroutine, with body <code>f</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#resume">resume&nbsp;(co, ...)</a></td>
+	<td class="summary">Starts or continues the execution of coroutine <code>co</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#running">running&nbsp;()</a></td>
+	<td class="summary">Returns the running coroutine.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#status">status&nbsp;(co)</a></td>
+	<td class="summary">Returns the status of coroutine <code>co</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#wrap">wrap&nbsp;(f)</a></td>
+	<td class="summary">Creates a new coroutine, with body <code>f</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#yield">yield&nbsp;(...)</a></td>
+	<td class="summary">Suspends the execution of the calling coroutine.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "create"></a>
+    <strong>create&nbsp;(f)</strong>
+    </dt>
+    <dd>
+    Creates a new coroutine, with body <code>f</code>.  <code>f</code> must be a Lua
+ function. Returns this new coroutine, an object with type <code>"thread"</code>.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">f</span>
+
+
+</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "resume"></a>
+    <strong>resume&nbsp;(co, ...)</strong>
+    </dt>
+    <dd>
+    Starts or continues the execution of coroutine <code>co</code>.  The first time
+ you resume a coroutine, it starts running its body. The values
+ ... are passed as the arguments to the body function. If the coroutine
+ has yielded, <a href="../modules/coroutine.html#resume">resume</a>  restarts it; the values  ... are passed
+ as the results from the yield.
+ If the coroutine runs without any errors, <a href="../modules/coroutine.html#resume">resume</a>  returns true plus any
+ values passed to <a href="../modules/coroutine.html#yield">yield</a>  (if the coroutine yields) or any values returned
+ by the body function (if the coroutine terminates). If there is any error,
+ <a href="../modules/coroutine.html#resume">resume</a>  returns false plus the error message.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">co</span>
+
+
+</li>
+      <li><span class="parameter">...</span>
+
+
+</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "running"></a>
+    <strong>running&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the running coroutine.  Or nil when called by the main thread.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "status"></a>
+    <strong>status&nbsp;(co)</strong>
+    </dt>
+    <dd>
+    Returns the status of coroutine <code>co</code>.  Result is a string: <code>"running"</code>, if
+ the coroutine is running (that is, it called <a href="../modules/coroutine.html#status">status</a> ); <code>"suspended"</code>, if
+ the coroutine is suspended in a call to <a href="../modules/coroutine.html#yield">yield</a> , or if it has not started
+ running yet; <code>"normal"</code> if the coroutine is active but not running (that
+ is, it has resumed another coroutine); and <code>"dead"</code> if the coroutine has
+ finished its body function, or if it has stopped with an error.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">co</span>
+
+
+</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "wrap"></a>
+    <strong>wrap&nbsp;(f)</strong>
+    </dt>
+    <dd>
+    Creates a new coroutine, with body <code>f</code>.  <code>f</code> must be a Lua
+ function. Returns a function that resumes the coroutine each time it is
+ called. Any arguments passed to the function behave as the extra arguments to
+ <a href="../modules/coroutine.html#resume">resume</a> . Returns the same values returned by <a href="../modules/coroutine.html#resume">resume</a> , except the first
+ boolean. In case of error, propagates the error.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">f</span>
+
+
+</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "yield"></a>
+    <strong>yield&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Suspends the execution of the calling coroutine.  The coroutine cannot
+ be running a C function, a metamethod, or an iterator. Any arguments to
+ <a href="../modules/coroutine.html#yield">yield</a>  are passed as extra results to <a href="../modules/coroutine.html#resume">resume</a> .
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+
+
+</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

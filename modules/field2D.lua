@@ -1,4 +1,4 @@
---- Field2D: an object representing a 2D densely packed array.
+--- The Field2D module encapsulates typed byte array as a 2D field of densely packed cells, with several useful methods and fields.
 
 local ffi = require "ffi"
 local gl = require "gl"
@@ -9,20 +9,56 @@ local floor = math.floor
 local field2D = {}
 field2D.__index = field2D
 
-function field2D:reduce(func, result)
-	for y = 0, self.height-1 do
-		for x = 0, self.width-1 do
-			result = func(result, self.data[self:index_raw(x, y)], x, y)
-		end
-	end
-	return result
+--- Create a @{Field2D} object.
+-- The field will be initialized with zero values in all cells.
+-- @tparam ?int width
+-- @tparam ?int height
+-- @return @{Field2D}
+function field2D.new(width, height)
+	width = width or 64
+	height = height or width
+	local data = ffi.new("float[?]", width*height)
+	
+	return setmetatable({
+		data = data,
+		-- dimensions:
+		dim = { width, height },
+		-- human-readable...
+		width = width,
+		height = height,
+		length = width * height,
+		-- size in bytes:
+		size = ffi.sizeof(data),
+	}, field2D)
 end
 
--- e.g.:
-function field2D:sum()
-	return self:reduce(function(total, cell)
-		return total + cell
-	end, 0)
+--[[--
+The Field2D type encapsulates typed byte array as a 2D field of densely packed cells, with several useful methods and fields.
+	
+Fields:
+
+- ```width:``` ***int*** the horizontal dimension of the array
+- ```height:``` ***int*** the vertical dimension of the array
+- ```length:``` ***int*** the total number of cells in the array
+- ```size:``` ***int*** the size of the array in bytes
+- ```data:``` ***cdata*** the raw data pointer of the array
+
+@usage
+	f = field2D.new(64, 64)
+	-- or simply:
+	f = field2D(64, 64)
+	
+@type Field2D
+--]]
+
+--- Create a duplicate copy of the field.
+-- Returns a new @{Field2D} with the same dimensions and content.
+-- @return @{Field2D}
+function field2D:clone()
+	local f2 = field2D.new(self.width, self.height)
+	-- copy data:
+	ffi.copy(self.data, f2.data, f2.size)
+	return f2
 end
 
 -- field:find(predicate), to return a list of coordinates usable by a range map?
@@ -60,12 +96,22 @@ function field2D:index_raw(x, y)
 	return y*self.width + x
 end
 
---- set the value of a cell, or of all cells.
+
+
+--- Set all cells to zero.
+-- @return self
+function field2D:clear()
+	ffi.fill(self.data, self.size)
+	return self
+end
+
+--- Set the value of a cell, or of all cells.
 -- If the x,y coordinate is not specified, it will apply the value for all cells.
 -- If the value to set is a function, this function is called (passing the x, y coordinates as arguments). If the function returns a value, the cell is set to this value; otherwise the cell is left unchanged.
 -- @tparam number|function value to set
 -- @tparam ?int x coordinate (row) to set a single cell
 -- @tparam ?int y coordinate (column) to set a single cell
+-- @return self
 function field2D:set(value, x, y)
 	if x then
 		local idx = self:index(x, y or 0)
@@ -93,13 +139,6 @@ function field2D:set(value, x, y)
 	return self
 end
 
-function field2D:get(x, y)
-	return self.data[self:index(x, y)]
-end
-
-function field2D:clear()
-	ffi.fill(self.data, self.size)
-end
 
 function field2D:map(func)
 	for y = 0, self.height-1 do
@@ -112,18 +151,33 @@ function field2D:map(func)
 			end	
 		end
 	end
+	return self
 end
 
--- NOTE: this also leaves the texture bound
-function field2D:send(unit)
-	self:bind(unit)
-	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, self.width, self.height, 0, gl.LUMINANCE, gl.FLOAT, self.data)
+function field2D:reduce(func, result)
+	for y = 0, self.height-1 do
+		for x = 0, self.width-1 do
+			result = func(result, self.data[self:index_raw(x, y)], x, y)
+		end
+	end
+	return result
 end
 
--- NOTE: this also leaves the texture bound
-function field2D:draw(x, y, w, h, unit)
-	self:send(unit)
-	sketch.quad(x or 0, y or 0, w or 1, h or 1)
+-- e.g.:
+function field2D:sum()
+	return self:reduce(function(total, cell)
+		return total + cell
+	end, 0)
+end
+
+
+--- Get the value of a cell.
+-- The x, y indices will safely wrap if they are out of range.
+-- @tparam int x coordinate (row)
+-- @tparam int y coordinate (column)
+-- @return value of the cell
+function field2D:get(x, y)
+	return self.data[self:index(x, y)]
 end
 
 function field2D:create()
@@ -142,40 +196,45 @@ function field2D:create()
 	end
 end
 
+-- NOTE: this also leaves the texture bound
+function field2D:send(unit)
+	self:bind(unit)
+	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, self.width, self.height, 0, gl.LUMINANCE, gl.FLOAT, self.data)
+	return self
+end
+
+--- Draw the field as an OpenGL textured quad.
+-- if no coordinates are given, it will default to 0,0,1,1, which fills the screen in 2D rendering mode.
+-- NOTE: this leaves the texture bound; it can be unbound using self:unbind(unit)
+-- @tparam ?int x coordinate of quad 
+-- @tparam ?int y coordinate of quad 
+-- @tparam ?int width of quad 
+-- @tparam ?int height of quad
+-- @tparam ?int unit OpenGL texture unit to bind
+-- @return self
+function field2D:draw(x, y, w, h, unit)
+	self:send(unit)
+	sketch.quad(x or 0, y or 0, w or 1, h or 1)
+	return self
+end
+
+--- Bind the field as an OpenGL texture.
+-- Unbind the texture using self:unbind()
+-- @tparam ?int unit OpenGL texture unit to bind
+-- @return self
 function field2D:bind(unit)
 	--gl.ActiveTexture(gl.TEXTURE0 + (unit or 0))
 	self:create()
-	
 	gl.BindTexture(gl.TEXTURE_2D, self.texID)
+	return self
 end
 
+--- Unbind the field as an OpenGL texture.
+-- @tparam ?int unit OpenGL texture unit to unbind
+-- @return self
 function field2D:unbind(unit)
 	--gl.ActiveTexture(gl.TEXTURE0 + (unit or 0))
 	gl.BindTexture(gl.TEXTURE_2D, 0)
-end
-
-function field2D:copy()
-	local f2 = field2D.new(self.width, self.height)
-	-- copy data:
-	ffi.copy(self.data, f2.data, f2.size)
-	return f2
-end
-
-function field2D.new(dimx, dimy)
-	dimx = dimx or 64
-	dimy = dimy or dimx
-	local data = ffi.new("float[?]", dimx*dimy)
-	
-	return setmetatable({
-		data = data,
-		-- dimensions:
-		dim = { dimx, dimy },
-		-- human-readable...
-		width = dimx,
-		height = dimy,
-		-- size in bytes:
-		size = ffi.sizeof(data),
-	}, field2D)
 end
 
 return setmetatable(field2D, {

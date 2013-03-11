@@ -56,6 +56,33 @@
 		36C3E0B016E4400A007407CF /* devnotes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = devnotes.txt; sourceTree = "<group>"; };
 		36C6556E16E4419600FDE98B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = SOURCE_ROOT; };
 		36C6558416E4442000FDE98B /* field2D.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = field2D.lua; sourceTree = "<group>"; };
+		36FC187516EE12D400C20D48 /* coroutine.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = coroutine.lua; sourceTree = "<group>"; };
+		36FC187616EE12D400C20D48 /* debug.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = debug.lua; sourceTree = "<group>"; };
+		36FC187716EE12D400C20D48 /* global.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = global.lua; sourceTree = "<group>"; };
+		36FC187816EE12D400C20D48 /* globals.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = globals.lua; sourceTree = "<group>"; };
+		36FC187916EE12D400C20D48 /* io.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = io.lua; sourceTree = "<group>"; };
+		36FC187A16EE12D400C20D48 /* lfs.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = lfs.lua; sourceTree = "<group>"; };
+		36FC187B16EE12D400C20D48 /* lpeg.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = lpeg.lua; sourceTree = "<group>"; };
+		36FC187C16EE12D400C20D48 /* math.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = math.lua; sourceTree = "<group>"; };
+		36FC187D16EE12D400C20D48 /* os.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = os.lua; sourceTree = "<group>"; };
+		36FC187E16EE12D400C20D48 /* package.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = package.lua; sourceTree = "<group>"; };
+		36FC187F16EE12D400C20D48 /* string.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = string.lua; sourceTree = "<group>"; };
+		36FC188016EE12D400C20D48 /* table.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = table.lua; sourceTree = "<group>"; };
+		36FC188116EE12D400C20D48 /* config.ld */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.ld; sourceTree = "<group>"; };
+		36FC188216EE12D400C20D48 /* doc.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = doc.lua; sourceTree = "<group>"; };
+		36FC188416EE12D400C20D48 /* ldoc_css.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = ldoc_css.lua; sourceTree = "<group>"; };
+		36FC188516EE12D400C20D48 /* ldoc_ltp.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = ldoc_ltp.lua; sourceTree = "<group>"; };
+		36FC188616EE12D400C20D48 /* ldoc_one_css.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = ldoc_one_css.lua; sourceTree = "<group>"; };
+		36FC188716EE12D400C20D48 /* html.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = html.lua; sourceTree = "<group>"; };
+		36FC188816EE12D400C20D48 /* lang.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = lang.lua; sourceTree = "<group>"; };
+		36FC188916EE12D400C20D48 /* lexer.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = lexer.lua; sourceTree = "<group>"; };
+		36FC188A16EE12D400C20D48 /* markdown.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = markdown.lua; sourceTree = "<group>"; };
+		36FC188B16EE12D400C20D48 /* markup.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = markup.lua; sourceTree = "<group>"; };
+		36FC188C16EE12D400C20D48 /* parse.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = parse.lua; sourceTree = "<group>"; };
+		36FC188D16EE12D400C20D48 /* prettify.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = prettify.lua; sourceTree = "<group>"; };
+		36FC188E16EE12D400C20D48 /* SciTE.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SciTE.properties; sourceTree = "<group>"; };
+		36FC188F16EE12D400C20D48 /* tools.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = tools.lua; sourceTree = "<group>"; };
+		36FC189016EE12D400C20D48 /* ldoc.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = ldoc.lua; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +128,8 @@
 		362BFFB816E369C600405F7A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				36FC189016EE12D400C20D48 /* ldoc.lua */,
+				36FC187316EE12D400C20D48 /* ldoc */,
 				36228CF216EC4C6D00BB8932 /* av-Info.plist */,
 				36C3E0B016E4400A007407CF /* devnotes.txt */,
 				36228D3416EC4F5300BB8932 /* makeluajitosx.sh */,
@@ -129,6 +158,55 @@
 			name = modules;
 			path = ../modules;
 			sourceTree = SOURCE_ROOT;
+		};
+		36FC187316EE12D400C20D48 /* ldoc */ = {
+			isa = PBXGroup;
+			children = (
+				36FC187416EE12D400C20D48 /* builtin */,
+				36FC188116EE12D400C20D48 /* config.ld */,
+				36FC188216EE12D400C20D48 /* doc.lua */,
+				36FC188316EE12D400C20D48 /* html */,
+				36FC188716EE12D400C20D48 /* html.lua */,
+				36FC188816EE12D400C20D48 /* lang.lua */,
+				36FC188916EE12D400C20D48 /* lexer.lua */,
+				36FC188A16EE12D400C20D48 /* markdown.lua */,
+				36FC188B16EE12D400C20D48 /* markup.lua */,
+				36FC188C16EE12D400C20D48 /* parse.lua */,
+				36FC188D16EE12D400C20D48 /* prettify.lua */,
+				36FC188E16EE12D400C20D48 /* SciTE.properties */,
+				36FC188F16EE12D400C20D48 /* tools.lua */,
+			);
+			path = ldoc;
+			sourceTree = "<group>";
+		};
+		36FC187416EE12D400C20D48 /* builtin */ = {
+			isa = PBXGroup;
+			children = (
+				36FC187516EE12D400C20D48 /* coroutine.lua */,
+				36FC187616EE12D400C20D48 /* debug.lua */,
+				36FC187716EE12D400C20D48 /* global.lua */,
+				36FC187816EE12D400C20D48 /* globals.lua */,
+				36FC187916EE12D400C20D48 /* io.lua */,
+				36FC187A16EE12D400C20D48 /* lfs.lua */,
+				36FC187B16EE12D400C20D48 /* lpeg.lua */,
+				36FC187C16EE12D400C20D48 /* math.lua */,
+				36FC187D16EE12D400C20D48 /* os.lua */,
+				36FC187E16EE12D400C20D48 /* package.lua */,
+				36FC187F16EE12D400C20D48 /* string.lua */,
+				36FC188016EE12D400C20D48 /* table.lua */,
+			);
+			path = builtin;
+			sourceTree = "<group>";
+		};
+		36FC188316EE12D400C20D48 /* html */ = {
+			isa = PBXGroup;
+			children = (
+				36FC188416EE12D400C20D48 /* ldoc_css.lua */,
+				36FC188516EE12D400C20D48 /* ldoc_ltp.lua */,
+				36FC188616EE12D400C20D48 /* ldoc_one_css.lua */,
+			);
+			path = html;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
