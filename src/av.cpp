@@ -561,7 +561,7 @@ int main(int argc, char * argv[]) {
 		err = lua_pcall(L, argc, LUA_MULTRET, debugtraceback);
 	}
 	if (err) {
-		printf("error (%s): %s\n", startfile, lua_tostring(L, -1));
+		printf("error in av_main: %s\n", lua_tostring(L, -1));
 		return 0;
 	}
 	
