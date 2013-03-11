@@ -1,4 +1,9 @@
 -- this code gets baked into the av application
+local args = ...
+
+for i, v in ipairs{ args } do
+	print(i, v)
+end
 
 -- add the modules search path:
 package.path = './modules/?.lua;./modules/?/init.lua;'..package.path

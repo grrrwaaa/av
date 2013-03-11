@@ -549,7 +549,7 @@ int main(int argc, char * argv[]) {
 	lua_setfield(L, LUA_REGISTRYINDEX, "debug.traceback");
 	
 	lua_settop(L, 0); // clean stack
-		
+	
 	const char * startfile = argc > 1 ? argv[1] : "./start.lua";
 	lua_getfield(L, LUA_REGISTRYINDEX, "debug.traceback");
 	int debugtraceback = lua_gettop(L);
