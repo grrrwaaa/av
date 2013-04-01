@@ -27,31 +27,33 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	CC='g++'
 	CFLAGS="-x c++ -fno-stack-protector -O3 -Wall -fPIC"
 	DEFINES=""
-	INCLUDEPATHS="-I/usr/local/include/luajit-2.0"
+	INCLUDEPATHS="-Iosx/include" #"-I/usr/local/include/luajit-2.0"
+	SOURCES="av.cpp rgbd.cpp"
 	
 	LINK=$CC
 	LDFLAGS32="-w -rdynamic -keep_private_externs"
 	LDFLAGS64="$LDFLAGS32 -pagezero_size 10000 -image_base 100000000"
 	
 	LINKERPATHS="-Losx/lib"
-	LIBRARIES="-lluajit -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL"
+	LIBRARIES="-lluajit -lfreenect -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL"
 	
-	echo compile 32
-	rm -f *.o
-	$CC -arch i386 -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
-	echo link 32
-	$LINK -arch i386 $LDFLAGS32 $LINKERPATHS $LIBRARIES *.o -o app32
+	#echo compile 32
+	#rm -f *.o
+	#$CC -arch i386 -c $CFLAGS $DEFINES $INCLUDEPATHS $SOURCES
+	#echo link 32
+	#$LINK -arch i386 $LDFLAGS32 $LINKERPATHS $LIBRARIES *.o -o app32
 	
 	echo compile 64
 	rm -f *.o
-	$CC -arch x86_64 -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
+	$CC -arch x86_64 -c $CFLAGS $DEFINES $INCLUDEPATHS $SOURCES
 	echo link 64
 	$LINK -arch x86_64 $LDFLAGS64 $LINKERPATHS $LIBRARIES *.o -o app64
 	
 	# join them in fat love:
 	echo fatten
-	lipo -create app32 app64 -output $PRODUCT_NAME
-	rm app32 app64
+	#lipo -create app32 app64 -output $PRODUCT_NAME
+	#rm app32 app64
+	mv app64 $PRODUCT_NAME
 
 	# documentation:
 	./ldoc.lua -v --format markdown --title "AV Reference" --project "LuaJIT AV" --dir ../docs --output reference ../modules	

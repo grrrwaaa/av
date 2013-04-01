@@ -1,0 +1,721 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>AV Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>LuaJIT AV</h1>
+
+<ul>
+  <li><a href="../reference.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/draw2D.html">draw2D</a></li>
+  <li><a href="../modules/field2D.html">field2D</a></li>
+  <li><a href="../modules/field3D.html">field3D</a></li>
+  <li><a href="../modules/io.html">io</a></li>
+  <li><a href="../modules/math.html">math</a></li>
+  <li><a href="../modules/os.html">os</a></li>
+  <li><a href="../modules/string.html">string</a></li>
+  <li><a href="../modules/table.html">table</a></li>
+  <li><strong>vec2</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>vec2</code></h1>
+
+<p>vec2: A simple 2-component vector</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#vec2">vec2&nbsp;(x, y)</a></td>
+	<td class="summary">Create a new vector with components x, y:</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#copy">copy&nbsp;(v)</a></td>
+	<td class="summary">Create a copy of a vector:</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#random">random&nbsp;()</a></td>
+	<td class="summary">Create a new vector of magnitude 1 in a uniformly random direction:</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fromPolar">fromPolar&nbsp;(length, angle)</a></td>
+	<td class="summary">Create a vector from a polar form length and angle</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:add">vec2:add&nbsp;(v)</a></td>
+	<td class="summary">Add a vector (or number) to self (in-place)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#addnew">addnew&nbsp;(a, b)</a></td>
+	<td class="summary">Add two vectors (or numbers) to create a new vector</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:sub">vec2:sub&nbsp;(v)</a></td>
+	<td class="summary">Subtract a vector (or number) to self (in-place)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#subnew">subnew&nbsp;(a, b)</a></td>
+	<td class="summary">Subtract two vectors (or numbers) to create a new vector</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:mul">vec2:mul&nbsp;(v)</a></td>
+	<td class="summary">Multiply a vector (or number) to self (in-place)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mulnew">mulnew&nbsp;(a, b)</a></td>
+	<td class="summary">Multiply two vectors (or numbers) to create a new vector</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:div">vec2:div&nbsp;(v)</a></td>
+	<td class="summary">Divide a vector (or number) to self (in-place)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#divnew">divnew&nbsp;(a, b)</a></td>
+	<td class="summary">Divide two vectors (or numbers) to create a new vector</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:pow">vec2:pow&nbsp;(v)</a></td>
+	<td class="summary">Raise to power a vector (or number) to self (in-place)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#pownew">pownew&nbsp;(a, b)</a></td>
+	<td class="summary">Raise to power two vectors (or numbers) to create a new vector</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:mod">vec2:mod&nbsp;(v)</a></td>
+	<td class="summary">Calculate modulo a vector (or number) to self (in-place)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#modnew">modnew&nbsp;(a, b)</a></td>
+	<td class="summary">Calculate modulo two vectors (or numbers) to create a new vector</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:lerp">vec2:lerp&nbsp;(v, f)</a></td>
+	<td class="summary">interpolate from self to v by factor of f</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#lerpnew">lerpnew&nbsp;(a, b, f)</a></td>
+	<td class="summary">create a vector from the linear interpolation of two vectors:</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#dot">dot&nbsp;(a, b)</a></td>
+	<td class="summary">return the dot product of two vectors:</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:length">vec2:length&nbsp;()</a></td>
+	<td class="summary">return the length of a vector</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:normalize">vec2:normalize&nbsp;()</a></td>
+	<td class="summary">set the length of the vector to 1 (unit vector)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:rotate">vec2:rotate&nbsp;(angle)</a></td>
+	<td class="summary">Rotate a vector by an angle</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:rotatenew">vec2:rotatenew&nbsp;(angle)</a></td>
+	<td class="summary">Create a vector by rotating a vector by an angle</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec2:polar">vec2:polar&nbsp;()</a></td>
+	<td class="summary">Return the magnitude and angle (polar form):</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "vec2"></a>
+    <strong>vec2&nbsp;(x, y)</strong>
+    </dt>
+    <dd>
+    Create a new vector with components x, y:
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       number (optional, default 0)</li>
+      <li><span class="parameter">y</span>
+       number (optional, default 0)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "copy"></a>
+    <strong>copy&nbsp;(v)</strong>
+    </dt>
+    <dd>
+    Create a copy of a vector:
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       vector</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "random"></a>
+    <strong>random&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create a new vector of magnitude 1 in a uniformly random direction:
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fromPolar"></a>
+    <strong>fromPolar&nbsp;(length, angle)</strong>
+    </dt>
+    <dd>
+    Create a vector from a polar form length and angle
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">length</span>
+       magnitude</li>
+      <li><span class="parameter">angle</span>
+       in radians</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:add"></a>
+    <strong>vec2:add&nbsp;(v)</strong>
+    </dt>
+    <dd>
+    Add a vector (or number) to self (in-place)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       number or vector to add</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "addnew"></a>
+    <strong>addnew&nbsp;(a, b)</strong>
+    </dt>
+    <dd>
+    Add two vectors (or numbers) to create a new vector
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       vector or number</li>
+      <li><span class="parameter">b</span>
+       vector or number</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:sub"></a>
+    <strong>vec2:sub&nbsp;(v)</strong>
+    </dt>
+    <dd>
+    Subtract a vector (or number) to self (in-place)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       number or vector to sub</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "subnew"></a>
+    <strong>subnew&nbsp;(a, b)</strong>
+    </dt>
+    <dd>
+    Subtract two vectors (or numbers) to create a new vector
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       vector or number</li>
+      <li><span class="parameter">b</span>
+       vector or number</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:mul"></a>
+    <strong>vec2:mul&nbsp;(v)</strong>
+    </dt>
+    <dd>
+    Multiply a vector (or number) to self (in-place)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       number or vector to mul</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mulnew"></a>
+    <strong>mulnew&nbsp;(a, b)</strong>
+    </dt>
+    <dd>
+    Multiply two vectors (or numbers) to create a new vector
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       vector or number</li>
+      <li><span class="parameter">b</span>
+       vector or number</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:div"></a>
+    <strong>vec2:div&nbsp;(v)</strong>
+    </dt>
+    <dd>
+    Divide a vector (or number) to self (in-place)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       number or vector to div</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "divnew"></a>
+    <strong>divnew&nbsp;(a, b)</strong>
+    </dt>
+    <dd>
+    Divide two vectors (or numbers) to create a new vector
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       vector or number</li>
+      <li><span class="parameter">b</span>
+       vector or number</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:pow"></a>
+    <strong>vec2:pow&nbsp;(v)</strong>
+    </dt>
+    <dd>
+    Raise to power a vector (or number) to self (in-place)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       number or vector to pow</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "pownew"></a>
+    <strong>pownew&nbsp;(a, b)</strong>
+    </dt>
+    <dd>
+    Raise to power two vectors (or numbers) to create a new vector
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       vector or number</li>
+      <li><span class="parameter">b</span>
+       vector or number</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:mod"></a>
+    <strong>vec2:mod&nbsp;(v)</strong>
+    </dt>
+    <dd>
+    Calculate modulo a vector (or number) to self (in-place)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       number or vector to mod</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "modnew"></a>
+    <strong>modnew&nbsp;(a, b)</strong>
+    </dt>
+    <dd>
+    Calculate modulo two vectors (or numbers) to create a new vector
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       vector or number</li>
+      <li><span class="parameter">b</span>
+       vector or number</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:lerp"></a>
+    <strong>vec2:lerp&nbsp;(v, f)</strong>
+    </dt>
+    <dd>
+    interpolate from self to v by factor of f
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       vector</li>
+      <li><span class="parameter">f</span>
+       interpolation factor from self to v (0 = none, 1 = full)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "lerpnew"></a>
+    <strong>lerpnew&nbsp;(a, b, f)</strong>
+    </dt>
+    <dd>
+    create a vector from the linear interpolation of two vectors:
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       vector</li>
+      <li><span class="parameter">b</span>
+       vector</li>
+      <li><span class="parameter">f</span>
+       interpolation factor from a to b (0 = none, 1 = full)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "dot"></a>
+    <strong>dot&nbsp;(a, b)</strong>
+    </dt>
+    <dd>
+    return the dot product of two vectors:
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       vector</li>
+      <li><span class="parameter">b</span>
+       vector</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        dot product
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:length"></a>
+    <strong>vec2:length&nbsp;()</strong>
+    </dt>
+    <dd>
+    return the length of a vector
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        length
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:normalize"></a>
+    <strong>vec2:normalize&nbsp;()</strong>
+    </dt>
+    <dd>
+    set the length of the vector to 1 (unit vector)
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:rotate"></a>
+    <strong>vec2:rotate&nbsp;(angle)</strong>
+    </dt>
+    <dd>
+    Rotate a vector by an angle
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">angle</span>
+       in radians</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:rotatenew"></a>
+    <strong>vec2:rotatenew&nbsp;(angle)</strong>
+    </dt>
+    <dd>
+    Create a vector by rotating a vector by an angle
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">angle</span>
+       in radians</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec2:polar"></a>
+    <strong>vec2:polar&nbsp;()</strong>
+    </dt>
+    <dd>
+    Return the magnitude and angle (polar form):
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        length, angle (in radians)
+    </ol>
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -4,7 +4,7 @@
 #ifdef _WIN32
 #define AV_EXPORT __declspec(dllexport)
 #else
-#define AV_EXPORT 
+#define AV_EXPORT
 #endif
 
 #ifdef __cplusplus

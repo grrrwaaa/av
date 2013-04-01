@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>AV Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>LuaJIT AV</h1>
+
+<ul>
+  <li><a href="../reference.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><strong>draw2D</strong></li>
+  <li><a href="../modules/field2D.html">field2D</a></li>
+  <li><a href="../modules/field3D.html">field3D</a></li>
+  <li><a href="../modules/io.html">io</a></li>
+  <li><a href="../modules/math.html">math</a></li>
+  <li><a href="../modules/os.html">os</a></li>
+  <li><a href="../modules/string.html">string</a></li>
+  <li><a href="../modules/table.html">table</a></li>
+  <li><a href="../modules/vec2.html">vec2</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>draw2D</code></h1>
+
+<p>Draw2D: simple drawing primitives for 2D graphics</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#push">push&nbsp;()</a></td>
+	<td class="summary">Store the current transformation until the next pop()
+ Caches the current transform matrix into the matrix stack, and pushes a new copy of the matrix onto the top.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#pop">pop&nbsp;()</a></td>
+	<td class="summary">Restore the transformation from the previous push()
+ Discards the current transformation matrix and restores the previous matrix from the matrix stack.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#translate">translate&nbsp;(x, y)</a></td>
+	<td class="summary">Move the coordinate system origin to x, y
+ (modifies the transformation matrix)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scale">scale&nbsp;(x, y)</a></td>
+	<td class="summary">Scale the coordinate system
+ (modifies the transformation matrix)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rotate">rotate&nbsp;(a)</a></td>
+	<td class="summary">Rotate the coordinate system around the origin
+ (modifies the transformation matrix)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#point">point&nbsp;(x, y)</a></td>
+	<td class="summary">Draw a point at position x,y</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#line">line&nbsp;(x1, y1, x2, y2)</a></td>
+	<td class="summary">Draw a line from x1,y1 to x2,y2</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rect">rect&nbsp;(x, y, w, h)</a></td>
+	<td class="summary">Draw a rectangle at the point (x, y) with width w and height h</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ellipse">ellipse&nbsp;(x, y, w, h)</a></td>
+	<td class="summary">Draw an ellipse at the point (x, y) with horizontal diameter w and vertical diameter h</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#circle">circle&nbsp;(x, y, d)</a></td>
+	<td class="summary">Draw an ellipse at the point (x, y) with horizontal diameter d</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "push"></a>
+    <strong>push&nbsp;()</strong>
+    </dt>
+    <dd>
+    Store the current transformation until the next pop()
+ Caches the current transform matrix into the matrix stack, and pushes a new copy of the matrix onto the top.
+ Note that the stack is limited in size (typically 32 items).
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "pop"></a>
+    <strong>pop&nbsp;()</strong>
+    </dt>
+    <dd>
+    Restore the transformation from the previous push()
+ Discards the current transformation matrix and restores the previous matrix from the matrix stack.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "translate"></a>
+    <strong>translate&nbsp;(x, y)</strong>
+    </dt>
+    <dd>
+    Move the coordinate system origin to x, y
+ (modifies the transformation matrix)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       coordinate of new origin</li>
+      <li><span class="parameter">y</span>
+       coordinate of new origin</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "scale"></a>
+    <strong>scale&nbsp;(x, y)</strong>
+    </dt>
+    <dd>
+    Scale the coordinate system
+ (modifies the transformation matrix)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       horizontal factor</li>
+      <li><span class="parameter">y</span>
+       vertical factor</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rotate"></a>
+    <strong>rotate&nbsp;(a)</strong>
+    </dt>
+    <dd>
+    Rotate the coordinate system around the origin
+ (modifies the transformation matrix)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       the angle (in radians) to rotate</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "point"></a>
+    <strong>point&nbsp;(x, y)</strong>
+    </dt>
+    <dd>
+    Draw a point at position x,y
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       coordinate of center (optional, defaults to 0)</li>
+      <li><span class="parameter">y</span>
+       coordinate of center (optional, defaults to 0)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "line"></a>
+    <strong>line&nbsp;(x1, y1, x2, y2)</strong>
+    </dt>
+    <dd>
+    Draw a line from x1,y1 to x2,y2
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x1</span>
+       start coordinate</li>
+      <li><span class="parameter">y1</span>
+       start coordinate</li>
+      <li><span class="parameter">x2</span>
+       end coordinate (optional, defaults to 0)</li>
+      <li><span class="parameter">y2</span>
+       end coordinate (optional, defaults to 0)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "rect"></a>
+    <strong>rect&nbsp;(x, y, w, h)</strong>
+    </dt>
+    <dd>
+    Draw a rectangle at the point (x, y) with width w and height h
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       coordinate of center (optional, defaults to 0)</li>
+      <li><span class="parameter">y</span>
+       coordinate of center (optional, defaults to 0)</li>
+      <li><span class="parameter">w</span>
+       width (optional, defaults to 1)</li>
+      <li><span class="parameter">h</span>
+       height (optional, defaults to 1)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ellipse"></a>
+    <strong>ellipse&nbsp;(x, y, w, h)</strong>
+    </dt>
+    <dd>
+    Draw an ellipse at the point (x, y) with horizontal diameter w and vertical diameter h
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       coordinate of center (optional, defaults to 0)</li>
+      <li><span class="parameter">y</span>
+       coordinate of center (optional, defaults to 0)</li>
+      <li><span class="parameter">w</span>
+       horizontal diameter (optional, defaults to 1)</li>
+      <li><span class="parameter">h</span>
+       vertical diameter (optional, defaults to w)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "circle"></a>
+    <strong>circle&nbsp;(x, y, d)</strong>
+    </dt>
+    <dd>
+    Draw an ellipse at the point (x, y) with horizontal diameter d
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       coordinate of center (optional, defaults to 0)</li>
+      <li><span class="parameter">y</span>
+       coordinate of center (optional, defaults to 0)</li>
+      <li><span class="parameter">d</span>
+       diameter (optional, defaults to 1)</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

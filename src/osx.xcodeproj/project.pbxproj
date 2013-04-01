@@ -35,6 +35,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		36157D821709964A0005D8A6 /* draw2D.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = draw2D.lua; sourceTree = "<group>"; };
+		36157D831709964A0005D8A6 /* field3D.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = field3D.lua; sourceTree = "<group>"; };
+		36157D841709964A0005D8A6 /* freenect.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = freenect.lua; sourceTree = "<group>"; };
+		36157D851709964A0005D8A6 /* glu.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = glu.lua; sourceTree = "<group>"; };
+		36157D861709964A0005D8A6 /* io.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = io.lua; sourceTree = "<group>"; };
+		36157D871709964A0005D8A6 /* math.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = math.lua; sourceTree = "<group>"; };
+		36157D881709964A0005D8A6 /* os.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = os.lua; sourceTree = "<group>"; };
+		36157D891709964A0005D8A6 /* png.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = png.lua; sourceTree = "<group>"; };
+		36157D8A1709964A0005D8A6 /* string.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = string.lua; sourceTree = "<group>"; };
+		36157D8B1709964A0005D8A6 /* table.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = table.lua; sourceTree = "<group>"; };
+		36157D8C1709964A0005D8A6 /* vec2.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = vec2.lua; sourceTree = "<group>"; };
 		36228CEF16EC4C6D00BB8932 /* av.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = av.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36228CF216EC4C6D00BB8932 /* av-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "av-Info.plist"; sourceTree = "<group>"; };
 		36228D3416EC4F5300BB8932 /* makeluajitosx.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = makeluajitosx.sh; sourceTree = "<group>"; };
@@ -53,6 +64,11 @@
 		362BFFC016E369EC00405F7A /* glfw3.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = glfw3.lua; sourceTree = "<group>"; };
 		362BFFC116E369EC00405F7A /* sdl.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = sdl.lua; sourceTree = "<group>"; };
 		362BFFCE16E36A7F00405F7A /* window.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = window.lua; sourceTree = "<group>"; };
+		368C279A16F97B5500AB3D5D /* rgbd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rgbd.h; sourceTree = "<group>"; };
+		368C279B16F97B5500AB3D5D /* rgbd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rgbd.cpp; sourceTree = "<group>"; };
+		368C279D16F97BBE00AB3D5D /* av.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = av.hpp; sourceTree = "<group>"; };
+		368C27F716F981FD00AB3D5D /* rgbd.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = rgbd.lua; sourceTree = "<group>"; };
+		368C27F816F9828A00AB3D5D /* snap.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = snap.lua; path = ../snap.lua; sourceTree = SOURCE_ROOT; };
 		36C3E0B016E4400A007407CF /* devnotes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = devnotes.txt; sourceTree = "<group>"; };
 		36C6556E16E4419600FDE98B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.md; path = ../README.md; sourceTree = SOURCE_ROOT; };
 		36C6558416E4442000FDE98B /* field2D.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = field2D.lua; sourceTree = "<group>"; };
@@ -115,6 +131,7 @@
 		362BFE7F16E3586E00405F7A = {
 			isa = PBXGroup;
 			children = (
+				368C27F816F9828A00AB3D5D /* snap.lua */,
 				3624310F16ED8D7F00C9732C /* draw.lua */,
 				36C6556E16E4419600FDE98B /* README.md */,
 				36228E5816EC781300BB8932 /* start.lua */,
@@ -135,7 +152,10 @@
 				36228D3416EC4F5300BB8932 /* makeluajitosx.sh */,
 				36228E4916EC769600BB8932 /* build.sh */,
 				362BFF4A16E3627B00405F7A /* h2ffi.lua */,
+				368C279A16F97B5500AB3D5D /* rgbd.h */,
+				368C279B16F97B5500AB3D5D /* rgbd.cpp */,
 				362BFF3C16E3616900405F7A /* av.h */,
+				368C279D16F97BBE00AB3D5D /* av.hpp */,
 				362BFF5216E3643D00405F7A /* av_ffi_header.cpp */,
 				362BFEB316E3598800405F7A /* av.cpp */,
 				362290D916EC91B800BB8932 /* main.lua */,
@@ -147,6 +167,17 @@
 		362BFFBD16E369EC00405F7A /* modules */ = {
 			isa = PBXGroup;
 			children = (
+				36157D821709964A0005D8A6 /* draw2D.lua */,
+				36157D831709964A0005D8A6 /* field3D.lua */,
+				36157D841709964A0005D8A6 /* freenect.lua */,
+				36157D851709964A0005D8A6 /* glu.lua */,
+				36157D861709964A0005D8A6 /* io.lua */,
+				36157D871709964A0005D8A6 /* math.lua */,
+				36157D881709964A0005D8A6 /* os.lua */,
+				36157D891709964A0005D8A6 /* png.lua */,
+				36157D8A1709964A0005D8A6 /* string.lua */,
+				36157D8B1709964A0005D8A6 /* table.lua */,
+				36157D8C1709964A0005D8A6 /* vec2.lua */,
 				36228E9416EC80EA00BB8932 /* lua.lua */,
 				362BFFCE16E36A7F00405F7A /* window.lua */,
 				362BFFBE16E369EC00405F7A /* gl.lua */,
@@ -154,6 +185,7 @@
 				362BFFC016E369EC00405F7A /* glfw3.lua */,
 				362BFFC116E369EC00405F7A /* sdl.lua */,
 				36C6558416E4442000FDE98B /* field2D.lua */,
+				368C27F716F981FD00AB3D5D /* rgbd.lua */,
 			);
 			name = modules;
 			path = ../modules;
