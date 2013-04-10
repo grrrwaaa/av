@@ -3,9 +3,6 @@
 local filename = select(2, ...) or "start.lua"
 local args = { select(3, ...) }
 
--- add the modules search path:
-package.path = './modules/?.lua;./modules/?/init.lua;'..package.path
-
 -- load the modules we need:
 local ffi = require "ffi"
 local builtin = require "builtin"
@@ -52,6 +49,7 @@ function spawn(filename)
 		local builtin_header = ...
 		local ffi = require 'ffi'
 		ffi.cdef(builtin_header)
+		package.loaded.builtin = builtin_header
 
 		-- initialize the window bindings:
 		win = require "window"

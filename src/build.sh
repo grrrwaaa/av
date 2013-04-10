@@ -22,13 +22,13 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	
 	export MACOSX_DEPLOYMENT_TARGET=10.4
 	
-	# cross compile
+	# cross compile 86/64
 	
 	CC='g++'
 	CFLAGS="-x c++ -fno-stack-protector -O3 -Wall -fPIC"
-	DEFINES=""
-	INCLUDEPATHS="-Iosx/include" #"-I/usr/local/include/luajit-2.0"
-	SOURCES="av.cpp rgbd.cpp"
+	DEFINES="-DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__MACOSX_CORE__"
+	INCLUDEPATHS="-Iosx/include -Irtaudio-4.0.11" #"-I/usr/local/include/luajit-2.0"
+	SOURCES="av.cpp rgbd.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp"
 	
 	LINK=$CC
 	LDFLAGS32="-w -rdynamic -keep_private_externs"
@@ -36,6 +36,8 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	
 	LINKERPATHS="-Losx/lib"
 	LIBRARIES="-lluajit -lfreenect -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL"
+	
+	#-framework AudioUnit -framework CoreAudio -framework AudioToolbox"
 	
 	#echo compile 32
 	#rm -f *.o
@@ -69,7 +71,7 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	CC='g++'
 	CFLAGS="-O3 -Wall -fPIC -ffast-math -Wno-unknown-pragmas -MMD"
 	DEFINES="-D_GNU_SOURCE -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__"
-	INCLUDEPATHS="-I/usr/local/include/luajit-2.0 -I/usr/include/luajit-2.0"
+	INCLUDEPATHS="-I/usr/local/include/luajit-2.0 -I/usr/include/luajit-2.0 -Irtaudio-4.0.11"
 	
 	LINK=$CC
 	LDFLAGS="-w -rdynamic -Wl,-E "

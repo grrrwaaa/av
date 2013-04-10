@@ -9,35 +9,45 @@ local twopi = pi * 2
 local format = string.format
 
 --- Create a new vector with components x, y:
--- @param x number (optional, default 0)
+-- (Can also be used to duplicate a vector: vec2(v))
+-- @param x number or vector (optional, default 0)
 -- @param y number (optional, default 0)
 function vec2(x, y) end
 
 local vec2 = {}
 vec2.__index = vec2
 
-function vec2.new(x, y)
-	return setmetatable({ x = x or 0, y = y or x or 0 }, vec2)
+local function new(x, y)
+	return setmetatable({ x = x, y = y }, vec2)
 end
 
 --- Create a copy of a vector:
 -- @param v vector
 function vec2.copy(v)
-	return vec2.new(v.x, v.y)
+	return new(v.x, v.y)
 end
 
---- Create a new vector of magnitude 1 in a uniformly random direction:
--- @return new vector
-function vec2.random()
-	local a = random() * pi * 2
-	return vec2.new(cos(a), sin(a))
+--- Set the components of a vector:
+-- @param x component
+-- @param y component
+-- @return self
+function vec2:set(x, y)
+	self.x = x
+	self.y = y
+	return self
+end
+
+--- Create a unit (length 1) vector from an angle
+-- @param angle in radians
+function vec2.fromAngle(angle)
+	return new(cos(angle), sin(angle))	
 end
 
 --- Create a vector from a polar form length and angle
 -- @param length magnitude
 -- @param angle in radians
 function vec2.fromPolar(length, angle)
-	return vec2.new(length * cos(angle), length * sin(angle))	
+	return new(length * cos(angle), length * sin(angle))	
 end
 
 --- Add a vector (or number) to self (in-place)
@@ -61,11 +71,11 @@ end
 -- @return new vector
 function vec2.addnew(a, b)
 	if type(b) == "number" then
-		return vec2.new(a.x + b, a.y + b)
+		return new(a.x + b, a.y + b)
 	elseif type(a) == "number" then
-		return vec2.new(a + b.x, a + b.y)
+		return new(a + b.x, a + b.y)
 	else
-		return vec2.new(a.x + b.x, a.y + b.y)
+		return new(a.x + b.x, a.y + b.y)
 	end
 end
 vec2.__add = vec2.addnew
@@ -91,11 +101,11 @@ end
 -- @return new vector
 function vec2.subnew(a, b)
 	if type(b) == "number" then
-		return vec2.new(a.x - b, a.y - b)
+		return new(a.x - b, a.y - b)
 	elseif type(a) == "number" then
-		return vec2.new(a - b.x, a - b.y)
+		return new(a - b.x, a - b.y)
 	else
-		return vec2.new(a.x - b.x, a.y - b.y)
+		return new(a.x - b.x, a.y - b.y)
 	end
 end
 vec2.__sub = vec2.subnew
@@ -121,11 +131,11 @@ end
 -- @return new vector
 function vec2.mulnew(a, b)
 	if type(b) == "number" then
-		return vec2.new(a.x * b, a.y * b)
+		return new(a.x * b, a.y * b)
 	elseif type(a) == "number" then
-		return vec2.new(a * b.x, a * b.y)
+		return new(a * b.x, a * b.y)
 	else
-		return vec2.new(a.x * b.x, a.y * b.y)
+		return new(a.x * b.x, a.y * b.y)
 	end
 end
 vec2.__mul = vec2.mulnew
@@ -151,11 +161,11 @@ end
 -- @return new vector
 function vec2.divnew(a, b)
 	if type(b) == "number" then
-		return vec2.new(a.x / b, a.y / b)
+		return new(a.x / b, a.y / b)
 	elseif type(a) == "number" then
-		return vec2.new(a / b.x, a / b.y)
+		return new(a / b.x, a / b.y)
 	else
-		return vec2.new(a.x / b.x, a.y / b.y)
+		return new(a.x / b.x, a.y / b.y)
 	end
 end
 vec2.__div = vec2.divnew
@@ -181,11 +191,11 @@ end
 -- @return new vector
 function vec2.pownew(a, b)
 	if type(b) == "number" then
-		return vec2.new(a.x ^ b, a.y ^ b)
+		return new(a.x ^ b, a.y ^ b)
 	elseif type(a) == "number" then
-		return vec2.new(a ^ b.x, a ^ b.y)
+		return new(a ^ b.x, a ^ b.y)
 	else
-		return vec2.new(a.x ^ b.x, a.y ^ b.y)
+		return new(a.x ^ b.x, a.y ^ b.y)
 	end
 end
 vec2.__pow = vec2.pownew
@@ -211,11 +221,11 @@ end
 -- @return new vector
 function vec2.modnew(a, b)
 	if type(b) == "number" then
-		return vec2.new(a.x % b, a.y % b)
+		return new(a.x % b, a.y % b)
 	elseif type(a) == "number" then
-		return vec2.new(a % b.x, a % b.y)
+		return new(a % b.x, a % b.y)
 	else
-		return vec2.new(a.x % b.x, a.y % b.y)
+		return new(a.x % b.x, a.y % b.y)
 	end
 end
 vec2.__mod = vec2.modnew
@@ -238,22 +248,8 @@ function vec2.lerpnew(a, b, f)
 	return a + (b - a) * f
 end
 
---- return the dot product of two vectors:
--- @param a vector
--- @param b vector
--- @return dot product
-function vec2.dot(a, b)
-	return a.x * b.x + a.y * b.y
-end
-
---- return the length of a vector
--- @return length
-function vec2:length()
-	return sqrt(self:dot(self))
-end
-vec2.__len = vec2.length
-
 --- set the length of the vector to 1 (unit vector)
+-- (randomized direction if self length was zero)
 -- @return self
 function vec2:normalize()
 	local r = self:length()
@@ -268,6 +264,88 @@ function vec2:normalize()
 		self.y = sin(a)
 	end
 	return self
+end
+
+--- return a normalized copy of the vector 
+-- (randomized direction if self length was zero)
+-- @return vector of length 1 (unit vector)
+function vec2:normalizenew()
+	local r = self:length()
+	if r > 0 then
+		local div = 1 / r
+		return new(self.x * div, self.y * div)
+	else
+		-- no particular direction; pick one at random!
+		local a = random() * twopi
+		return new(cos(a), sin(a))
+	end
+	return self
+end
+
+--- Impose a maximum magnitude
+-- Rescales vector if greater than maximum
+-- @param maximum maximum magnitude of vector
+-- @return self
+function vec2:limit(maximum)
+	local m2 = self:dot(self)
+	if m2 > maximum*maximum then
+		self:mul(maximum / sqrt(m2))
+	end
+	return self
+end
+
+--- Create a copy of a vector, limited to a maximum magnitude
+-- Rescales vector if greater than maximum
+-- @param maximum maximum magnitude of vector
+-- @return new vector
+function vec2:limitnew(maximum)
+	local m2 = self:dot(self)
+	if m2 > maximum*maximum then
+		return self * (maximum / sqrt(m2))
+	end
+	return self:copy()
+end
+
+--- Rotate a vector to a specific angle:
+-- @param a new angle
+-- @return self
+function vec2:setangle(a)
+	local scalar = self:length()
+	self.x = scalar * cos(a)
+	self.y = scalar * sin(a)
+	return self
+end
+
+--- Return a copy rotated to a specific angle:
+-- @param a new angle
+-- @return new vector
+function vec2:setanglenew(a)
+	local scalar = self:length()
+	return new(
+		scalar * cos(a),
+		scalar * sin(a)
+	)
+end
+
+--- Rescale a vector to a specific magnitude:
+-- @param m new magnitude
+-- @return self
+function vec2:setmag(m)
+	local scalar = m / self:length()
+	self.x = self.x * scalar
+	self.y = self.y * scalar
+	return self
+end
+
+--- Return a vector copy rescaled to a specific magnitude:
+-- @param m new magnitude
+-- @return new vector
+function vec2:setmagnew(m)
+	local scalar = m / self:length()
+	return new(
+		self.x * scalar,
+		self.y * scalar
+	)
 end
 
 --- Rotate a vector by an angle
@@ -288,18 +366,70 @@ end
 function vec2:rotatenew(angle)
 	local c = cos(angle)
 	local s = sin(angle)
-	return vec2.new(
+	return new(
 		self.x * c + self.y * s,
 		self.y * c - self.x * s
 	)
 end
 
+--- Create a new vector of magnitude 1 in a uniformly random direction:
+-- @return new vector
+function vec2.random()
+	local a = random() * pi * 2
+	return new(cos(a), sin(a))
+end
+
+--- Set to a vector of magnitude 1 in a uniformly random direction:
+-- @return self
+function vec2:randomize()
+	local a = random() * pi * 2
+	self.x = cos(a)
+	self.y = sin(a)
+	return self
+end
+
+--- return the length of a vector
+-- (Can also use #vector)
+-- @return length
+function vec2:length()
+	return sqrt(self:dot(self))
+end
+vec2.__len = vec2.length
+
+--- Return the angle to the vector (direction)
+-- @return angle (in radians)
+function vec2:angle()
+	return atan2(self.y, self.x)
+end
+
 --- Return the magnitude and angle (polar form):
 -- @return length, angle (in radians)
 function vec2:polar()
-	local r = self:length()
-	local t = atan2(self.y, self.x)
-	return r, t
+	return self:length(), self:angle()
+end
+
+--- return the dot product of two vectors:
+-- @param a vector
+-- @param b vector
+-- @return dot product
+function vec2.dot(a, b)
+	return a.x * b.x + a.y * b.y
+end
+
+--- The distance between two vectors (two points)
+-- (The relative distance from self to p)
+-- @param p target to measure distance to
+-- @return distance
+function vec2:distance(p)
+	return (p - self):length()
+end
+
+--- The angle between two vectors (two points)
+-- (The relative angle from self to v)
+-- @param v vector to measure angle between to
+-- @return distance
+function vec2:anglebetween(v)
+	return (v - self):angle()
 end
 
 function vec2:__tostring()
@@ -308,7 +438,15 @@ end
 
 setmetatable(vec2, {
 	__call = function(t, x, y)
-		return vec2.new(x, y)
+		if type(x) == "number" then
+			return new(x, y or 0)
+		elseif x then
+			-- copy an existing vector:
+			return new(x.x, x.y)
+		else
+			-- create a default vector
+			return new(0, 0)
+		end
 	end
 })
 

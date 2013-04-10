@@ -30,3 +30,4 @@ function update()
 		return field:get(x, y) * 0.995
 	end)
 end
+

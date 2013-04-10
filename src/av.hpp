@@ -44,4 +44,14 @@
 #endif
 
 
+extern "C" {
+	#include "lua.h"
+	#include "lualib.h"
+	#include "lauxlib.h"
+
+	int luaopen_builtin(lua_State * L);
+	
+	lua_State * av_init_lua();
+}
+
 #endif // AV_HPP

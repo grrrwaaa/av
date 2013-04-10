@@ -5,14 +5,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-extern "C" {
-	#include "lua.h"
-	#include "lualib.h"
-	#include "lauxlib.h"
-
-	int luaopen_builtin(lua_State * L);
-}
-
 /*
 // the path from where it was invoked:
 char launchpath[AV_PATH_MAX+1];
@@ -152,7 +144,11 @@ void av_tick() {
 		if (err) {
 			printf("error: %s\n", lua_tostring(L, -1));
 		}
+	} else {
+		printf("av_main corrupt\n");
+		exit(0);
 	}
+	
 	lua_settop(L, 0);
 }
 
@@ -418,6 +414,17 @@ double av_filetime(const char * filename) {
 	#endif
 }
 
+/*
+Stupid hack because Clang CIndex uses pass-by-value callbacks which LuaJIT does not yet support.
+*/
+int av_clang_visit(CXCursor cursor, CXCursor parent, void * ud) {
+	if (ud) {
+		return ((av_clang_visitor *)ud)->fun(&cursor, &parent);
+	} else {
+		return 0;
+	}
+}
+
 #include "av_ffi_header.cpp"
 
 int luaopen_builtin(lua_State * L) {
@@ -435,6 +442,25 @@ int luaopen_builtin(lua_State * L) {
 	return 1;
 }
 
+lua_State * av_init_lua() {
+	lua_State * L = lua_open();
+	luaL_openlibs(L);
+
+	lua_getglobal(L, "package");
+	lua_getfield(L, -1, "preload");
+		lua_pushcfunction(L, luaopen_builtin);
+		lua_setfield(L, -2, "builtin");
+	lua_pop(L, 2);
+	
+	lua_getglobal(L, "debug");
+	lua_pushliteral(L, "traceback");
+	lua_gettable(L, -2);
+	lua_setfield(L, LUA_REGISTRYINDEX, "debug.traceback");
+	
+	luaL_dostring(L, "package.path = './modules/?.lua;./modules/?/init.lua;'..package.path");
+	lua_settop(L, 0); // clean stack
+	return L;
+}
 
 int main(int argc, char * argv[]) {
 
@@ -503,21 +529,7 @@ int main(int argc, char * argv[]) {
 	glutReshapeFunc(onreshape);
 	glutDisplayFunc(ondisplay);
 	
-	L = lua_open();
-	luaL_openlibs(L);
-
-	lua_getglobal(L, "package");
-	lua_getfield(L, -1, "preload");
-		lua_pushcfunction(L, luaopen_builtin);
-		lua_setfield(L, -2, "builtin");
-	lua_pop(L, 2);
-	
-	lua_getglobal(L, "debug");
-	lua_pushliteral(L, "traceback");
-	lua_gettable(L, -2);
-	lua_setfield(L, LUA_REGISTRYINDEX, "debug.traceback");
-	
-	lua_settop(L, 0); // clean stack
+	L = av_init_lua();
 	
 	// now start:
 	lua_getfield(L, LUA_REGISTRYINDEX, "debug.traceback");

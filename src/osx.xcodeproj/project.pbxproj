@@ -46,6 +46,12 @@
 		36157D8A1709964A0005D8A6 /* string.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = string.lua; sourceTree = "<group>"; };
 		36157D8B1709964A0005D8A6 /* table.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = table.lua; sourceTree = "<group>"; };
 		36157D8C1709964A0005D8A6 /* vec2.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = vec2.lua; sourceTree = "<group>"; };
+		3616CAC2170BCF9B0084E438 /* av_audio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = av_audio.cpp; sourceTree = "<group>"; };
+		3616CAC7170BD01D0084E438 /* portaudio_h.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = portaudio_h.lua; sourceTree = "<group>"; };
+		3616CAC8170BD0820084E438 /* audio.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = audio.lua; sourceTree = "<group>"; };
+		3616CAC9170BD0E20084E438 /* audio.test.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = audio.test.lua; path = ../audio.test.lua; sourceTree = SOURCE_ROOT; };
+		3616CB1B170BD5740084E438 /* audioprocess.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = audioprocess.lua; sourceTree = "<group>"; };
+		3616CDCB170C3F570084E438 /* msg.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = msg.lua; sourceTree = "<group>"; };
 		36228CEF16EC4C6D00BB8932 /* av.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = av.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36228CF216EC4C6D00BB8932 /* av-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "av-Info.plist"; sourceTree = "<group>"; };
 		36228D3416EC4F5300BB8932 /* makeluajitosx.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = makeluajitosx.sh; sourceTree = "<group>"; };
@@ -64,6 +70,13 @@
 		362BFFC016E369EC00405F7A /* glfw3.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = glfw3.lua; sourceTree = "<group>"; };
 		362BFFC116E369EC00405F7A /* sdl.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = sdl.lua; sourceTree = "<group>"; };
 		362BFFCE16E36A7F00405F7A /* window.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; path = window.lua; sourceTree = "<group>"; };
+		366E1CE6170AA027002F9F53 /* kqueue.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = kqueue.lua; path = ../kqueue.lua; sourceTree = SOURCE_ROOT; };
+		366E1CEA170AA04B002F9F53 /* ignore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ignore.cpp; sourceTree = "<group>"; };
+		366E1CFB170AA57A002F9F53 /* clang.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = clang.lua; path = ../clang.lua; sourceTree = SOURCE_ROOT; };
+		366E1D24170AA95A002F9F53 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Index.h; path = ../Index.h; sourceTree = SOURCE_ROOT; };
+		366E26ED170AF7AB002F9F53 /* cindex.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = cindex.lua; path = ../cindex.lua; sourceTree = SOURCE_ROOT; };
+		366E26EE170AF7AB002F9F53 /* cindex.test.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = cindex.test.lua; path = ../cindex.test.lua; sourceTree = SOURCE_ROOT; };
+		36864510170FB45500584A9B /* socket_h.ffi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = socket_h.ffi; sourceTree = "<group>"; };
 		368C279A16F97B5500AB3D5D /* rgbd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rgbd.h; sourceTree = "<group>"; };
 		368C279B16F97B5500AB3D5D /* rgbd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rgbd.cpp; sourceTree = "<group>"; };
 		368C279D16F97BBE00AB3D5D /* av.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = av.hpp; sourceTree = "<group>"; };
@@ -131,6 +144,12 @@
 		362BFE7F16E3586E00405F7A = {
 			isa = PBXGroup;
 			children = (
+				3616CAC9170BD0E20084E438 /* audio.test.lua */,
+				366E26ED170AF7AB002F9F53 /* cindex.lua */,
+				366E26EE170AF7AB002F9F53 /* cindex.test.lua */,
+				366E1D24170AA95A002F9F53 /* Index.h */,
+				366E1CFB170AA57A002F9F53 /* clang.lua */,
+				366E1CE6170AA027002F9F53 /* kqueue.lua */,
 				368C27F816F9828A00AB3D5D /* snap.lua */,
 				3624310F16ED8D7F00C9732C /* draw.lua */,
 				36C6556E16E4419600FDE98B /* README.md */,
@@ -139,12 +158,14 @@
 				362BFFB816E369C600405F7A /* src */,
 				36228E9216EC7C4800BB8932 /* windows */,
 				36228CF016EC4C6D00BB8932 /* Products */,
+				3616CDCB170C3F570084E438 /* msg.lua */,
 			);
 			sourceTree = "<group>";
 		};
 		362BFFB816E369C600405F7A /* src */ = {
 			isa = PBXGroup;
 			children = (
+				36864510170FB45500584A9B /* socket_h.ffi */,
 				36FC189016EE12D400C20D48 /* ldoc.lua */,
 				36FC187316EE12D400C20D48 /* ldoc */,
 				36228CF216EC4C6D00BB8932 /* av-Info.plist */,
@@ -156,9 +177,11 @@
 				368C279B16F97B5500AB3D5D /* rgbd.cpp */,
 				362BFF3C16E3616900405F7A /* av.h */,
 				368C279D16F97BBE00AB3D5D /* av.hpp */,
+				3616CAC2170BCF9B0084E438 /* av_audio.cpp */,
 				362BFF5216E3643D00405F7A /* av_ffi_header.cpp */,
 				362BFEB316E3598800405F7A /* av.cpp */,
 				362290D916EC91B800BB8932 /* main.lua */,
+				366E1CEA170AA04B002F9F53 /* ignore.cpp */,
 			);
 			name = src;
 			path = ../src;
@@ -167,6 +190,8 @@
 		362BFFBD16E369EC00405F7A /* modules */ = {
 			isa = PBXGroup;
 			children = (
+				3616CAC8170BD0820084E438 /* audio.lua */,
+				3616CB1B170BD5740084E438 /* audioprocess.lua */,
 				36157D821709964A0005D8A6 /* draw2D.lua */,
 				36157D831709964A0005D8A6 /* field3D.lua */,
 				36157D841709964A0005D8A6 /* freenect.lua */,
@@ -186,6 +211,7 @@
 				362BFFC116E369EC00405F7A /* sdl.lua */,
 				36C6558416E4442000FDE98B /* field2D.lua */,
 				368C27F716F981FD00AB3D5D /* rgbd.lua */,
+				3616CAC7170BD01D0084E438 /* portaudio_h.lua */,
 			);
 			name = modules;
 			path = ../modules;

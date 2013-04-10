@@ -51,6 +51,47 @@ typedef struct av_Window {
 	
 } av_Window;
 
+enum {
+	AV_AUDIO_CMD_EMPTY,
+	AV_AUDIO_CMD_GENERIC = 128,
+	AV_AUDIO_CMD_CLEAR,
+	AV_AUDIO_CMD_VOICE_ADD,
+	AV_AUDIO_CMD_VOICE_REMOVE,
+	AV_AUDIO_CMD_VOICE_PARAM,
+	AV_AUDIO_CMD_VOICE_CODE,
+	
+	AV_AUDIO_CMD_SKIP = 255
+};
+
+typedef struct av_msg_param {
+	int id, pid;
+	double value;
+} av_msg_param;
+
+typedef struct av_msgbuffer {
+	int read, write, size, unused;
+	unsigned char * data;
+} av_msgbuffer;
+
+typedef struct av_Audio {
+	unsigned int blocksize;
+	unsigned int frames;	
+	unsigned int indevice, outdevice;
+	unsigned int inchannels, outchannels;		
+	
+	double time;		// in seconds
+	double samplerate;
+	double lag;			// in seconds
+	
+	av_msgbuffer msgbuffer;
+	
+	// only access from audio thread:
+	float * input;
+	float * output;	
+	void (*onframes)(struct av_Audio * self, double sampletime, float * inputs, float * outputs, int frames);
+	
+} av_Audio;
+
 AV_EXPORT av_Window * av_window_create();
 
 AV_EXPORT void av_window_setfullscreen(av_Window * self, int b);
@@ -59,6 +100,23 @@ AV_EXPORT void av_window_setdim(av_Window * self, int x, int y);
 
 // called to reset state before a script closes, e.g. removing callbacks:
 AV_EXPORT void av_state_reset(void * state);
+
+AV_EXPORT av_Audio * av_audio_get();
+
+// only use from main thread:
+AV_EXPORT void av_audio_start(); 
+
+// Stupid hack for clang CIndex module because of pass-by-value callback:
+typedef struct {
+	int kind;
+	int xdata;
+	void *data[3];
+} CXCursor;
+
+typedef struct av_clang_visitor {
+	int (*fun)(CXCursor *cursor, CXCursor *parent);
+} av_clang_visitor;
+AV_EXPORT int av_clang_visit(CXCursor cursor, CXCursor parent, void * ud);
 
 #ifdef __cplusplus
 }
