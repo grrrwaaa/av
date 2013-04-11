@@ -372,19 +372,21 @@ function vec2:rotatenew(angle)
 	)
 end
 
---- Create a new vector of magnitude 1 in a uniformly random direction:
+--- Create a new vector in a uniformly random direction:
+-- @param mag magnitude (optional, default 1)
 -- @return new vector
-function vec2.random()
+function vec2.random(mag)
 	local a = random() * pi * 2
-	return new(cos(a), sin(a))
+	return new(cos(a), sin(a)) * (mag or 1)
 end
 
 --- Set to a vector of magnitude 1 in a uniformly random direction:
+-- @param mag magnitude (optional, default 1)
 -- @return self
-function vec2:randomize()
+function vec2:randomize(mag)
 	local a = random() * pi * 2
-	self.x = cos(a)
-	self.y = sin(a)
+	self.x = cos(a) * (mag or 1)
+	self.y = sin(a) * (mag or 1)
 	return self
 end
 

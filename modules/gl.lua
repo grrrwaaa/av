@@ -4704,13 +4704,13 @@ function sketch.quad(x, y, w, h)
 			x, y, w, h = -w/2, -h/2, w, h
 		end
 	end
-	gl.TexCoord2f(0, 1)
-	gl.Vertex3f(x, y, 0)
-	gl.TexCoord2f(1, 1)
-	gl.Vertex3f(x+w, y, 0)
-	gl.TexCoord2f(1, 0)
-	gl.Vertex3f(x+w, y+h, 0)
 	gl.TexCoord2f(0, 0)
+	gl.Vertex3f(x, y, 0)
+	gl.TexCoord2f(1, 0)
+	gl.Vertex3f(x+w, y, 0)
+	gl.TexCoord2f(1, 1)
+	gl.Vertex3f(x+w, y+h, 0)
+	gl.TexCoord2f(0, 1)
 	gl.Vertex3f(x, y+h, 0)
 	gl.End()
 end

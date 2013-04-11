@@ -155,6 +155,7 @@ win.ondraw = function(self)
 	gl.LoadIdentity()
 	
 	gl.Disable(lib.GL_DEPTH_TEST)
+	gl.Color(1, 1, 1)
 
 	if draw and type(draw) == "function" then
 		local ok, err = pcall(draw, w, h)
