@@ -80,8 +80,13 @@
  Uses linear interpolation between nearest cells.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#field2D:splat">field2D:splat&nbsp;(value, x, y)</a></td>
+	<td class="summary">Add a value to the field at a normalized (0..1) index
+ Uses linear interpolation to distribute the value between nearest cells.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#field2D:diffuse">field2D:diffuse&nbsp;(sourcefield, diffusion, passes)</a></td>
-	<td class="summary">fill the field with a diffused copy of another</td>
+	<td class="summary">fill the field with a diffused (blurred) copy of another</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#field2D:draw">field2D:draw&nbsp;(x, y, w, h, unit)</a></td>
@@ -161,7 +166,7 @@
     <dd>
     return the value at a normalized index (0..1 range maps to field dimensions)
  Uses linear interpolation between nearest cells.
- Indexes out of range will wrap.
+ Indices out of range will wrap.
 
     <h3>Parameters:</h3>
     <ul>
@@ -177,26 +182,49 @@
 
 </dd>
     <dt>
+    <a name = "field2D:splat"></a>
+    <strong>field2D:splat&nbsp;(value, x, y)</strong>
+    </dt>
+    <dd>
+    Add a value to the field at a normalized (0..1) index
+ Uses linear interpolation to distribute the value between nearest cells.
+ Indices out of range will wrap.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">value</span>
+       the value to add to the field</li>
+      <li><span class="parameter">x</span>
+       coordinate (0..1) to sample</li>
+      <li><span class="parameter">y</span>
+       coordinate (0..1) to sample</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
     <a name = "field2D:diffuse"></a>
     <strong>field2D:diffuse&nbsp;(sourcefield, diffusion, passes)</strong>
     </dt>
     <dd>
-    fill the field with a diffused copy of another
+    fill the field with a diffused (blurred) copy of another
 
     <h3>Parameters:</h3>
     <ul>
       <li><span class="parameter">sourcefield</span>
-
-
-</li>
+       the field to be diffused</li>
       <li><span class="parameter">diffusion</span>
-
-
-</li>
+       the rate of diffusion</li>
       <li><span class="parameter">passes</span>
-
-
-</li>
+       ?int the number of iterations to improve numerical accuracy (default 10)</li>
     </ul>
 
 

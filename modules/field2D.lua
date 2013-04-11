@@ -104,14 +104,14 @@ end
 
 --- return the value at a normalized index (0..1 range maps to field dimensions)
 -- Uses linear interpolation between nearest cells.
--- Indexes out of range will wrap.
+-- Indices out of range will wrap.
 -- @param x coordinate (0..1) to sample
 -- @param y coordinate (0..1) to sample
 function field2D:sample(x, y)
 	assert(x, "missing x coordinate for sampling")
 	assert(y, "missing y coordinate for sampling")
-	local x = x and ((x * self.width) % self.width) or 0
-	local y = y and ((y * self.height) % self.height) or 0
+	local x = (x and (((x * self.width) - 0.5) % self.width) or 0) 
+	local y = (y and (((y * self.height) - 0.5) % self.height) or 0)
 	local x0 = floor(x)
 	local y0 = floor(y)
 	local x1 = (x0 + 1) % self.width
@@ -130,7 +130,42 @@ function field2D:sample(x, y)
 		 + v11 * xb * yb
 end
 
---- fill the field with a diffused copy of another
+--- Add a value to the field at a normalized (0..1) index
+-- Uses linear interpolation to distribute the value between nearest cells.
+-- Indices out of range will wrap.
+-- @param value the value to add to the field
+-- @param x coordinate (0..1) to sample
+-- @param y coordinate (0..1) to sample
+-- @return self
+function field2D:splat(value, x, y)
+	assert(value, "missing value for splat")
+	assert(x, "missing x coordinate for splat")
+	assert(y, "missing y coordinate for splat")
+	local x = (x and (((x * self.width) - 0.5) % self.width) or 0) 
+	local y = (y and (((y * self.height) - 0.5) % self.height) or 0)
+	local x0 = floor(x)
+	local y0 = floor(y)
+	local x1 = (x0 + 1) % self.width
+	local y1 = (y0 + 1) % self.height
+	local xb = x - x0
+	local yb = y - y0
+	local xa = 1 - xb
+	local ya = 1 - yb
+	local idx00 = self:index_raw(x0, y0)
+	local idx10 = self:index_raw(x1, y0)
+	local idx01 = self:index_raw(x0, y1)
+	local idx11 = self:index_raw(x1, y1)
+	self.data[idx00] = self.data[idx00] + value * xa * ya
+	self.data[idx10] = self.data[idx10] + value * xb * ya
+	self.data[idx01] = self.data[idx01] + value * xa * yb
+	self.data[idx11] = self.data[idx11] + value * xb * yb	
+	return self
+end
+
+--- fill the field with a diffused (blurred) copy of another
+-- @param sourcefield the field to be diffused
+-- @param diffusion the rate of diffusion
+-- @param passes ?int the number of iterations to improve numerical accuracy (default 10)
 function field2D:diffuse(sourcefield, diffusion, passes)
 	passes = passes or 10
 	

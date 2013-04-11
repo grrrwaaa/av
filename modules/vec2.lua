@@ -230,6 +230,27 @@ function vec2.modnew(a, b)
 end
 vec2.__mod = vec2.modnew
 
+--- Determine shortest relative vector in a toroidal space
+-- @param dimx width of space (optional, default 1)
+-- @param dimy height of space (optional, default dimx)
+-- @return self
+function vec2:relativewrap(dimx, dimy)
+	local dimx = dimx or 1
+	local dimy = dimy or dimx
+	local halfx = dimx * 0.5
+	local halfy = dimy * 0.5
+	self.x = ((self.x + halfx) % dimx) - halfx
+	self.y = ((self.y + halfy) % dimy) - halfy
+	return self
+end
+
+--- Create new vector as shortest relative vector in a toroidal space
+-- @param dimx width of space (optional, default 1)
+-- @param dimy height of space (optional, default dimx)
+-- @return new vector
+function vec2:relativewrapnew(dimx, dimy)
+	return self:copy():relativewrap(dimx, dimy)
+end
 
 --- interpolate from self to v by factor of f
 -- @param v vector
