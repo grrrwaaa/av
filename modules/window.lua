@@ -154,6 +154,11 @@ win.ondraw = function(self)
 	gl.MatrixMode(lib.GL_MODELVIEW)
 	gl.LoadIdentity()
 	
+	
+	gl.Enable(gl.BLEND)
+	gl.BlendEquationSeparate(gl.FUNC_ADD, gl.FUNC_ADD)
+	gl.BlendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ZERO)
+	
 	gl.Disable(lib.GL_DEPTH_TEST)
 	gl.Color(1, 1, 1)
 

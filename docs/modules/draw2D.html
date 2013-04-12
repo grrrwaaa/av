@@ -109,6 +109,14 @@
 	<td class="name" nowrap><a href="#circle">circle&nbsp;(x, y, d)</a></td>
 	<td class="summary">Draw an ellipse at the point (x, y) with horizontal diameter d</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#arc">arc&nbsp;(x, y, s, e, w, h)</a></td>
+	<td class="summary">Draw an arc at the point (x, y) with horizontal diameter d</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#color">color&nbsp;(red, green, blue, alpha)</a></td>
+	<td class="summary">Set the rendering color</td>
+	</tr>
 </table>
 
 <br/>
@@ -314,6 +322,58 @@
        coordinate of center (optional, defaults to 0)</li>
       <li><span class="parameter">d</span>
        diameter (optional, defaults to 1)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "arc"></a>
+    <strong>arc&nbsp;(x, y, s, e, w, h)</strong>
+    </dt>
+    <dd>
+    Draw an arc at the point (x, y) with horizontal diameter d
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       coordinate of center (optional, defaults to 0)</li>
+      <li><span class="parameter">y</span>
+       coordinate of center (optional, defaults to 0)</li>
+      <li><span class="parameter">s</span>
+       start angle (optional, defaults to -pi/2)</li>
+      <li><span class="parameter">e</span>
+       end angle (optional, defaults to pi/2)</li>
+      <li><span class="parameter">w</span>
+       horizontal radius (optional, defaults to 1)</li>
+      <li><span class="parameter">h</span>
+       vertical radius (optional, defaults to w)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "color"></a>
+    <strong>color&nbsp;(red, green, blue, alpha)</strong>
+    </dt>
+    <dd>
+    Set the rendering color
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">red</span>
+       value from 0 to 1 (optional, default 0)</li>
+      <li><span class="parameter">green</span>
+       value from 0 to 1 (optional, default 0)</li>
+      <li><span class="parameter">blue</span>
+       value from 0 to 1 (optional, default 0)</li>
+      <li><span class="parameter">alpha</span>
+       (opacity) value from 0 to 1 (optional, default 1)</li>
     </ul>
 
 

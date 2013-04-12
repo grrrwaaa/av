@@ -4,6 +4,7 @@ local gl = require "gl"
 local GL = gl
 local pi = math.pi
 local twopi = pi * 2
+local halfpi = pi/2
 local rad2deg = 180/pi
 local sin, cos = math.sin, math.cos
 
@@ -106,7 +107,10 @@ function draw2D.ellipse(x, y, w, h)
 	h = h and h/2 or w
 	gl.Begin(GL.TRIANGLE_FAN)
 	for a = 0, twopi, 0.0436 do
-		gl.Vertex2d(x + w * sin(a), y + h * cos(a))
+		gl.Vertex2d(
+			x + w * cos(a), 
+			y + h * sin(a)
+		)
 	end
 	gl.End()
 end
@@ -121,11 +125,42 @@ function draw2D.circle(x, y, d)
 	local r = w and d/2 or 0.5
 	gl.Begin(GL.TRIANGLE_FAN)
 	for a = 0, twopi, 0.0436 do
-		gl.Vertex2d(x + r * sin(a), y + r * cos(a))
+		gl.Vertex2d(x + r * cos(a), y + r * sin(a))
 	end
 	gl.End()
 end
 
+--- Draw an arc at the point (x, y) with horizontal diameter d
+-- @param x coordinate of center (optional, defaults to 0)
+-- @param y coordinate of center (optional, defaults to 0)
+-- @param s start angle (optional, defaults to -pi/2)
+-- @param e end angle (optional, defaults to pi/2)
+-- @param w horizontal radius (optional, defaults to 1)
+-- @param h vertical radius (optional, defaults to w)
+function draw2D.arc(x, y, s, e, w, h)
+	x = x or 0
+	y = y or 0
+	s = s or -halfpi
+	e = e or halfpi
+	w = w and w or 1
+	h = h and h or w
+	gl.Begin(GL.TRIANGLE_FAN)
+	gl.Vertex2d(0, 0)
+	for a = s, e, 0.0436 do
+		gl.Vertex2d(
+			x + w * cos(a), 
+			y + h * sin(a)
+		)
+	end
+	gl.End()
+end
+
+--- Set the rendering color
+-- @param red value from 0 to 1 (optional, default 0)
+-- @param green value from 0 to 1 (optional, default 0)
+-- @param blue value from 0 to 1 (optional, default 0)
+-- @param alpha (opacity) value from 0 to 1 (optional, default 1)
+function draw2D.color(red, green, blue, alpha) end
 draw2D.color = gl.Color
 
 return draw2D
