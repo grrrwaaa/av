@@ -7,7 +7,7 @@ DIR_LIB = win32/lib
 # cl /MT links the CRT statically, so that it can be used on systems that do not have the CRT installed.
 # xcopy /Y suppresses the "Overwrite?" warnings 
 build: 
-	cl /MT /I$(DIR_INCLUDE) av.cpp /link /LIBPATH:$(DIR_LIB) lua51.lib glut32.lib
+	cl /MT /I$(DIR_INCLUDE) av.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp /link /LIBPATH:$(DIR_LIB) lua51.lib glut32.lib
 	xcopy av.exe .. /Y
 	xcopy *.dll .. /Y
 	del *.exe 
