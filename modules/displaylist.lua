@@ -1,3 +1,5 @@
+--- displaylist: A friendly wrapper for OpenGL display lists
+
 local gl = require "gl"
 
 local displaylist = {}

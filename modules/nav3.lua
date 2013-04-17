@@ -1,3 +1,5 @@
+--- nav3: utilities for 3D navigation
+
 local vec3 = require "vec3"
 local quat = require "quat"
 print(quat)

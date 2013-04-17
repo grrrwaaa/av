@@ -1,3 +1,5 @@
+-- shader: Friendly wrapper for OpenGL GLSL shaders
+
 local gl = require "gl"
 local ffi = require "ffi"
 local util = require "util"

@@ -30,12 +30,12 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	INCLUDEPATHS="-Iosx/include -Iinclude -Irtaudio-4.0.11" #"-I/usr/local/include/luajit-2.0"
 	SOURCES="av.cpp rgbd.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp"
 	
-	LINK=$CC
-	LDFLAGS32="-w -rdynamic -keep_private_externs"
+	LINK='g++'
+	LDFLAGS32="-w -keep_private_externs"
 	LDFLAGS64="$LDFLAGS32 -pagezero_size 10000 -image_base 100000000"
 	
 	LINKERPATHS="-Losx/lib"
-	LIBRARIES="-lluajit -lfreenect -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL"
+	LIBRARIES="-l$SRCROOT/osx/lib/libluajit.a -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL  -losx/lib/libfreenect.a"
 	
 	#-framework AudioUnit -framework CoreAudio -framework AudioToolbox"
 	
@@ -58,7 +58,7 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	mv app64 $PRODUCT_NAME
 
 	# documentation:
-	./ldoc.lua -v --format markdown --title "AV Reference" --project "LuaJIT AV" --dir ../docs --output reference ../modules	
+	#./ldoc.lua -v --format markdown --title "AV Reference" --project "LuaJIT AV" --dir ../docs --output reference ../modules	
 
 	echo copy
 	cp $PRODUCT_NAME ../

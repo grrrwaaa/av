@@ -1,5 +1,6 @@
-local ffi = require "ffi"
+-- rgbd: Accessing depth-cameras 
 
+local ffi = require "ffi"
 local lib = ffi.C
 
 ffi.cdef [[

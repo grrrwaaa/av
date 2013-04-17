@@ -1,3 +1,4 @@
+--- draw3D: utilities for 3D OpenGL
 
 local gl = require "gl"
 local sketch = gl.sketch

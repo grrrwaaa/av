@@ -1,3 +1,5 @@
+-- lua: FFI interface for creating and manipulating lua_State objects
+
 local bit = require "bit"
 local ffi = require "ffi"
 local header = [[

@@ -1,3 +1,5 @@
+--- audioprocess: (audio thread internal use only)
+
 local ffi = require "ffi"
 local C = ffi.C
 -- to cdef the av_Audio stuff:

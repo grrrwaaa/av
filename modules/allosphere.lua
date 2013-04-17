@@ -1,3 +1,4 @@
+--- allosphere: Utilities relating specifically to the AlloSphere
 
 local gl = require "gl"
 local vec3 = require "vec3"

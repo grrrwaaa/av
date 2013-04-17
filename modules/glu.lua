@@ -1,3 +1,5 @@
+-- glu: binding to the OpenGL Utility library
+
 local ffi  = require( "ffi" )
 
 local libs = ffi_glu_libs or {
