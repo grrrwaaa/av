@@ -76,7 +76,6 @@
 		366E1D24170AA95A002F9F53 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Index.h; path = ../Index.h; sourceTree = SOURCE_ROOT; };
 		366E26ED170AF7AB002F9F53 /* cindex.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = cindex.lua; path = ../cindex.lua; sourceTree = SOURCE_ROOT; };
 		366E26EE170AF7AB002F9F53 /* cindex.test.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lua; name = cindex.test.lua; path = ../cindex.test.lua; sourceTree = SOURCE_ROOT; };
-		36864510170FB45500584A9B /* socket_h.ffi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = socket_h.ffi; sourceTree = "<group>"; };
 		368C279A16F97B5500AB3D5D /* rgbd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rgbd.h; sourceTree = "<group>"; };
 		368C279B16F97B5500AB3D5D /* rgbd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rgbd.cpp; sourceTree = "<group>"; };
 		368C279D16F97BBE00AB3D5D /* av.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = av.hpp; sourceTree = "<group>"; };
@@ -165,7 +164,6 @@
 		362BFFB816E369C600405F7A /* src */ = {
 			isa = PBXGroup;
 			children = (
-				36864510170FB45500584A9B /* socket_h.ffi */,
 				36FC189016EE12D400C20D48 /* ldoc.lua */,
 				36FC187316EE12D400C20D48 /* ldoc */,
 				36228CF216EC4C6D00BB8932 /* av-Info.plist */,
@@ -292,7 +290,7 @@
 /* Begin PBXProject section */
 		362BFE8116E3586E00405F7A /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = 362BFE8416E3586E00405F7A /* Build configuration list for PBXProject "osx" */;
+			buildConfigurationList = 362BFE8416E3586E00405F7A /* Build configuration list for PBXProject "av" */;
 			compatibilityVersion = "Xcode 2.4";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -490,7 +488,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		362BFE8416E3586E00405F7A /* Build configuration list for PBXProject "osx" */ = {
+		362BFE8416E3586E00405F7A /* Build configuration list for PBXProject "av" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				362BFE8216E3586E00405F7A /* Debug */,

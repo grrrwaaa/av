@@ -35,7 +35,7 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	LDFLAGS64="$LDFLAGS32 -pagezero_size 10000 -image_base 100000000"
 	
 	LINKERPATHS="-Losx/lib"
-	LIBRARIES="-l$SRCROOT/osx/lib/libluajit.a -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL  -losx/lib/libfreenect.a"
+	LIBRARIES="-lluajit -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL  -losx/lib/libfreenect.a"
 	
 	#-framework AudioUnit -framework CoreAudio -framework AudioToolbox"
 	
