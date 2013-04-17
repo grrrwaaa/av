@@ -5,6 +5,7 @@ local gl = require "gl"
 local sketch = gl.sketch
 
 local floor = math.floor
+local min, max = math.min,math.max
 
 local field2D = {}
 field2D.__index = field2D
@@ -16,13 +17,6 @@ function field2D:reduce(func, result)
 		end
 	end
 	return result
-end
-
--- e.g.:
-function field2D:sum()
-	return self:reduce(function(total, cell)
-		return total + cell
-	end, 0)
 end
 
 -- field:find(predicate), to return a list of coordinates usable by a range map?
@@ -223,6 +217,53 @@ function field2D:map(func)
 			end	
 		end
 	end
+end
+
+
+--- normalize the field values to a 0..1 range
+-- @return self
+function field2D:normalize()
+	local lo, hi = self.data[0], self.data[0]
+	for y = 0, self.height-1 do
+		for x = 0, self.width-1 do
+			local idx = self:index_raw(x, y)
+			lo = min(lo, self.data[idx])
+			hi = max(hi, self.data[idx])
+		end
+	end
+	local range = hi - lo
+	local scale = 1/range
+	for y = 0, self.height-1 do
+		for x = 0, self.width-1 do
+			local idx = self:index_raw(x, y)
+			self.data[idx] = (self.data[idx] - lo) * scale
+		end
+	end
+	return self
+end
+
+--- return the sum of all cells
+-- @return sum
+function field2D:sum()
+	return self:reduce(function(total, cell)
+		return total + cell
+	end, 0)
+end
+
+--- return the maximum value of all cells
+-- @return max
+function field2D:max()
+	return self:redunce(function(m, cell)
+		return m and max(m, cell) or cell
+	end, nil)
+end
+
+--- return the minimum value of all cells
+-- @return min
+function field2D:min()
+	return self:redunce(function(m, cell)
+		return m and min(m, cell) or cell
+	end, nil)
 end
 
 --- Draw the field in greyscale from 0..1

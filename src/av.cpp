@@ -100,14 +100,10 @@ struct av_Window_GLUT : public av_Window {
 	int non_fullscreen_width, non_fullscreen_height;
 	bool reload;
 	
-	// other stuff:
-	av_RGBD * rgbd;
-	
 	av_Window_GLUT() {
 		width = 720;
 		height = 480;
 		is_fullscreen = 0;
-		rgbd = 0;
 		reset();
 	}
 	
@@ -499,14 +495,10 @@ int main(int argc, char * argv[]) {
 	// configure GLUT:
 	glutInit(&argc, argv);
 	
-	
-	win.rgbd = av_rgbd_init();
-	
-	
 //	screen_width = glutGet(GLUT_SCREEN_WIDTH);
 //	screen_height = glutGet(GLUT_SCREEN_HEIGHT);	
-	
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitDisplayString("rgb double depth>=16 alpha samples<=4");
+	//glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 	glutInitWindowSize(win.width, win.height);
 	glutInitWindowPosition(0, 0);
 	
@@ -514,6 +506,15 @@ int main(int argc, char * argv[]) {
 	//printf("initializing window\n");
 	glutSetWindow(win.id);
 	
+	// Force VSYNC on.
+	#if defined AV_OSX
+		GLint VBL = 1;
+		CGLContextObj ctx = CGLGetCurrentContext();
+		CGLSetParameter(ctx, kCGLCPSwapInterval, &VBL);
+	#elif defined AV_LINUX
+	#elif defined AV_WINDOWS
+	#endif
+
 	
 //	glutIgnoreKeyRepeat(1);
 //	glutSetCursor(GLUT_CURSOR_NONE);
@@ -547,7 +548,6 @@ int main(int argc, char * argv[]) {
 	}
 	
 	// start it up:
-	av_rgbd_start();
 	glutTimerFunc((unsigned int)(1000.0/win.fps), timerfunc, 0);
 	
 	//atexit(terminate);

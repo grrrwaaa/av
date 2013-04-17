@@ -125,10 +125,22 @@ ffi.metatype("av_Window", Window)
 
 local win = lib.av_window_create()
 local updating = true
+local firstdraw = true
 
 -- set default callbacks:
 win.ondraw = function(self) 
 	collectgarbage()
+	
+	if firstdraw then
+		gl.Enable(gl.MULTISAMPLE)	
+		gl.Enable(gl.POLYGON_SMOOTH)
+		gl.Hint(gl.POLYGON_SMOOTH_HINT, gl.NICEST)
+		gl.Enable(gl.LINE_SMOOTH)
+		gl.Hint(gl.LINE_SMOOTH_HINT, gl.NICEST)
+		gl.Enable(gl.POINT_SMOOTH)
+		gl.Hint(gl.POINT_SMOOTH_HINT, gl.NICEST)
+		firstdraw = false
+	end
 			
 	local t1 = lib.av_time()
 	dt = t1 - t

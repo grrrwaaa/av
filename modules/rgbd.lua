@@ -47,6 +47,7 @@ ffi.cdef [[
 ]]
 
 local rgbd = {
+	start = lib.av_rgbd_start(),
 	instance = lib.av_rgbd_init(),
 }
 

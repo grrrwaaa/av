@@ -361,17 +361,18 @@ av_RGBD * av_rgbd_init() {
 
 void av_rgbd_start() {
 	
-	static bool initialized = 0;
-	if (initialized) return;
+	if (av_rgbd_init() == 0) 
+	return;
 	
-	if (av_rgbd_init() == 0) return;
+	static bool started = 0;
+	if (started) return;
 	
 	int res = pthread_create(&freenect_thread, NULL, freenect_threadfunc, NULL);
 	if (res) {
 		printf("pthread_create failed\n");
 		return;
 	}
-	initialized = 1;
+	started = 1;
 }
 
 av_RGBDSensor * av_rgbd_open(int user_device_number) {

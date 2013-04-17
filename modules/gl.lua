@@ -4395,17 +4395,21 @@ function gl.End() glEnd() end
 function gl.Get(p) error("TODO for the array returns.") end
 
 function gl.LoadMatrix(t) 
-	assert(type(t) == "table", "gl.LoadMatrix requires a table argument")
-	local m = ffi.new("GLdouble[?]", 16)
-	for i = 1, 16 do m[i-1] = t[i] end
-	gl.LoadMatrixd(m)
+	if type(t) == "table" then
+		gl.LoadMatrixd(ffi.new("GLdouble[?]", 16, unpack(t)))
+	else
+		-- hope t is a double *
+		gl.LoadMatrixd(t)
+	end
 end
 
 function gl.MultMatrix(t) 
-	assert(type(t) == "table", "gl.LoadMatrix requires a table argument")
-	local m = ffi.new("GLdouble[?]", 16)
-	for i = 1, 16 do m[i-1] = t[i] end
-	gl.MultMatrixd(m)
+	if type(t) == "table" then
+		gl.MultMatrixd(ffi.new("GLdouble[?]", 16, unpack(t)))
+	else
+		-- hope t is a double *
+		gl.MultMatrixd(t)
+	end
 end
 
 function gl.Normal(x, y, z)
@@ -4449,7 +4453,9 @@ end
 function gl.Vertex(x, y, z, w)
 	if type(x) == "userdata" or type(x) == "cdata" then
 		x, y, z, w = x:unpack()
-	elseif type(x) == "table" then x, y, z, w = unpack(x) end
+	elseif type(x) == "table" then 
+		x, y, z, w = unpack(x) 
+	end
 	if w then
 		gl.Vertex4d(x, y, z, w)
 	elseif z then

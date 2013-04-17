@@ -43,11 +43,14 @@
   <li><strong>field2D</strong></li>
   <li><a href="../modules/field3D.html">field3D</a></li>
   <li><a href="../modules/io.html">io</a></li>
+  <li><a href="../modules/mat4.html">mat4</a></li>
   <li><a href="../modules/math.html">math</a></li>
   <li><a href="../modules/os.html">os</a></li>
+  <li><a href="../modules/quat.html">quat</a></li>
   <li><a href="../modules/string.html">string</a></li>
   <li><a href="../modules/table.html">table</a></li>
   <li><a href="../modules/vec2.html">vec2</a></li>
+  <li><a href="../modules/vec3.html">vec3</a></li>
 </ul>
 
 </div>
@@ -87,6 +90,22 @@
 	<tr>
 	<td class="name" nowrap><a href="#field2D:diffuse">field2D:diffuse&nbsp;(sourcefield, diffusion, passes)</a></td>
 	<td class="summary">fill the field with a diffused (blurred) copy of another</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#field2D:normalize">field2D:normalize&nbsp;()</a></td>
+	<td class="summary">normalize the field values to a 0..1 range</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#field2D:sum">field2D:sum&nbsp;()</a></td>
+	<td class="summary">return the sum of all cells</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#field2D:max">field2D:max&nbsp;()</a></td>
+	<td class="summary">return the maximum value of all cells</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#field2D:min">field2D:min&nbsp;()</a></td>
+	<td class="summary">return the minimum value of all cells</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#field2D:draw">field2D:draw&nbsp;(x, y, w, h, unit)</a></td>
@@ -227,6 +246,78 @@
        ?int the number of iterations to improve numerical accuracy (default 10)</li>
     </ul>
 
+
+
+
+
+</dd>
+    <dt>
+    <a name = "field2D:normalize"></a>
+    <strong>field2D:normalize&nbsp;()</strong>
+    </dt>
+    <dd>
+    normalize the field values to a 0..1 range
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "field2D:sum"></a>
+    <strong>field2D:sum&nbsp;()</strong>
+    </dt>
+    <dd>
+    return the sum of all cells
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        sum
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "field2D:max"></a>
+    <strong>field2D:max&nbsp;()</strong>
+    </dt>
+    <dd>
+    return the maximum value of all cells
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        max
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "field2D:min"></a>
+    <strong>field2D:min&nbsp;()</strong>
+    </dt>
+    <dd>
+    return the minimum value of all cells
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        min
+    </ol>
 
 
 
