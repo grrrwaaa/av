@@ -6,6 +6,7 @@ local output = assert(args[2], "output name required")
 
 local r = {
 	string.format("-- generated from %s on %s", input, os.date()),
+	string.format("print('Binary built on %s')", os.date()),
 	"local header = [[",
 }
 

@@ -27,7 +27,7 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	CC='g++'
 	CFLAGS="-x c++ -fno-stack-protector -O3 -Wall -fPIC"
 	DEFINES="-DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__MACOSX_CORE__"
-	INCLUDEPATHS="-Iosx/include -Irtaudio-4.0.11" #"-I/usr/local/include/luajit-2.0"
+	INCLUDEPATHS="-Iosx/include -Iinclude -Irtaudio-4.0.11" #"-I/usr/local/include/luajit-2.0"
 	SOURCES="av.cpp rgbd.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp"
 	
 	LINK=$CC
