@@ -124,12 +124,64 @@ function field2D:sample(x, y)
 		 + v11 * xb * yb
 end
 
+--- Update the field at a normalized (0..1) index
+-- Like field2D:set(), but uses linear interpolation to distribute the update between nearest cells (thus it is an inverse of field:sample()). If the index falls exactly in the center of one cell, it is equivalent to field:set(). Otherwise, the four nearest cells will be updated as a weighted average of their current and the new value.
+-- If the value is a function, this function is called for each nearby cell to generate a new value. The function argument is the old value of the cell. 
+-- Indices out of range will wrap.
+-- @param value (number or function) the value to update the field
+-- @param x coordinate (0..1) to update
+-- @param y coordinate (0..1) to update
+-- @return self
+function field2D:update(value, x, y)
+	assert(value, "missing value for update")
+	assert(x, "missing x coordinate for update")
+	assert(y, "missing y coordinate for update")
+	local x = (x and (((x * self.width) - 0.5) % self.width) or 0) 
+	local y = (y and (((y * self.height) - 0.5) % self.height) or 0)
+	local x0 = floor(x)
+	local y0 = floor(y)
+	local x1 = (x0 + 1) % self.width
+	local y1 = (y0 + 1) % self.height
+	local xb = x - x0
+	local yb = y - y0
+	local xa = 1 - xb
+	local ya = 1 - yb
+	local idx00 = self:index_raw(x0, y0)
+	local idx10 = self:index_raw(x1, y0)
+	local idx01 = self:index_raw(x0, y1)
+	local idx11 = self:index_raw(x1, y1)
+	-- old value
+	local v00 = self.data[idx00]
+	local v10 = self.data[idx10]
+	local v01 = self.data[idx01]
+	local v11 = self.data[idx11]
+	-- new value
+	local o00, o10, o01, o11
+	if type(value) == "function" then
+		o00 = value(v00, x, y)
+		o10 = value(v10, x, y)
+		o01 = value(v01, x, y)
+		o11 = value(v11, x, y)
+	else
+		o00 = value
+		o10 = value
+		o01 = value
+		o11 = value
+	end
+	-- interpolated application:
+	self.data[idx00] = v00 + xa*ya*(o00 - v00)
+	self.data[idx10] = v10 + xb*ya*(o10 - v10)
+	self.data[idx01] = v01 + xa*yb*(o01 - v01)
+	self.data[idx11] = v11 + xb*yb*(o11 - v11)
+	return self
+end
+
 --- Add a value to the field at a normalized (0..1) index
--- Uses linear interpolation to distribute the value between nearest cells.
+-- Uses linear interpolation to distribute the value between nearest cells, for accumulation.
 -- Indices out of range will wrap.
 -- @param value the value to add to the field
--- @param x coordinate (0..1) to sample
--- @param y coordinate (0..1) to sample
+-- @param x coordinate (0..1) to update
+-- @param y coordinate (0..1) to update
 -- @return self
 function field2D:splat(value, x, y)
 	assert(value, "missing value for splat")
@@ -153,6 +205,54 @@ function field2D:splat(value, x, y)
 	self.data[idx10] = self.data[idx10] + value * xb * ya
 	self.data[idx01] = self.data[idx01] + value * xa * yb
 	self.data[idx11] = self.data[idx11] + value * xb * yb	
+	return self
+end
+
+--- Multiply the field by a value, optionally at a normalized (0..1) index
+-- If indices are not given, all cells are multipled by the value.
+-- Otherwise, uses linear interpolation to distribute the value between nearest cells, for multiplication. If the position index is exactly in the center of a cell, it performs a normal multiplcation. Otherwise the four nearest cells are updated according to a weighted average of their current and modified value.
+-- Indices out of range will wrap.
+-- @param value the value to scale to the field
+-- @param x coordinate (0..1) to update (optional)
+-- @param y coordinate (0..1) to update (optional)
+-- @return self
+function field2D:scale(value, x, y)
+	assert(value, "missing value for splat")
+	if x and y then
+		local x = (x and (((x * self.width) - 0.5) % self.width) or 0) 
+		local y = (y and (((y * self.height) - 0.5) % self.height) or 0)
+		local x0 = floor(x)
+		local y0 = floor(y)
+		local x1 = (x0 + 1) % self.width
+		local y1 = (y0 + 1) % self.height
+		local xb = x - x0
+		local yb = y - y0
+		local xa = 1 - xb
+		local ya = 1 - yb
+		local idx00 = self:index_raw(x0, y0)
+		local idx10 = self:index_raw(x1, y0)
+		local idx01 = self:index_raw(x0, y1)
+		local idx11 = self:index_raw(x1, y1)
+		-- old value
+		local v00 = self.data[idx00]
+		local v10 = self.data[idx10]
+		local v01 = self.data[idx01]
+		local v11 = self.data[idx11]
+		-- new value
+		local o00 = v00 * value
+		local o10 = v10 * value
+		local o01 = v01 * value
+		local o11 = v11 * value
+		-- interpolated application:
+		self.data[idx00] = v00 + xa*ya*(o00 - v00)
+		self.data[idx10] = v10 + xb*ya*(o10 - v10)
+		self.data[idx01] = v01 + xa*yb*(o01 - v01)
+		self.data[idx11] = v11 + xb*yb*(o11 - v11)
+	else
+		for idx = 0, (self.width * self.height) - 1 do
+			self.data[idx] = self.data[idx] * value
+		end
+	end
 	return self
 end
 
@@ -206,17 +306,19 @@ function field2D:clear()
 	ffi.fill(self.data, self.size)
 end
 
+--- Apply a function to each cell of the field in turn
+-- The function arguments will be the current value of the cell and the x and y position, and the return value should be the new value of the cell (or nil to indicate no change). E.g. to multiply all cells by 2: field:map(function(value, x, y) return value * 2 end)
+-- @param func the function to apply
+-- @return self
 function field2D:map(func)
 	for y = 0, self.height-1 do
 		for x = 0, self.width-1 do
 			local idx = self:index_raw(x, y)
-			local v = func(self.data[idx], x, y)
-			if v then
-				self.data[idx] = v
-				--print(x, y, idx, self.data[idx])
-			end	
+			local old = self.data[idx]
+			self.data[idx] = func(old, x, y) or old	
 		end
 	end
+	return self
 end
 
 
@@ -253,7 +355,7 @@ end
 --- return the maximum value of all cells
 -- @return max
 function field2D:max()
-	return self:redunce(function(m, cell)
+	return self:reduce(function(m, cell)
 		return m and max(m, cell) or cell
 	end, nil)
 end
@@ -261,7 +363,7 @@ end
 --- return the minimum value of all cells
 -- @return min
 function field2D:min()
-	return self:redunce(function(m, cell)
+	return self:reduce(function(m, cell)
 		return m and min(m, cell) or cell
 	end, nil)
 end
@@ -450,6 +552,185 @@ field2D.drawWeird = (function()
 		--sketch.quad(0, 0, 1, 1)
 		gl.UseProgram(0)
 		self:unbind(unit)
+	end
+end)()
+
+field2D.drawFlow = (function()
+	local program = nil
+	local program_dw = 0
+	local program_dh = 0
+	local program_fx = 0
+	local program_fy = 0
+	return function(fx, fy)
+		assert(fx, "missing field arguments (requires 2 fields)")
+		assert(fy, "missing field arguments (requires 2 fields)")
+		assert(fx.width == fy.width and fx.height == fy.height, "fields must have same dimensions")
+		
+		---[[
+		if not program then
+			local vert = gl.CreateVertexShader[=[
+			uniform sampler2D fx;
+			uniform sampler2D fy;	
+			uniform float dw, dh;		
+			varying float t;
+			varying vec3 c;
+			
+			void main() {
+				vec4 pos = gl_Vertex;
+				
+				// using texcoord to distinguish line endpoints:
+				t = vec2(gl_MultiTexCoord0).x;
+				
+				float x = texture2D(fx, pos.xy).x;
+				float y = texture2D(fy, pos.xy).x;
+				
+				
+				// displace vertices by texture & endpoint:
+				pos.x += t * x * 0.1;
+				pos.y += t * y * 0.1;
+				
+				c = vec3(x, y, 0);
+				
+				pos.xy = (pos.xy * 2.) - 1.;
+				gl_Position = pos;
+			}
+			
+			]=]
+			local frag = gl.CreateFragmentShader[=[
+			varying float t;
+			varying vec3 c;
+			
+			void main() {
+				gl_FragColor = vec4(c, 1); 
+			}
+			
+			]=]
+			program = gl.Program(vert, frag)
+			gl.assert("creating shader")
+			program_fx = gl.GetUniformLocation(program, "fx")
+			program_fy = gl.GetUniformLocation(program, "fy")
+			program_dw = gl.GetUniformLocation(program, "dw")
+			program_dh = gl.GetUniformLocation(program, "dh")
+			gl.UseProgram(program)
+			gl.assert("binding shader")
+		else
+			gl.UseProgram(program)
+		end
+		
+		fy:send(1)
+		fx:send(0)
+		gl.Uniformf(program_fx, 0)
+		gl.Uniformf(program_fy, 1)
+		gl.Uniformf(program_dw, 1/fx.width)
+		gl.Uniformf(program_dh, 1/fx.height)
+		
+		local w, h = fx.width, fx.height
+		gl.Begin(gl.LINES)
+		local s = 0.01
+		for x = s/2, 1, s do
+			for y = s/2, 1, s do
+				gl.TexCoord(1, 1)
+				gl.Vertex(x, y)
+				gl.TexCoord(0, 0)
+				gl.Vertex(x, y)
+			end
+		end
+		gl.End()
+		
+		gl.UseProgram(0)
+		fy:unbind(1)
+		fx:unbind(0)
+		--]]
+		
+		---[[
+		local w, h = fx.width, fx.height
+		gl.PushMatrix()
+		gl.Scale(1/w, 1/h, 1)
+		gl.Translate(0.5, 0.5, 0)
+		gl.Begin(gl.LINES)
+		for x = 0, w-1 do
+			for y = 0, h-1 do
+				local idx = fx:index_raw(x, y)
+				local x1 = fx.data[idx] * 0.5
+				local y1 = fy.data[idx] * 0.5
+				gl.Color(1, 1, 1, 0.2)
+				gl.TexCoord(1, 1)
+				gl.Vertex(x+x1, y+y1)
+				gl.Color(0)
+				gl.TexCoord(0, 0)
+				gl.Vertex(x-x1, y-y1)
+			end
+		end
+		gl.End()
+		gl.PopMatrix()
+		--]]
+	end
+end)()
+
+field2D.drawFlow = (function()
+	local program = nil
+	local program_fx = 0
+	local program_fy = 0
+	return function(fx, fy)
+		assert(fx, "missing field arguments (requires 2 fields)")
+		assert(fy, "missing field arguments (requires 2 fields)")
+		if not program then
+			local vert = gl.CreateVertexShader[[
+			uniform sampler2D fx;
+			uniform sampler2D fy;
+			varying float c;
+			void main() {
+				vec2 T = gl_Vertex.xy; 
+				c = vec2(gl_MultiTexCoord0).x;
+				float x = texture2D(fx, T).x;
+				float y = texture2D(fy, T).x;
+				
+				vec4 pos = vec4(T*2.-1., 0, 1);
+				pos.x += (c - 0.5) * 0.02 * x;
+				pos.y += (c - 0.5) * 0.02 * y;
+				gl_Position = pos;
+			}
+			
+			]]
+			local frag = gl.CreateFragmentShader[[
+			varying float c;
+			void main() {
+				gl_FragColor = vec4(c, c, c, 1);
+			}
+			
+			]]
+			program = gl.Program(vert, frag)
+			gl.assert("creating shader")
+			gl.UseProgram(program)
+			program_fx = gl.GetUniformLocation(program, "fx")
+			program_fy = gl.GetUniformLocation(program, "fy")
+			gl.assert("binding shader")
+		else
+			gl.UseProgram(program)
+		end
+		
+		fy:send(1)
+		fx:send(0)
+			gl.Uniformi(program_fx, 0)
+			gl.Uniformi(program_fy, 1)	
+		
+		--sketch.quad(0, 0, 1, 1)
+		
+		gl.Begin(gl.LINES)
+		local s = 1/128
+		for x = s/2, 1, s do
+			for y = s/2, 1, s do
+				gl.TexCoord(0, 0)
+				gl.Vertex(x, y)
+				gl.TexCoord(1, 1)
+				gl.Vertex(x, y)
+			end
+		end
+		gl.End()
+		
+		gl.UseProgram(0)
+		fy:unbind(1)
+		fx:unbind(0)
 	end
 end)()
 

@@ -472,7 +472,7 @@ function vec2.__eq(a, b)
 	return a.x==b.x and a.y==b.y
 end
 
-function vec3:unpack()
+function vec2:unpack()
 	return self.x, self.y
 end
 

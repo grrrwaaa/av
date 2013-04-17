@@ -77,10 +77,10 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	LDFLAGS="-w -rdynamic -Wl,-E "
 	LINKERPATHS="-L/usr/local/lib -L/usr/lib"
 	#LIBRARIES="-lluajit-5.1 -lfreeimage -lGLEW -lGLU -lGL -lglut -lasound ../externs/libuv/libuv.a -lrt -lpthread"
-	LIBRARIES="-lluajit-5.1 -lGLU -lGL -lglut"
+	LIBRARIES="-lluajit-5.1 -lGLU -lGL -lglut -lasound -lrt -lpthread"
 	
 	echo compile
-	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp
+	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS av.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp
 	echo link
 	$LINK $LDFLAGS $LINKERPATHS $LIBRARIES -Wl,-whole-archive *.o -Wl,-no-whole-archive $LIBRARIES -o $PRODUCT_NAME
 
