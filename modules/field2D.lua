@@ -555,117 +555,10 @@ field2D.drawWeird = (function()
 	end
 end)()
 
-field2D.drawFlow = (function()
-	local program = nil
-	local program_dw = 0
-	local program_dh = 0
-	local program_fx = 0
-	local program_fy = 0
-	return function(fx, fy)
-		assert(fx, "missing field arguments (requires 2 fields)")
-		assert(fy, "missing field arguments (requires 2 fields)")
-		assert(fx.width == fy.width and fx.height == fy.height, "fields must have same dimensions")
-		
-		---[[
-		if not program then
-			local vert = gl.CreateVertexShader[=[
-			uniform sampler2D fx;
-			uniform sampler2D fy;	
-			uniform float dw, dh;		
-			varying float t;
-			varying vec3 c;
-			
-			void main() {
-				vec4 pos = gl_Vertex;
-				
-				// using texcoord to distinguish line endpoints:
-				t = vec2(gl_MultiTexCoord0).x;
-				
-				float x = texture2D(fx, pos.xy).x;
-				float y = texture2D(fy, pos.xy).x;
-				
-				
-				// displace vertices by texture & endpoint:
-				pos.x += t * x * 0.1;
-				pos.y += t * y * 0.1;
-				
-				c = vec3(x, y, 0);
-				
-				pos.xy = (pos.xy * 2.) - 1.;
-				gl_Position = pos;
-			}
-			
-			]=]
-			local frag = gl.CreateFragmentShader[=[
-			varying float t;
-			varying vec3 c;
-			
-			void main() {
-				gl_FragColor = vec4(c, 1); 
-			}
-			
-			]=]
-			program = gl.Program(vert, frag)
-			gl.assert("creating shader")
-			program_fx = gl.GetUniformLocation(program, "fx")
-			program_fy = gl.GetUniformLocation(program, "fy")
-			program_dw = gl.GetUniformLocation(program, "dw")
-			program_dh = gl.GetUniformLocation(program, "dh")
-			gl.UseProgram(program)
-			gl.assert("binding shader")
-		else
-			gl.UseProgram(program)
-		end
-		
-		fy:send(1)
-		fx:send(0)
-		gl.Uniformf(program_fx, 0)
-		gl.Uniformf(program_fy, 1)
-		gl.Uniformf(program_dw, 1/fx.width)
-		gl.Uniformf(program_dh, 1/fx.height)
-		
-		local w, h = fx.width, fx.height
-		gl.Begin(gl.LINES)
-		local s = 0.01
-		for x = s/2, 1, s do
-			for y = s/2, 1, s do
-				gl.TexCoord(1, 1)
-				gl.Vertex(x, y)
-				gl.TexCoord(0, 0)
-				gl.Vertex(x, y)
-			end
-		end
-		gl.End()
-		
-		gl.UseProgram(0)
-		fy:unbind(1)
-		fx:unbind(0)
-		--]]
-		
-		---[[
-		local w, h = fx.width, fx.height
-		gl.PushMatrix()
-		gl.Scale(1/w, 1/h, 1)
-		gl.Translate(0.5, 0.5, 0)
-		gl.Begin(gl.LINES)
-		for x = 0, w-1 do
-			for y = 0, h-1 do
-				local idx = fx:index_raw(x, y)
-				local x1 = fx.data[idx] * 0.5
-				local y1 = fy.data[idx] * 0.5
-				gl.Color(1, 1, 1, 0.2)
-				gl.TexCoord(1, 1)
-				gl.Vertex(x+x1, y+y1)
-				gl.Color(0)
-				gl.TexCoord(0, 0)
-				gl.Vertex(x-x1, y-y1)
-			end
-		end
-		gl.End()
-		gl.PopMatrix()
-		--]]
-	end
-end)()
+--- draw two fields representing X and Y vector components
+-- @param fx X component field
+-- @param fy Y component field
+function field2D.drawFlow(fx, fy) end
 
 field2D.drawFlow = (function()
 	local program = nil
@@ -686,8 +579,8 @@ field2D.drawFlow = (function()
 				float y = texture2D(fy, T).x;
 				
 				vec4 pos = vec4(T*2.-1., 0, 1);
-				pos.x += (c - 0.5) * 0.02 * x;
-				pos.y += (c - 0.5) * 0.02 * y;
+				pos.x += (c - 0.5) * 0.05 * x;
+				pos.y += (c - 0.5) * 0.05 * y;
 				gl_Position = pos;
 			}
 			
@@ -717,7 +610,7 @@ field2D.drawFlow = (function()
 		--sketch.quad(0, 0, 1, 1)
 		
 		gl.Begin(gl.LINES)
-		local s = 1/128
+		local s = 1/64
 		for x = s/2, 1, s do
 			for y = s/2, 1, s do
 				gl.TexCoord(0, 0)

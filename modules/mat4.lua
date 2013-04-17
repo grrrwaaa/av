@@ -13,7 +13,7 @@ local ffi = require "ffi"
 
 local mat4 = {}
 
-function new(...)
+local function new(...)
 	return { ... }
 end
 
