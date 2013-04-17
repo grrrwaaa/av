@@ -3,7 +3,7 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <head>
-    <title>AV Reference</title>
+    <title>Reference</title>
     <link rel="stylesheet" href="../ldoc.css" type="text/css" />
 </head>
 <body>
@@ -24,7 +24,7 @@
 
 <div id="navigation">
 <br/>
-<h1>LuaJIT AV</h1>
+<h1>ldoc</h1>
 
 <ul>
   <li><a href="../reference.html">Index</a></li>
@@ -66,9 +66,7 @@
 <h1>Module <code>quat</code></h1>
 
 <p>quat: A simple 2-component vector</p>
-<p>
-
-</p>
+<p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
@@ -127,11 +125,8 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#rotate">rotate&nbsp;(q, v)</a></td>
-	<td class="summary">
-<p>Rotate a vector:</p>
-<pre><code>q must be a normalized quaternion
-</code></pre>
-</td>
+	<td class="summary">Rotate a vector:
+	q must be a normalized quaternion</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#unrotate">unrotate&nbsp;(q, v)</a></td>
@@ -232,9 +227,7 @@
     <h3>Parameters:</h3>
     <ul>
       <li><span class="parameter">v1</span>
-
-
-</li>
+      </li>
       <li><span class="parameter">v2</span>
       get the normal to the plane (i.e. the unit bivector containing the v1 and v2) normalize because the cross product can get slightly denormalized</li>
     </ul>
@@ -403,23 +396,16 @@
     <strong>rotate&nbsp;(q, v)</strong>
     </dt>
     <dd>
-
-<p>Rotate a vector:</p>
-<pre><code>q must be a normalized quaternion
-</code></pre>
-
+    Rotate a vector:
+	q must be a normalized quaternion
 
     <h3>Parameters:</h3>
     <ul>
       <li><span class="parameter">q</span>
         <span class="types"><span class="type">qv = vec4(v, 0) // 'pure quaternion' derived from vector return ((q * qv) * q^-1).xyz reduced to 24 multiplies and 17 additions</span></span>
-
-
-</li>
+      </li>
       <li><span class="parameter">v</span>
-
-
-</li>
+      </li>
     </ul>
 
 
@@ -433,20 +419,16 @@
     </dt>
     <dd>
     Rotate a vector out of a quaternion:
- equiv.  quat<em>rotate(quat</em>conj(q), v):
+ equiv.  quat_rotate(quat_conj(q), v):
  q must be a normalized quaternion
 
     <h3>Parameters:</h3>
     <ul>
       <li><span class="parameter">q</span>
         <span class="types"><span class="type">reduced</span></span>
-
-
-</li>
+      </li>
       <li><span class="parameter">v</span>
-
-
-</li>
+      </li>
     </ul>
 
 

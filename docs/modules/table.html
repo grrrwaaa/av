@@ -3,7 +3,7 @@
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <head>
-    <title>AV Reference</title>
+    <title>Reference</title>
     <link rel="stylesheet" href="../ldoc.css" type="text/css" />
 </head>
 <body>
@@ -24,7 +24,7 @@
 
 <div id="navigation">
 <br/>
-<h1>LuaJIT AV</h1>
+<h1>ldoc</h1>
 
 <ul>
   <li><a href="../reference.html">Index</a></li>
@@ -66,9 +66,7 @@
 <h1>Module <code>table</code></h1>
 
 <p>manipulating Lua tables.</p>
-<p>
-
-</p>
+<p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
@@ -80,7 +78,7 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#insert">insert&nbsp;(table, pos, value)</a></td>
-	<td class="summary">Inserts element <code>value</code> at position <code>pos</code> in <a href="../modules/table.html#">table</a> , shifting up
+	<td class="summary">Inserts element `value` at position `pos` in `table`, shifting up
  other elements to open space, if necessary.</td>
 	</tr>
 	<tr>
@@ -90,13 +88,13 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#remove">remove&nbsp;(table, pos)</a></td>
-	<td class="summary">Removes from <a href="../modules/table.html#">table</a>  the element at position <code>pos</code>, shifting down other
+	<td class="summary">Removes from `table` the element at position `pos`, shifting down other
  elements to close the space, if necessary.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#sort">sort&nbsp;(table, comp)</a></td>
 	<td class="summary">Sorts table elements in a given order,
- <em>in-place</em>, from <code>table[1]</code> to <code>table[n]</code>, where <code>n</code> is the length of the
+ *in-place*, from `table[1]` to `table[n]`, where `n` is the length of the
  table.</td>
 	</tr>
 </table>
@@ -113,29 +111,21 @@
     </dt>
     <dd>
     Given an array where all elements are strings or numbers, returns
- <code>table[i]..sep..table[i+1] ...  sep..table[j]</code>. The default value for
- <code>sep</code> is the empty string, the default for <code>i</code> is 1, and the default for
- <code>j</code> is the length of the table. If <code>i</code> is greater than <code>j</code>, returns the
+ `table[i]..sep..table[i+1] ...  sep..table[j]`. The default value for
+ `sep` is the empty string, the default for `i` is 1, and the default for
+ `j` is the length of the table. If `i` is greater than `j`, returns the
  empty string.
 
     <h3>Parameters:</h3>
     <ul>
       <li><span class="parameter">table</span>
-
-
-</li>
+      </li>
       <li><span class="parameter">sep</span>
-
-
-</li>
+      </li>
       <li><span class="parameter">i</span>
-
-
-</li>
+      </li>
       <li><span class="parameter">j</span>
-
-
-</li>
+      </li>
     </ul>
 
 
@@ -148,25 +138,19 @@
     <strong>insert&nbsp;(table, pos, value)</strong>
     </dt>
     <dd>
-    Inserts element <code>value</code> at position <code>pos</code> in <a href="../modules/table.html#">table</a> , shifting up
- other elements to open space, if necessary.  The default value for <code>pos</code> is
- <code>n+1</code>, where <code>n</code> is the length of the table (see §2.5.5), so that a call
- <code>table.insert(t,x)</code> inserts <code>x</code> at the end of table <code>t</code>.
+    Inserts element `value` at position `pos` in `table`, shifting up
+ other elements to open space, if necessary.  The default value for `pos` is
+ `n+1`, where `n` is the length of the table (see §2.5.5), so that a call
+ `table.insert(t,x)` inserts `x` at the end of table `t`.
 
     <h3>Parameters:</h3>
     <ul>
       <li><span class="parameter">table</span>
-
-
-</li>
+      </li>
       <li><span class="parameter">pos</span>
-
-
-</li>
+      </li>
       <li><span class="parameter">value</span>
-
-
-</li>
+      </li>
     </ul>
 
 
@@ -186,9 +170,7 @@
     <h3>Parameters:</h3>
     <ul>
       <li><span class="parameter">table</span>
-
-
-</li>
+      </li>
     </ul>
 
 
@@ -201,22 +183,18 @@
     <strong>remove&nbsp;(table, pos)</strong>
     </dt>
     <dd>
-    Removes from <a href="../modules/table.html#">table</a>  the element at position <code>pos</code>, shifting down other
+    Removes from `table` the element at position `pos`, shifting down other
  elements to close the space, if necessary.  Returns the value of the removed
- element. The default value for <code>pos</code> is <code>n</code>, where <code>n</code> is the length of the
- table, so that a call <code>table.remove(t)</code> removes the last element of table
- <code>t</code>.
+ element. The default value for `pos` is `n`, where `n` is the length of the
+ table, so that a call `table.remove(t)` removes the last element of table
+ `t`.
 
     <h3>Parameters:</h3>
     <ul>
       <li><span class="parameter">table</span>
-
-
-</li>
+      </li>
       <li><span class="parameter">pos</span>
-
-
-</li>
+      </li>
     </ul>
 
 
@@ -230,22 +208,18 @@
     </dt>
     <dd>
     Sorts table elements in a given order,
- <em>in-place</em>, from <code>table[1]</code> to <code>table[n]</code>, where <code>n</code> is the length of the
- table.  If <code>comp</code> is given, then it must be a function that receives two
+ *in-place*, from `table[1]` to `table[n]`, where `n` is the length of the
+ table.  If `comp` is given, then it must be a function that receives two
  table elements, and returns true when the first is less than the second
- (so that <code>not comp(a[i+1],a[i])</code> will be true after the sort). If <code>comp</code>
- is not given, then the '&lt;' operator will be used.
+ (so that `not comp(a[i+1],a[i])` will be true after the sort). If `comp`
+ is not given, then the '<' operator will be used.
 
     <h3>Parameters:</h3>
     <ul>
       <li><span class="parameter">table</span>
-
-
-</li>
+      </li>
       <li><span class="parameter">comp</span>
-
-
-</li>
+      </li>
     </ul>
 
 

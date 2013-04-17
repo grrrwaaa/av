@@ -58,8 +58,8 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	mv app64 $PRODUCT_NAME
 
 	# documentation:
-	#./ldoc.lua -v --format markdown --title "AV Reference" --project "LuaJIT AV" --dir ../docs --output reference ../modules	
-
+	./ldoc.lua -v --dir ../docs --output reference ../modules	
+	
 	echo copy
 	cp $PRODUCT_NAME ../
 	

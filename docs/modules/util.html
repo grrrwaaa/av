@@ -35,7 +35,7 @@
 <h2>Modules</h2>
 <ul>
   <li><a href="../modules/allosphere.html">allosphere</a></li>
-  <li><strong>audio</strong></li>
+  <li><a href="../modules/audio.html">audio</a></li>
   <li><a href="../modules/audioprocess.html">audioprocess</a></li>
   <li><a href="../modules/displaylist.html">displaylist</a></li>
   <li><a href="../modules/draw2D.html">draw2D</a></li>
@@ -50,7 +50,7 @@
   <li><a href="../modules/quat.html">quat</a></li>
   <li><a href="../modules/string.html">string</a></li>
   <li><a href="../modules/table.html">table</a></li>
-  <li><a href="../modules/util.html">util</a></li>
+  <li><strong>util</strong></li>
   <li><a href="../modules/vec2.html">vec2</a></li>
   <li><a href="../modules/vec3.html">vec3</a></li>
 </ul>
@@ -59,9 +59,11 @@
 
 <div id="content">
 
-<h1>Module <code>audio</code></h1>
+<h1>Module <code>util</code></h1>
 
-<p>audio: accessing the audio system</p>
+<p>return an object that will call func when it is garbage collected:
+ (Sentinel pattern)
+ Note: this is not necessary in Lua 5.2 where tables can have __gc metamethods</p>
 <p></p>
 
 
