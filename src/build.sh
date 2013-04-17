@@ -71,7 +71,7 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	CC='g++'
 	CFLAGS="-O3 -Wall -fPIC -ffast-math -Wno-unknown-pragmas -MMD"
 	DEFINES="-D_GNU_SOURCE -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__"
-	INCLUDEPATHS="-I/usr/local/include/luajit-2.0 -I/usr/include/luajit-2.0 -Irtaudio-4.0.11"
+	INCLUDEPATHS="-I/usr/local/include/luajit-2.0 -I/usr/include/luajit-2.0 -Irtaudio-4.0.11 -Iinclude"
 	
 	LINK=$CC
 	LDFLAGS="-w -rdynamic -Wl,-E "

@@ -1,6 +1,7 @@
 #include "av.hpp"
 //#include "portaudio.h"
 #include "RtAudio.h"
+#include <string.h>
 
 #define AV_AUDIO_MSGBUFFER_SIZE_DEFAULT (1024 * 1024)
 
