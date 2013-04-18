@@ -1,17 +1,18 @@
 local ffi = require "ffi"
 local C = require "darwin"
 local sin, cos = math.sin, math.cos
+local abs = math.abs
 local pi = math.pi
-ffi.cdef [[
-typedef struct vec4f {
-	float x, y, z, w;
-} vec4f;
-]]
+local floor = math.floor
+local sqrt = math.sqrt
 
 local gl = require "gl"
+local vec2 = require "vec2"
 local vec3 = require "vec3"
+local vec4 = require "vec4"
 local nav3 = require "nav3"
 local mat4 = require "mat4"
+local quat = require "quat"
 local displaylist = require "displaylist"
 local shader = require "shader"
 local texture = require "texture"
@@ -67,23 +68,37 @@ function import(filename)
 end
 
 
-
-
-local ptest = shader()
-ptest:vertex[[
-	varying vec4 C;
-	void main (void) {  
+local phong = shader()
+phong:vertex[[
+	uniform float lighting;
+	uniform vec3 ambient, diffuse, specular;
+	uniform vec3 lightpos;
+	varying vec4 color;
+	void main(){
+		color = gl_Color;
 		vec4 vertex = gl_ModelViewMatrix * gl_Vertex;
-		// the ray direction vector for this pixel:
-		vec3 d = normalize(gl_Vertex.xyz);
-		gl_Position = gl_ProjectionMatrix * vertex;
-		C = vec4(d * 0.5 + 0.5, 0.5);
+		vec3 normal = gl_NormalMatrix * gl_Normal;
+		vec3 V = vertex.xyz;
+		vec3 eyeVec = normalize(-V);
+		vec3 lightDir = normalize(lightpos); // - V);
+		gl_Position = gl_ProjectionMatrix * vertex; 
+		
+		vec3 final_color = color.rgb * ambient;
+		vec3 N = normalize(normal);
+		vec3 L = lightDir;
+		float lambertTerm = max(dot(N, L), 0.0);
+		final_color += diffuse * color.rgb * lambertTerm;
+		vec3 E = eyeVec;
+		vec3 R = reflect(-L, N);
+		float spec = pow(max(dot(R, E), 0.0), 0.9 + 1e-20);
+		final_color += specular * spec;
+		color = vec4(mix(color.rgb, final_color, lighting), color.a);
 	}
 ]]
-ptest:fragment[[
-	varying vec4 C;
-	void main (void) {
-		gl_FragColor = C;
+phong:fragment[[
+	varying vec4 color;
+	void main() {
+		gl_FragColor = color;
 	}
 ]]
 
@@ -218,7 +233,11 @@ showCube:fragment[[
 
 local cubeCapture = shader()
 cubeCapture:vertex[[
-	varying vec4 C;
+	uniform float lighting;
+	uniform vec3 ambient, diffuse, specular;
+	uniform vec3 lightpos;
+	varying vec4 color;
+	
 	
 	// @omni_eye: the eye parallax distance. 	
 	//	This will be zero for mono, and positive/negative for right/left eyes.
@@ -269,21 +288,243 @@ cubeCapture:vertex[[
 		return vertex;	
 	}
 	
-	void main (void) {  
+	void main(){
 		vec4 vertex = gl_ModelViewMatrix * gl_Vertex;
 		gl_Position = omni_render(vertex);
-		C = gl_Color;
+		
+		// the rest is a typical phong effect
+		color = gl_Color;
+		vec3 normal = gl_NormalMatrix * gl_Normal;
+		vec3 V = vertex.xyz;
+		vec3 eyeVec = normalize(-V);
+		vec3 lightDir = normalize(lightpos); // - V);
+		vec3 final_color = color.rgb * ambient;
+		vec3 N = normalize(normal);
+		vec3 L = lightDir;
+		float lambertTerm = max(dot(N, L), 0.0);
+		final_color += diffuse * color.rgb * lambertTerm;
+		vec3 E = eyeVec;
+		vec3 R = reflect(-L, N);
+		float spec = pow(max(dot(R, E), 0.0), 0.9 + 1e-20);
+		final_color += specular * spec;
+		color = vec4(mix(color.rgb, final_color, lighting), color.a);
 	}
 ]]
 cubeCapture:fragment[[
+	varying vec4 color;
+	void main (void) {	
+		gl_FragColor = color;
+	}
+]]
+
+-- this is the ideal one: displaces vertices prior to rendering:
+local showPerv = shader()
+showPerv:vertex[[
+
+	vec4 perv_render(vec4 vertex) {
+		// get world direction:
+		vec3 dir = normalize(vertex.xyz);
+		// convert unit vector dir into vec2 offset from view axis
+		// this could in fact be baked into a cubemap...
+		vec3 d = length(vertex.xyz);
+		// use d for depth, perspective division & clipping
+		return vertex;
+	}
+	
+	varying vec4 C;
+	void main (void) {  
+		vec4 vertex = gl_ModelViewMatrix * gl_Vertex;
+		gl_Position = perv_render(vertex);
+		C = gl_Color;
+	}
+]]
+showPerv:fragment[[
 	varying vec4 C;
 	void main (void) {	
 		gl_FragColor = C;
 	}
 ]]
 
-for i = 1, 6 do
+-- initial guesses as to the locations of the projectors:
+local initial_estimates = {
+	--[[
+	vec3(allosphere.capsuleRadius, allosphere.doorwayY, 0),
+	vec3(allosphere.capsuleRadius, allosphere.doorwayY, 0),
+	vec3(allosphere.capsuleRadius, allosphere.doorwayY, 0),
+	vec3(allosphere.capsuleRadius, allosphere.doorwayY, 0),
+	
+	vec3(-allosphere.capsuleRadius, allosphere.doorwayY, 0),
+	vec3(-allosphere.capsuleRadius, allosphere.doorwayY, 0),
+	vec3(-allosphere.capsuleRadius, allosphere.doorwayY, 0),
+	vec3(-allosphere.capsuleRadius, allosphere.doorwayY, 0),
+	
+	vec3( 1, -2, -0.5 ),
+	vec3( -1, -2, -0.5 ),
+	vec3( -1, -2, 0.5 ),
+	vec3( -1, -2, 0.5 ),
+	--]]
+	
+	-- PDs
+	vec3(4.852,		0.8325,		0.444),	
+	vec3(4.804,		0.793,		-0.591),
+	-- these two might be the wrong way around... can't remember
+	vec3(4.804,		0.795,		-0.23),
+	vec3(4.169916, 1.124892, 0.029404), --vec3(4.828,		0.765,		0.088),
+	
+	vec3(-4.857,	0.8175,		-0.447),
+	vec3(-4.792,	0.787,		0.592),
+	-- these two might be the wrong way around... can't remember
+	vec3(-4.82,		0.812,		0.232),
+	vec3(-4.847,	0.765,		-0.117),
+	
+	-- Barcos
+	vec3(0.767164, -3.608163, -1.083599), --vec3(0.735, 	-3.5465,	-0.962),
+	vec3(-0.755,	-3.5295,	-0.958),
+	vec3(-0.786,	-3.5585,	0.946),
+	vec3(0.768,		-3.5495,	0.942),
+}
+
+--[[
+
+If we have the camera in the right place (at the center of projection), the projected image on the surface looks almost like a proper rectangle. There should be a way to use this fact to derive the pose of projection (pos + unit vectors). Facts:
+- lines between adjacent pixels are near horizontal (or vertical)
+- spacing between pixels is even
+- aspect ratio of pixels is regular
+
+There's a lot of data to work from, so this is a good candidate for optimization.
+
+We assume the projector has a regular perspective and view matrix, and project the raw points through this matrix to get the screen locations. Then optimize this matrix by stages:
+
+1. move view until lines become straight (but not parallel)
+	- initial guess from eyeballing
+	- mutate projector location
+	- pick random pairs on a row or column
+		-> unit vector error between near and far neighbors is minimized
+2. orient view (XY) until lines become parallel/orthogonal
+	- initial guess from projection-to-center and mid-side axes
+	- mutate X or Y rotation
+		- probably mostly X rotation (off-axis center for table/ceiling-style 
+	- pick random pairs of h or v lines
+		-> unit vector error between lines is minimized
+	- pick random pairs of h and v lines
+		-> orthogonality error between h/v lines is minimizedprojectors)
+
+[possible to interleave steps (1) and (2)]		
+	
+3. orient view (Z) until lines become properly horizontal/vertical
+	-> simple rotation, probably minimal
+4. derive scale parameters from corners
+	- scale by fovy/fovx (fovy, aspect)
+	- initial guess of aspect from projector resolution
+5. derive shift parameters from center
+	- shift by off-axis projection matrix
+
+If the assumption holds, then we should be able to project a raw map3D point (on the surface of the screen) through the matrix and get the corresponding UV coordinate of the point back with minimal error. 
+
+We could plot the error to see how close we got, and see what shape the error surface has. The most important places to be correct are the edges (overlaps). If using several matrices is better, we can do that and interpolate between them.
+
+The last step is to bake a cubemap of projected points.
+
+Calculating depth is trickier, but tractable
+Calculating stereo offset is also trickier
+
+--------------------------------------------------------------------------------
+
+The assumption: there is an imaginary projection plane where the UV origin is exactly 1 unit distance from the lens. The desired UV coordinates are on this plane. We need to know the orientation of the plane, and where the UV origin is relative to the projector. The orientation of the plane can be given in terms of the two (orthogonal) vectors on the surface. The position of UV origin can be given as a unit vector relative to the projector.
+
+Initial guesses can be made:
+	The UV origin could be the unit vector from projector to the center pixel.
+	The V vector direction can be estimated from the top and bottom middle pixels (but what about magnitude?)
+	Same for the U.
+
+Then for any vertex, we only need to 
+	1) make it relative to the plane
+	2) intersect it with the plane
+
+Another way: we need to find the center of projection axis (probably near to the bottom or top edge), and the UV scaling factors. The projection plane is centered on that axis, and then UV coordinates are shifted & scaled.
+
+--]]
+function configure(self)
+	local pos = self.projector_position
+	local map3D = self.map3D
+	local w, h = self.width, self.height
+	
+	function getpixel(x, y) 
+		local v = map3D[floor(y)*w + floor(x)] 
+		return vec3(v.x, v.y, v.z)
+	end
+	
+	local bl = getpixel(0, h-1)
+	local bm = getpixel(w/2, h-1)
+	local br = getpixel(w-1, h-1)
+	local tl = getpixel(0, 0)
+	local tm = getpixel(w/2, 0)
+	local tr = getpixel(w-1, 0)
+	local mid = getpixel(w/2, h/2)
+	
+	-- unit component of vector to projector:
+	local posu = pos:normalizenew()
+	-- unit components of vectors to top-middle and bottom-middle:
+	local tmu = tm:normalizenew()
+	local bmu = bm:normalizenew()
+	-- far corner of parallelogram
+	local posu2 = posu * 2
+	
+	-- ratio of triangle areas:
+	local v1 = posu2:cross(bmu):normalize()
+	local v2 = tmu:cross(bmu):normalize()
+	local ratio_top = v1/v2
+	
+	-- where the ratio is even is the plane we care about
+	local plane = ratio_top * tmu - pos
+	local planeu = plane:normalizenew()
+	
+	local normal = (-pos):dot(planeu) * planeu + pos
+	local normald = #normal
+	local normalu = normal / normald
+	
+	-- find the uv intersection of screen corners
+	local tld = (tl-pos):dot(normalu)
+	local trd = (tr-pos):dot(normalu)
+	local bld = (bl-pos):dot(normalu)
+	local brd = (br-pos):dot(normalu)
+	
+	local tl_intersect = (tl-pos) / tld + pos
+	local tr_intersect = (tr-pos) / trd + pos
+	local bl_intersect = (bl-pos) / bld + pos
+	local br_intersect = (br-pos) / brd + pos
+	
+	-- vector elements of the uv coordinate
+	-- hopefully these should be perpendicular to each other
+	local xvec = tr_intersect - tl_intersect
+	local yvec = bl_intersect - tl_intersect
+	
+	self.pos = pos
+	self.xvec = xvec
+	self.yvec = yvec
+	self.normal = normalu
+	
+	self.mid = mid
+	self.bl = bl
+	self.br = br
+	self.bm = bm
+	self.tl = tl
+	self.tr = tr
+	self.tm = tm
+end
+
+for i = 9, 9 do
 	local self = import(string.format("%s/map3D%s.bin", datapath, i))
+	
+	self.projector_position = initial_estimates[i]
+	
+	
+	self.getpixel = function(self, x, y) 
+		local v = self.map3D[floor(y)*self.width + floor(x)] 
+		return vec3(v.x, v.y, v.z)
+	end
+	
+	configure(self)
 	
 	self.quads = displaylist(function()
 		local jump = 32
@@ -305,7 +546,21 @@ for i = 1, 6 do
 			end
 		gl.End()
 	end)
-	projectors[i] = self
+	projectors[#projectors+1] = self
+end
+
+function drawWorld()
+	gl.Begin(gl.LINES)
+		gl.Color(0,1,1) gl.Vertex(-0.1, 0, 0)
+		gl.Color(1,0,0) gl.Vertex(1, 0, 0)
+		gl.Color(1,0,1) gl.Vertex(0, -0.1, 0)
+		gl.Color(0,1,0) gl.Vertex(0, 1, 0)
+		gl.Color(1,1,0) gl.Vertex(0, 0, -0.1)
+		gl.Color(0,0,1) gl.Vertex(0, 0, 1)
+	gl.End()
+	
+	gl.Color(1,1,1,1)
+	allosphere:drawframe()
 end
 
 local fbos = fbo(512, 512, #projectors)
@@ -313,62 +568,64 @@ local cubefbos = cubefbo(1024, 1024)
 nav3.pos.z = 10
 
 local currentshader = showCube
+local cubecaptured = false
+local screen = 1
+local fovy = 60
+local pmat, vmat
 
 function draw()
 	-- always update nav: 
 	nav3:update()
 	
 	-- offline capture a world into a cubeFBO:
-	cubefbos:startcapture()
-	for face = 0, 5 do
-		cubefbos:face(face)
-		gl.Enable(gl.DEPTH_TEST)
-		gl.ClearColor(0.1,0,0)
-		gl.Clear(gl.COLOR_BUFFER_BIT, gl.DEPTH_BUFFER_BIT)
-	
-		gl.MatrixMode(gl.PROJECTION)
-		local near, far = 0.1, 100
-		local D = far-near	
-		local D2 = far+near
-		local D3 = far*near*2
-		gl.LoadMatrix{
-			1,	0,	0,		0,
-			0,	1,	0,		0,
-			0,	0,	-D2/D,	-1,
-			0,	0,	-D3/D,	0
-		}
-		gl.MatrixMode(gl.MODELVIEW)
-		gl.LoadIdentity()
+	if not cubecaptured then
+		cubefbos:startcapture()
+		for face = 0, 5 do
+			cubefbos:face(face)
+			gl.Enable(gl.DEPTH_TEST)
+			gl.ClearColor(0.1,0.1,0.1)
+			gl.Clear(gl.COLOR_BUFFER_BIT, gl.DEPTH_BUFFER_BIT)
 		
-		-- a little scene:
-		cubeCapture:bind()
-		cubeCapture:uniform("omni_face", face)
-		cubeCapture:uniform("omni_eye", 0.)
-		cubeCapture:uniform("omni_near", 0.1)
-		cubeCapture:uniform("omni_far", 100)
-		
-		-- draw axes:
-		gl.Begin(gl.LINES)
-			gl.Color(0,1,1) gl.Vertex(-0.1, 0, 0)
-			gl.Color(1,0,0) gl.Vertex(1, 0, 0)
-			gl.Color(1,0,1) gl.Vertex(0, -0.1, 0)
-			gl.Color(0,1,0) gl.Vertex(0, 1, 0)
-			gl.Color(1,1,0) gl.Vertex(0, 0, -0.1)
-			gl.Color(0,0,1) gl.Vertex(0, 0, 1)
-		gl.End()
-		
-		gl.Color(1,1,1,1)
-		allosphere:drawframe()
-		
-		cubeCapture:unbind()
-	end
-	cubefbos:endcapture()
-	cubefbos:generatemipmap()
-	
+			gl.MatrixMode(gl.PROJECTION)
+			local near, far = 0.1, 100
+			local D = far-near	
+			local D2 = far+near
+			local D3 = far*near*2
+			gl.LoadMatrix{
+				1,	0,	0,		0,
+				0,	1,	0,		0,
+				0,	0,	-D2/D,	-1,
+				0,	0,	-D3/D,	0
+			}
+			gl.MatrixMode(gl.MODELVIEW)
+			gl.LoadIdentity()
+			
+			-- a little scene:
+			cubeCapture:bind()
+			cubeCapture:uniform("omni_face", face)
+			cubeCapture:uniform("omni_eye", 0.)
+			cubeCapture:uniform("omni_near", 0.1)
+			cubeCapture:uniform("omni_far", 100)
+				
+			cubeCapture:uniform("lighting", 1)
+			cubeCapture:uniform("lightpos", 10, 10, 10)
+			cubeCapture:uniform("ambient", 0.2, 0.2, 0.2)
+			cubeCapture:uniform("diffuse", 0.8, 0.8, 0.8)
+			cubeCapture:uniform("specular", 1, 1, 1)
+			
+			-- draw axes:
+			drawWorld()
+			
+			cubeCapture:unbind()
+		end
+		cubefbos:endcapture()
+		cubefbos:generatemipmap()
+		cubecaptured = true
+	end		
 	
 	gl.ClearColor(0,0,0)
 	
-	-- offline capturing:
+	-- simulate the allosphere projector renders:
 	fbos:capture(function()
 		for i, p in ipairs(projectors) do
 			fbos:settexture(i)
@@ -390,68 +647,286 @@ function draw()
 			end
 			
 			currentshader:bind()
-			currentshader:uniform("map3D", 0)
-			if currentshader == showCube then
-				cubefbos:bind(2)
-				currentshader:uniform("cubeMap", 2)
+			if currentshader == showPerv then
+				
+				-- bind the antiwarp / send param uniforms...
+				
+				drawWorld()
+				
+			else
+				currentshader:uniform("map3D", 0)
+				if currentshader == showCube then
+					cubefbos:bind(2)
+					currentshader:uniform("cubeMap", 2)
+				end
+				
+				-- bind the map3D texture data:
+				p.map3Dtex:bind(0)
+				gl.Color(1, 1, 1)
+				gl.Begin(gl.QUADS)
+					gl.TexCoord(0, 0) gl.Vertex(-1, -1, 0)
+					gl.TexCoord(1, 0) gl.Vertex(1, -1, 0)
+					gl.TexCoord(1, 1) gl.Vertex(1, 1, 0)
+					gl.TexCoord(0, 1) gl.Vertex(-1, 1, 0)
+				gl.End()
+				if currentshader == showCube then
+					cubefbos:unbind(2)
+				end	
+				p.map3Dtex:unbind(0)
+				
 			end
-			
-			-- bind the map3D texture data:
-			p.map3Dtex:bind(0)
-			gl.Color(1, 1, 1)
-			gl.Begin(gl.QUADS)
-				gl.TexCoord(0, 0) gl.Vertex(-1, -1, 0)
-				gl.TexCoord(1, 0) gl.Vertex(1, -1, 0)
-				gl.TexCoord(1, 1) gl.Vertex(1, 1, 0)
-				gl.TexCoord(0, 1) gl.Vertex(-1, 1, 0)
-			gl.End()
-			if currentshader == showCube then
-				cubefbos:unbind(2)
-			end	
-			p.map3Dtex:unbind(0)
-			
 			currentshader:unbind()
 		end	
 	end)
 	fbos:generatemipmap()	
-		
-	-- go 3D:
+	
+	-- now show the results:
 	gl.Viewport(0, 0, win.width, win.height)
-	gl.MatrixMode(gl.PROJECTION)
-	gl.LoadMatrix(mat4.perspective(60, win.width/win.height, 0.1, 100))
-	gl.MatrixMode(gl.MODELVIEW)
-	gl.LoadMatrix(mat4.lookatu(nav3.pos, nav3.ux, nav3.uy, nav3.uz))
-	gl.Disable(gl.DEPTH_TEST)
-	
-	-- draw axes:
-	gl.Begin(gl.LINES)
-		gl.Color(0,1,1) gl.Vertex(-0.1, 0, 0)
-		gl.Color(1,0,0) gl.Vertex(1, 0, 0)
-		gl.Color(1,0,1) gl.Vertex(0, -0.1, 0)
-		gl.Color(0,1,0) gl.Vertex(0, 1, 0)
-		gl.Color(1,1,0) gl.Vertex(0, 0, -0.1)
-		gl.Color(0,0,1) gl.Vertex(0, 0, 1)
-	gl.End()
-	
-	gl.Color(1,1,1, 0.5)
-	allosphere:drawframe()
-	
-	-- render each projector:
-	--ptest:bind()
-	for i, p in ipairs(projectors) do
-		fbos:bind(0, i)	
-		p.quads:draw()
+	if false and screen and projectors[screen] then
+		-- show the view from one screen only:
+		gl.MatrixMode(gl.PROJECTION)
+		gl.LoadIdentity()
+		gl.MatrixMode(gl.MODELVIEW)
+		gl.LoadIdentity()
+		
+		fbos:settexture(screen)
+		
+		fbos:bind()
+		gl.Color(1, 1, 1)
+		gl.Begin(gl.QUADS)
+			-- upside down...
+			gl.TexCoord(0, 1) gl.Vertex(-1, -1, 0)
+			gl.TexCoord(1, 1) gl.Vertex(1, -1, 0)
+			gl.TexCoord(1, 0) gl.Vertex(1, 1, 0)
+			gl.TexCoord(0, 0) gl.Vertex(-1, 1, 0)
+		gl.End()
 		fbos:unbind()
+	else
+		-- go 3D:
+		local aspect = win.width/win.height
+		
+		pmat = mat4.perspective(fovy, aspect, 0.1, 100)
+		gl.MatrixMode(gl.PROJECTION)
+		gl.LoadMatrix(pmat)
+		--gl.LoadMatrix(mat4.ortho(-aspect, aspect, -1, 1, 0.1, 100))
+		gl.MatrixMode(gl.MODELVIEW)
+		vmat = mat4.lookatu(nav3.pos, nav3.ux, nav3.uy, nav3.uz)
+		gl.LoadMatrix(vmat)
+		gl.Disable(gl.DEPTH_TEST)
+		
+		-- draw axes:
+		gl.Begin(gl.LINES)
+			gl.Color(0,1,1) gl.Vertex(-0.1, 0, 0)
+			gl.Color(1,0,0) gl.Vertex(1, 0, 0)
+			gl.Color(1,0,1) gl.Vertex(0, -0.1, 0)
+			gl.Color(0,1,0) gl.Vertex(0, 1, 0)
+			gl.Color(1,1,0) gl.Vertex(0, 0, -0.1)
+			gl.Color(0,0,1) gl.Vertex(0, 0, 1)
+		gl.End()
+		
+		-- draw projectors:
+		for i, p in ipairs(projectors) do
+			gl.Begin(gl.LINES)
+			--[[
+			gl.Color(0, 0, 1)
+			gl.Vertex(p.pos)
+			gl.Vertex(p.pos + p.normal)
+			gl.Color(1, 0, 0)
+			gl.Vertex(p.pos)
+			gl.Vertex(p.pos + p.xvec)
+			gl.Color(0, 1, 0)
+			gl.Vertex(p.pos)
+			gl.Vertex(p.pos + p.yvec)
+			--]]
+			gl.Color(1, 1, 1)
+			gl.Vertex(p.pos) gl.Vertex(p.tl)
+			gl.Vertex(p.pos) gl.Vertex(p.tr)
+			gl.Vertex(p.pos) gl.Vertex(p.bl)
+			gl.Vertex(p.pos) gl.Vertex(p.br)
+			gl.End()
+		end
+		
+		--[[
+		phong:bind()
+		phong:uniform("lighting", 1)
+		phong:uniform("lightpos", 10, 10, 10)
+		phong:uniform("ambient", 0.2, 0.2, 0.2)
+		phong:uniform("diffuse", 0.8, 0.8, 0.8)
+		phong:uniform("specular", 1, 1, 1)
+		gl.Color(1,1,1, 0.2)
+		allosphere:drawframe()
+		phong:unbind()
+		--]]
+		
+		gl.Color(0.5, 0.5, 0.5, 0.5)
+		gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
+		allosphere:drawframe()
+		
+		-- render each projector:
+		gl.Color(1,1,1, 0.8)
+		for i, p in ipairs(projectors) do
+			fbos:bind(0, i)	
+			p.quads:draw()
+			fbos:unbind()
+		end
+		gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
+		
+		-- draw overlay:
+		
+		-- return to default matrix:
+		gl.MatrixMode(gl.PROJECTION)
+		gl.LoadIdentity()
+		gl.MatrixMode(gl.MODELVIEW)
+		gl.LoadIdentity()
+		gl.Disable(gl.DEPTH_TEST)
+		
+		
+		if screen then
+			local p = projectors[screen]
+			
+			estimate(p)
+		end	
 	end
-	--ptest:unbind()
 end
 
-function update()
+-- the closer this gets to zero, the more parallel are the lines:
+local parallel_err = 1
+local parallel_move = 1
 
+local parallel_point_set = {}
+
+
+
+function compute_parallel_error(tv1, tv2, tv3)
+	-- we only care about the xy components:
+	local pv1 = vec2(tv1.x / tv1.w, tv1.y / tv1.w)
+	local pv2 = vec2(tv2.x / tv2.w, tv2.y / tv2.w)
+	local pv3 = vec2(tv3.x / tv3.w, tv3.y / tv3.w)	
+	
+	gl.Vertex(pv1.x, pv1.y)
+	gl.Vertex(pv2.x, pv2.y)
+	gl.Vertex(pv1.x, pv1.y)
+	gl.Vertex(pv3.x, pv3.y)
+		
+	-- get the relative vectors
+	local r1 = (pv1 - pv2):normalize()
+	local r2 = (pv1 - pv3):normalize()
+	-- compute error in terms of absolute angle between these:
+	local err = 1 - abs(r1:dot(r2))
+	return err
+end
+
+function estimate(p)
+
+	-- generate a set of points to apply the parallel test to:
+	local numtests = 400
+	if #parallel_point_set == 0 then
+		parallel_move = 1
+		for i = 1, numtests do			
+			-- vertical:
+			local c = math.random(p.width)-1		
+			local r1 = math.random(p.height)-1
+			local r2 = math.random(p.height)-1
+			local r3 = math.random(p.height)-1
+			table.insert(parallel_point_set, 
+				vec4.fromvec3(p:getpixel(c, r1)))
+			table.insert(parallel_point_set, 
+				vec4.fromvec3(p:getpixel(c, r2)))
+			table.insert(parallel_point_set, 
+				vec4.fromvec3(p:getpixel(c, r3)))
+			
+			-- and horizontal:
+			local c1 = math.random(p.width)-1		
+			local c2 = math.random(p.width)-1		
+			local c3 = math.random(p.width)-1		
+			local r = math.random(p.height)-1
+			table.insert(parallel_point_set, 		
+				vec4.fromvec3(p:getpixel(c1, r)))
+			table.insert(parallel_point_set, 
+				vec4.fromvec3(p:getpixel(c2, r)))
+			table.insert(parallel_point_set, 
+				vec4.fromvec3(p:getpixel(c3, r)))		
+		end
+	end
+	
+	
+	-- try adjusting the position:
+	local newpos = nav3.pos + vec3.random(parallel_move)
+	parallel_move = parallel_move * 0.99
+	
+	local vmat = mat4.lookatu(newpos, nav3.ux, nav3.uy, nav3.uz)
+
+	
+	gl.LineWidth(0.3)
+	gl.Begin(gl.LINES)
+	
+	local errtotal = 0
+	for i = 1, #parallel_point_set, 3 do
+		local err = compute_parallel_error(
+			pmat:transform(vmat:transform(parallel_point_set[i+0])),
+			pmat:transform(vmat:transform(parallel_point_set[i+1])),
+			pmat:transform(vmat:transform(parallel_point_set[i+2]))
+		)
+		errtotal = errtotal + sqrt(err)
+	end
+	
+	gl.End()
+	
+	local new_parallel_err = (errtotal / numtests) * (errtotal / numtests)
+	
+	if new_parallel_err < parallel_err then
+		-- keep it:
+		nav3.pos = newpos
+		parallel_err = new_parallel_err
+	end
+	
+	-- average error:
+	print("parallel_err", parallel_err, new_parallel_err, parallel_move)
+	print(nav3.pos)
+	
+	--[[
+	gl.Color(1, 1, 0)
+	gl.Begin(gl.LINES)
+	gl.Vertex(tv1)
+	gl.Vertex(tv2)
+	gl.Vertex(tv1)
+	gl.Vertex(tv3)
+	gl.End()
+	--]]
+end	
+
+function lookat_projector(i)
+	local p = projectors[i]
+	nav3.pos:set(p.pos)
+	-- face it
+	local uz = (p.pos - p.mid):normalize()
+	local uy = (p.tm - p.bm):normalize()
+	local ux = uz:cross(uy):normalize()
+	local uy = uz:cross(ux):normalize()
+	nav3.q:set(quat.fromUnitVectors(ux, uy, uz))
 end
 
 function keydown(k)
-	if not nav3:keydown(k) then
+	local n = tonumber(k)
+	if n and n < 10 then
+		if screen == n then 
+			screen = nil
+		else 
+			screen = n 
+			lookat_projector(screen)
+			keydown("!")
+		end
+	elseif k == "*" then
+		-- restart estimation:
+		parallel_err = 1
+		parallel_point_set = {}
+	elseif k == "!" then
+		lookat_projector(1)
+	elseif k == "=" then
+		fovy = fovy + 1
+	elseif k == "-" then
+		fovy = fovy - 1
+	elseif not nav3:keydown(k) then
 		print(k)
 	end
 end
@@ -459,3 +934,5 @@ end
 function keyup(k)
 	nav3:keyup(k)
 end
+
+lookat_projector(1)

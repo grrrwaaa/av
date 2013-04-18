@@ -226,6 +226,7 @@ void onkeyup(unsigned char k, int x, int y) {
 void onspecialkeydown(int key, int x, int y) {
 	getmodifiers();
 	
+	// GLUT_KEY_LEFT
 	#define CS(k) case GLUT_KEY_##k: key = AV_KEY_##k; break;
 	switch(key){
 		CS(LEFT) CS(UP) CS(RIGHT) CS(DOWN)

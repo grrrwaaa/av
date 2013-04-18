@@ -122,7 +122,7 @@ end
 function draw2D.circle(x, y, d)
 	x = x or 0
 	y = y or 0
-	local r = w and d/2 or 0.5
+	local r = d and d/2 or 0.5
 	gl.Begin(GL.TRIANGLE_FAN)
 	for a = 0, twopi, 0.0436 do
 		gl.Vertex2d(x + r * cos(a), y + r * sin(a))

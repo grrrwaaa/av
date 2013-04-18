@@ -125,6 +125,51 @@ function quat.fromAxisZ(angle)
 	)
 end
 
+function quat.fromUnitVectors(ux, uy, uz)
+	local uxy, uxz = ux.y, ux.z
+	local uyx, uyz = uy.x, uy.z
+	local uzx, uzy = uz.x, uz.y
+	local trace = ux.x + uy.y + uz.z
+	
+	if trace > 0 then
+		local w = sqrt(1. + trace)*0.5
+		local div = 1/(4*w)
+		return new(
+			(uyz - uzy) * div,
+			(uzx - uxz) * div,
+			(uxy - uyx) * div,
+			w)
+	elseif (ux.x > uy.y and ux.x > uz.z) then
+		-- ux.x is greatest
+		local x = sqrt(1. + ux.x-uy.y-uz.z)*0.5
+		local div = 1/(4*x)
+		return new(
+			x,
+			(uxy + uyx) * div,
+			(uxz + uzx) * div,
+			(uyz - uzy) * div)
+	elseif (uy.y > ux.x and uy.y > uz.z) then
+		-- uyx is greatest
+		local y = sqrt(1. + uy.y-ux.x-uz.z)*0.5
+		local div = 1/(4*y)
+		return new(
+			(uxy + uyx) * div,
+			y,
+			(uyz + uzy) * div,
+			(uzx - uxz) * div)
+	else 
+		-- uzx is greatest
+		local z = sqrt(1. + uz.z-ux.x-uy.y)*0.5
+		local div = 1/(4*z)
+		return new(
+			(uxz + uzx) * div,
+			(uyz + uzy) * div,
+			z,
+			(uxy - uyx) * div)
+	end
+end
+
+
 --- derive quaternion as absolute difference between two unit vectors
 -- v1 and v2 must be normalized. the order of v1,v2 is not important;
 -- v1 and v2 define a plane orthogonal to a rotational axis
@@ -147,16 +192,16 @@ end
 
 function quat.fromEuler(az, el, ba) 
 	--[[
-	//http://vered.rose.utoronto.ca/people/david_dir/GEMS/GEMS.html
-	//Converting from Euler angles to a quaternion is slightly more tricky, as the order of operations
-	//must be correct. Since you can convert the Euler angles to three independent quaternions by
-	//setting the arbitrary axis to the coordinate axes, you can then multiply the three quaternions
-	//together to obtain the final quaternion.
-	//So if you have three Euler angles (a, b, c), then you can form three independent quaternions
-	//Qx = [ cos(a/2), (sin(a/2), 0, 0)]
-	//Qy = [ cos(b/2), (0, sin(b/2), 0)]
-	//Qz = [ cos(c/2), (0, 0, sin(c/2))]
-	//And the final quaternion is obtained by Qx * Qy * Qz.
+	--http:--vered.rose.utoronto.ca/people/david_dir/GEMS/GEMS.html
+	--Converting from Euler angles to a quaternion is slightly more tricky, as the order of operations
+	--must be correct. Since you can convert the Euler angles to three independent quaternions by
+	--setting the arbitrary axis to the coordinate axes, you can then multiply the three quaternions
+	--together to obtain the final quaternion.
+	--So if you have three Euler angles (a, b, c), then you can form three independent quaternions
+	--Qx = [ cos(a/2), (sin(a/2), 0, 0)]
+	--Qy = [ cos(b/2), (0, sin(b/2), 0)]
+	--Qz = [ cos(c/2), (0, 0, sin(c/2))]
+	--And the final quaternion is obtained by Qx * Qy * Qz.
 	--]]
 	if type(az) ~= "number" then
 		az, el, ba = az.y, az.x, az.z
@@ -168,12 +213,12 @@ function quat.fromEuler(az, el, ba)
 	local s1 = sin(az * 0.5)
 	local s2 = sin(el * 0.5)
 	local s3 = sin(ba * 0.5)
-	-- equiv Q1 = Qy * Qx; // since many terms are zero
+	-- equiv Q1 = Qy * Qx; -- since many terms are zero
 	local tw = c1*c2
 	local tx = c1*s2
 	local ty = s1*c2
 	local tz =-s1*s2
-	-- equiv Q2 = Q1 * Qz; // since many terms are zero
+	-- equiv Q2 = Q1 * Qz; -- since many terms are zero
 	return new(
 		tx*c3 + ty*s3,
 		ty*c3 - tx*s3,
@@ -418,7 +463,7 @@ function quat:axisAngle()
 end
 
 function quat:euler()
-	-- http://www.mathworks.com/access/helpdesk/help/toolbox/aeroblks/quaternionstoeulerangles.html
+	-- http:--www.mathworks.com/access/helpdesk/help/toolbox/aeroblks/quaternionstoeulerangles.html
 	local sqw = self.w*self.w
 	local sqx = self.x*self.x
 	local sqy = self.y*self.y
@@ -484,7 +529,7 @@ function quat.matrix(s, m)
 
 	m[ 0] = ux[0];	m[ 4] = uy[0];	m[ 8] = uz[0];	m[12] = 0;
 	m[ 1] = ux[1];	m[ 5] = uy[1];	m[ 9] = uz[1];	m[13] = 0;
-	m[ 2] = ux[2];	m[ 6] = uy[2];	m[10] = uz[2];	m[14] = 0;
+	m[ 2] = ux[2];	m[ 6] = uy[2];	uz.z = uz[2];	m[14] = 0;
 	m[ 3] = 0;		m[ 7] = 0;		m[11] = 0;		m[15] = 1;
 end
 --]]
@@ -492,7 +537,7 @@ end
 --- Rotate a vector:
 --	q must be a normalized quaternion
 function quat.rotate(q, v)
-	-- qv = vec4(v, 0) // 'pure quaternion' derived from vector
+	-- qv = vec4(v, 0) -- 'pure quaternion' derived from vector
 	-- return ((q * qv) * q^-1).xyz
 	-- reduced to 24 multiplies and 17 additions:
 	local px =  q.w*v.x + q.y*v.z - q.z*v.y

@@ -4418,8 +4418,12 @@ function gl.MultMatrix(t)
 end
 
 function gl.Normal(x, y, z)
-	if type(x) == "table" then x, y, z = unpack(x) end
-	gl.Vertex3d(x, y, z)
+	if type(x) == "userdata" or type(x) == "cdata" then
+		x, y, z = x:unpack()
+	elseif type(x) == "table" then 
+		x, y, z = unpack(x) 
+	end
+	gl.Normal3d(x, y, z or 0)
 end
 
 function gl.PixelStore(p, v) gl.PixelStoref(p, v) end

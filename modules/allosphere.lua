@@ -155,77 +155,53 @@ local allosphere_list = displaylist(function()
 		
 	-- starting angle:
 	local pstart = math.pi/2 - math.atan(self.doorwayY / self.capsuleRadius)
-	gl.Begin(gl.LINES)
-	for ie = 0, numpanels do
-		local e = pstart * (2.*(ie/numpanels - 0.5))
+	gl.Begin(gl.QUAD_STRIP)
+	for ie = 0, numpanels-1 do
+		local e1 = pstart * (2.*(ie/numpanels - 0.5))
+		local e2 = pstart * (2.*((ie+1)/numpanels - 0.5))
+		local n = pstart * (2.*((ie+0.5)/numpanels - 0.5))
 		
-		local vertex = vec3(math.sin(e), math.cos(e), 0)
-		gl.Vertex(self.sphereCenterFront + vertex * self.capsuleRadius)
-		gl.Vertex(self.sphereCenterBack + vertex * self.capsuleRadius)
+		local vertex1 = vec3(math.sin(e1), math.cos(e1), 0)
+		local vertex2 = vec3(math.sin(e2), math.cos(e2), 0)
+		gl.Normal(math.sin(n), math.cos(n), 0)
+		
+		gl.Vertex(self.sphereCenterFront + vertex1 * self.capsuleRadius)
+		gl.Vertex(self.sphereCenterBack + vertex1 * self.capsuleRadius)
+		gl.Vertex(self.sphereCenterFront + vertex2 * self.capsuleRadius)
+		gl.Vertex(self.sphereCenterBack + vertex2 * self.capsuleRadius)
 	end
 	gl.End()
 	
-	-- each rib:
 	local numslices = 15
 	local numlats = 12
-	for ia = 0, numslices do
-		local a = math.pi * (ia/numslices - 0.5)
-		gl.Begin(gl.LINE_STRIP)
-		for ie = 0, numlats do
-			local e = math.pi * (ie/numlats - 0.5)
-			local vertex = vec3(
-				cos(e) * sin(a),
-				sin(e),
-				cos(e) * cos(a)
-			)
-			gl.Vertex(self.sphereCenterFront - vertex * self.capsuleRadius)
+	for ia = 0, numslices-1 do
+		local a1 = math.pi * (ia/numslices - 0.5)
+		local a2 = math.pi * ((ia+1)/numslices - 0.5)
+		gl.Begin(gl.QUADS)
+		for ie = 0, numlats-1 do
+			local e1 = math.pi * (ie/numlats - 0.5)
+			local e2 = math.pi * ((ie+1)/numlats - 0.5)
+			
+			local vertex1 = vec3( cos(e1) * sin(a1), sin(e1), cos(e1) * cos(a1) )
+			local vertex2 = vec3( cos(e2) * sin(a1), sin(e2), cos(e2) * cos(a1) )
+			local vertex3 = vec3( cos(e2) * sin(a2), sin(e2), cos(e2) * cos(a2) )
+			local vertex4 = vec3( cos(e1) * sin(a2), sin(e1), cos(e1) * cos(a2) )
+			gl.Normal((-vertex1):normalizenew())
+			gl.Vertex(self.sphereCenterFront - vertex1 * self.capsuleRadius)
+			gl.Vertex(self.sphereCenterFront - vertex2 * self.capsuleRadius)
+			gl.Vertex(self.sphereCenterFront - vertex3 * self.capsuleRadius)
+			gl.Vertex(self.sphereCenterFront - vertex4 * self.capsuleRadius)
+			
+			gl.Normal(vertex1:normalizenew())
+			gl.Vertex(self.sphereCenterBack + vertex1 * self.capsuleRadius)
+			gl.Vertex(self.sphereCenterBack + vertex2 * self.capsuleRadius)
+			gl.Vertex(self.sphereCenterBack + vertex3 * self.capsuleRadius)
+			gl.Vertex(self.sphereCenterBack + vertex4 * self.capsuleRadius)
 		end
 		gl.End()
 	end
-	for ie = 0, numlats do
-		local e = pi * (ie/(numlats) - 0.5);
-		gl.Begin(gl.LINE_STRIP);
-		for ia = 0, numslices do
-			local a = pi * (ia/(numslices) - 0.5);
-			local vertex= vec3(
-				cos(e) * sin(a),
-				sin(e),
-				cos(e) * cos(a)
-			);
-			gl.Vertex(self.sphereCenterFront - vertex * self.capsuleRadius);
-		end
-		gl.End();
-	end
 	
-	for ia = 0, numslices do
-		local a = math.pi * (ia/numslices - 0.5)
-		gl.Begin(gl.LINE_STRIP)
-		for ie = 0, numlats do
-			local e = math.pi * (ie/numlats - 0.5)
-			local vertex = vec3(
-				cos(e) * sin(a),
-				sin(e),
-				cos(e) * cos(a)
-			)
-			gl.Vertex(self.sphereCenterBack + vertex * self.capsuleRadius)
-		end
-		gl.End()
-	end
-	for ie = 0, numlats do
-		local e = pi * (ie/(numlats) - 0.5);
-		gl.Begin(gl.LINE_STRIP);
-		for ia = 0, numslices do
-			local a = pi * (ia/(numslices) - 0.5);
-			local vertex= vec3(
-				cos(e) * sin(a),
-				sin(e),
-				cos(e) * cos(a)
-			);
-			gl.Vertex(self.sphereCenterBack + vertex * self.capsuleRadius);
-		end
-		gl.End();
-	end
-	
+	---[[
 	-- the caps:
 	local e = math.acos(self.capRadius/self.capsuleRadius)
 	
@@ -273,6 +249,7 @@ local allosphere_list = displaylist(function()
 		gl.Vertex(self.sphereCenterBack + vertex * self.capsuleRadius);
 	end
 	gl.End()
+	--]]
 end)
 
 function allosphere:drawframe()

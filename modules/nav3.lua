@@ -2,6 +2,7 @@
 
 local vec3 = require "vec3"
 local quat = require "quat"
+local win = require "window"
 print(quat)
 
 local nav3 = {
@@ -51,30 +52,48 @@ function nav3:mouse(e, b, x, y)
 	
 end
 
-function nav3:keydown(k)
+function nav3:keydown(k)	
+	local v = 1
+	if win.shift ~= 0 then
+		v = 4
+	elseif win.ctrl ~= 0 or win.alt ~= 0 then
+		v = 0.25
+	end
 	if k == "w" then 
-		self.rvel.z = -1
+		self.rvel.z = -v
 		return true
 	elseif k == "s" then
-		self.rvel.z = 1
+		self.rvel.z = v
 		return true
 	elseif k == "a" then
-		self.rvel.x = -1
+		self.rvel.x = -v
 		return true
 	elseif k == "d" then
-		self.rvel.x = 1
+		self.rvel.x = v
+		return true
+	elseif k == "'" then
+		self.rvel.y= v
+		return true
+	elseif k == "/" then
+		self.rvel.y = -v
 		return true
 	elseif k == 270 then
-		self.tvel.x = 1
+		self.tvel.x = v
 		return true
 	elseif k == 272 then
-		self.tvel.x = -1
+		self.tvel.x = -v
 		return true
 	elseif k == 269 then
-		self.tvel.y = 1
+		self.tvel.y = v
 		return true
 	elseif k == 271 then
-		self.tvel.y = -1
+		self.tvel.y = -v
+		return true
+	elseif k == "z" then
+		self.tvel.z = -v
+		return true
+	elseif k == "c" then
+		self.tvel.z = v
 		return true
 	elseif k == 127 then
 		self.vel:set(0)
@@ -99,6 +118,12 @@ function nav3:keyup(k)
 	elseif k == "d" then
 		self.rvel.x = 0
 		return true
+	elseif k == "'" then
+		self.rvel.y = 0
+		return true
+	elseif k == "/" then
+		self.rvel.y = 0
+		return true
 	elseif k == 270 then
 		self.tvel.x = 0
 		return true
@@ -110,6 +135,12 @@ function nav3:keyup(k)
 		return true
 	elseif k == 271 then
 		self.tvel.y = -0
+		return true
+	elseif k == "z" then
+		self.tvel.z = 0
+		return true
+	elseif k == "c" then
+		self.tvel.z = 0
 		return true
 	end
 	return false

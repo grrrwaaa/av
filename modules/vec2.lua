@@ -3,6 +3,7 @@
 local sqrt = math.sqrt
 local sin, cos = math.sin, math.cos
 local atan2 = math.atan2
+local acos = math.acos
 local random = math.random
 local pi = math.pi
 local twopi = pi * 2
@@ -458,10 +459,13 @@ end
 
 --- The angle between two vectors (two points)
 -- (The relative angle from self to v)
--- @param v vector to measure angle between to
+-- @param a vector to measure angle between
+-- @param b vector to measure angle between
 -- @return distance
-function vec2:anglebetween(v)
-	return (v - self):angle()
+function vec2.anglebetween(a, b)
+	local am = a:length()
+	local bm = b:length()
+	return acos(a:dot(b) / (am * bm))
 end
 
 function vec2:__tostring()
