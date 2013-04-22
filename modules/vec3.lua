@@ -260,6 +260,84 @@ function vec3.modnew(a, b)
 end
 vec3.__mod = vec3.modnew
 
+--- Calculate minimum of elements (in-place)
+-- @param v number or vector limit
+-- @return self
+function vec3:min(v)
+	if type(v) == "number" then
+		self.x = min(self.x, v)
+		self.y = min(self.y, v)
+		self.z = min(self.z, v)
+		return self
+	else
+		self.x = min(self.x, v.x)
+		self.y = min(self.y, v.y)
+		self.z = min(self.z, v.z)
+		return self
+	end
+end
+
+--- Calculate minimum of elements to create a new vector
+-- @param a vector or number
+-- @param b vector or number
+-- @return new vector
+function vec3.minnew(a, b)
+	if type(b) == "number" then
+		return new(min(a.x, b), min(a.y, b), min(a.z, b))
+	elseif type(a) == "number" then
+		return new(min(a, b.x), min(a, b.y), min(a, b.z))
+	else
+		return new(min(a.x, b.x), min(a.y, b.y), min(a.z, b.z)) 
+	end
+end
+
+--- Calculate maximum of elements (in-place)
+-- @param v number or vector limit
+-- @return self
+function vec3:max(v)
+	if type(v) == "number" then
+		self.x = max(self.x, v)
+		self.y = max(self.y, v)
+		self.z = max(self.z, v)
+		return self
+	else
+		self.x = max(self.x, v.x)
+		self.y = max(self.y, v.y)
+		self.z = max(self.z, v.z)
+		return self
+	end
+end
+
+--- Calculate maximum of elements to create a new vector
+-- @param a vector or number
+-- @param b vector or number
+-- @return new vector
+function vec3.maxnew(a, b)
+	if type(b) == "number" then
+		return new(max(a.x, b), max(a.y, b), max(a.z, b))
+	elseif type(a) == "number" then
+		return new(max(a, b.x), max(a, b.y), max(a, b.z))
+	else
+		return new(max(a.x, b.x), max(a.y, b.y), max(a.z, b.z)) 
+	end
+end
+
+--- Constrain vector to range (in-place)
+-- @param lo vector or number minimum value 
+-- @param hi vector or number minimum value 
+-- @return self
+function vec3:clip(lo, hi)
+	return self:max(lo):min(hi)
+end
+
+--- Constrain vector to range to create a new vector
+-- @param lo vector or number minimum value 
+-- @param hi vector or number minimum value 
+-- @return new vector
+function vec3:clip(lo, hi)
+	return self:maxnew(lo):min(hi)
+end
+
 --- Determine shortest relative vector in a toroidal space
 -- @param dimx width of space (optional, default 1)
 -- @param dimy height of space (optional, default dimx)

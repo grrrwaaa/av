@@ -134,6 +134,30 @@
 	<td class="summary">Calculate modulo two vectors (or numbers) to create a new vector</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#vec4:min">vec4:min&nbsp;(v)</a></td>
+	<td class="summary">Calculate minimum of elements (in-place)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#minnew">minnew&nbsp;(a, b)</a></td>
+	<td class="summary">Calculate minimum of elements to create a new vector</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec4:max">vec4:max&nbsp;(v)</a></td>
+	<td class="summary">Calculate maximum of elements (in-place)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#maxnew">maxnew&nbsp;(a, b)</a></td>
+	<td class="summary">Calculate maximum of elements to create a new vector</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec4:clip">vec4:clip&nbsp;(lo, hi)</a></td>
+	<td class="summary">Constrain vector to range (in-place)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#vec4:clip">vec4:clip&nbsp;(lo, hi)</a></td>
+	<td class="summary">Constrain vector to range to create a new vector</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#vec4:relativewrap">vec4:relativewrap&nbsp;(dimx, dimy, dimz, dimw)</a></td>
 	<td class="summary">Determine shortest relative vector in a toroidal space</td>
 	</tr>
@@ -552,6 +576,152 @@
        vector or number</li>
       <li><span class="parameter">b</span>
        vector or number</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec4:min"></a>
+    <strong>vec4:min&nbsp;(v)</strong>
+    </dt>
+    <dd>
+    Calculate minimum of elements (in-place)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       number or vector limit</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "minnew"></a>
+    <strong>minnew&nbsp;(a, b)</strong>
+    </dt>
+    <dd>
+    Calculate minimum of elements to create a new vector
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       vector or number</li>
+      <li><span class="parameter">b</span>
+       vector or number</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec4:max"></a>
+    <strong>vec4:max&nbsp;(v)</strong>
+    </dt>
+    <dd>
+    Calculate maximum of elements (in-place)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       number or vector limit</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "maxnew"></a>
+    <strong>maxnew&nbsp;(a, b)</strong>
+    </dt>
+    <dd>
+    Calculate maximum of elements to create a new vector
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">a</span>
+       vector or number</li>
+      <li><span class="parameter">b</span>
+       vector or number</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new vector
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec4:clip"></a>
+    <strong>vec4:clip&nbsp;(lo, hi)</strong>
+    </dt>
+    <dd>
+    Constrain vector to range (in-place)
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">lo</span>
+       vector or number minimum value</li>
+      <li><span class="parameter">hi</span>
+       vector or number minimum value</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "vec4:clip"></a>
+    <strong>vec4:clip&nbsp;(lo, hi)</strong>
+    </dt>
+    <dd>
+    Constrain vector to range to create a new vector
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">lo</span>
+       vector or number minimum value</li>
+      <li><span class="parameter">hi</span>
+       vector or number minimum value</li>
     </ul>
 
     <h3>Returns:</h3>
