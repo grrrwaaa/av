@@ -5,6 +5,9 @@ local abs = math.abs
 local pi = math.pi
 local floor = math.floor
 local sqrt = math.sqrt
+local min, max = math.min, math.max
+local random = math.random
+local srandom = function() return random()*2-1 end
 
 local gl = require "gl"
 local vec2 = require "vec2"
@@ -513,7 +516,7 @@ function configure(self)
 	self.tm = tm
 end
 
-for i = 9, 9 do
+for i = 1, 12 do
 	local self = import(string.format("%s/map3D%s.bin", datapath, i))
 	
 	self.projector_position = initial_estimates[i]
@@ -567,11 +570,226 @@ local fbos = fbo(512, 512, #projectors)
 local cubefbos = cubefbo(1024, 1024)
 nav3.pos.z = 10
 
-local currentshader = showCube
+local currentshader = showDemo --showCube
 local cubecaptured = false
 local screen = 1
 local fovy = 60
 local pmat, vmat
+
+function compute_parallel_error(pv1, pv2, pv3)
+		
+	-- get the relative vectors
+	local r1 = (pv1 - pv2):normalize()
+	local r2 = (pv1 - pv3):normalize()
+	-- compute error in terms of absolute angle between these:
+	local err = max(0, 1 - abs(r1:dot(r2)))
+	return err
+end
+
+function compute_orthogonal_error(x1, x2, y1, y2)
+	-- we only care about the xy components:
+	-- get the relative vectors
+	local r1 = (x1 - x2):normalize()
+	local r2 = (y1 - y2):normalize()
+	
+	return max(0, min(1, abs(r1:dot(r2))))
+end
+
+function estimate() end
+local estimate = coroutine.wrap(function(p)
+	-- the closer this gets to zero, the more parallel are the lines:
+	local parallel_err = 1
+	local parallel_move = 1
+	local orthogonal_err = 1
+	local orthogonal_turn = 1
+	
+	local parallel_point_set = {}
+	local screen_point_set = {}
+
+	-- generate a set of points to apply the parallel test to:
+	local numtests = 400
+	if #parallel_point_set == 0 then
+		parallel_move = 1
+		orthogonal_turn = 1
+		for i = 1, numtests do			
+			-- vertical:
+			local c = math.random(p.width)-1		
+			local r1 = math.random(p.height)-1
+			local r2 = math.random(p.height)-1
+			local r3 = math.random(p.height)-1
+			table.insert(parallel_point_set, 
+				vec4.fromvec3(p:getpixel(c, r1)))
+			table.insert(parallel_point_set, 
+				vec4.fromvec3(p:getpixel(c, r2)))
+			table.insert(parallel_point_set, 
+				vec4.fromvec3(p:getpixel(c, r3)))
+			
+			-- and horizontal:
+			local c1 = math.random(p.width)-1		
+			local c2 = math.random(p.width)-1		
+			local c3 = math.random(p.width)-1		
+			local r = math.random(p.height)-1
+			table.insert(parallel_point_set, 		
+				vec4.fromvec3(p:getpixel(c1, r)))
+			table.insert(parallel_point_set, 
+				vec4.fromvec3(p:getpixel(c2, r)))
+			table.insert(parallel_point_set, 
+				vec4.fromvec3(p:getpixel(c3, r)))		
+		end
+	end
+	
+	-- initial error:
+	local errtotal = 0
+	for i = 1, #screen_point_set, 3 do
+		local err = compute_parallel_error(
+			screen_point_set[i+0],
+			screen_point_set[i+1],
+			screen_point_set[i+2]
+		)
+		errtotal = errtotal + sqrt(err)
+	end
+	parallel_err = (errtotal / numtests) * (errtotal / numtests)
+	
+	
+	local tries = 0
+	while tries < 100 do
+		tries = tries + 1
+		
+		for pass = 1, 10 do
+			-- try adjusting the position:
+			local newpos = nav3.pos + vec3.random(parallel_move)
+			local q1 = nav3.q
+			local vmat = mat4.lookatu(newpos, q1:ux(), q1:uy(), q1:uz())
+			for i, v in ipairs(parallel_point_set) do	
+				-- transform by current vmat:
+				local v1 = pmat:transform(vmat:transform(v))
+				-- only care about xy positions:
+				local v2 = vec2(v1.x / v1.w, v1.y / v1.w)
+				screen_point_set[i] = v2
+			end
+			
+			local errtotal = 0
+			for i = 1, #screen_point_set, 3 do
+				local err = compute_parallel_error(
+					screen_point_set[i+0],
+					screen_point_set[i+1],
+					screen_point_set[i+2]
+				)
+				errtotal = errtotal + sqrt(err)
+			end
+			local new_parallel_err = (errtotal / numtests) * (errtotal / numtests)
+			
+			parallel_move = parallel_move * 0.99
+			if new_parallel_err < parallel_err then
+				-- keep it:
+				nav3.pos = newpos
+				parallel_err = new_parallel_err
+				tries = 0
+			end
+			
+			
+		end
+		
+		print("parallel_err", parallel_err, new_parallel_err, parallel_move)
+		print(nav3.pos)
+		gl.LineWidth(0.3)
+		gl.Color(1, 1, 1, 0.1)
+		gl.Begin(gl.LINES)
+		for i = 1, #screen_point_set, 3 do
+			gl.Vertex(screen_point_set[i+0].x, screen_point_set[i+0].y)
+			gl.Vertex(screen_point_set[i+1].x, screen_point_set[i+1].y)
+			gl.Vertex(screen_point_set[i+0].x, screen_point_set[i+0].y)
+			gl.Vertex(screen_point_set[i+2].x, screen_point_set[i+2].y)
+		end
+		gl.End()
+		
+		coroutine.yield()
+	end
+	
+	print("next orient:")
+	
+	-- initial error:
+	local errtotal = 0
+	for i = 1, #screen_point_set, 6 do
+		local err = compute_orthogonal_error(
+			screen_point_set[i+0],
+			screen_point_set[i+1],
+			screen_point_set[i+3],
+			screen_point_set[i+4]
+		)
+		errtotal = errtotal + sqrt(err)
+	end
+	orthogonal_err = (errtotal / numtests) * (errtotal / numtests)
+		
+	
+	local tries = 0
+	while tries < 100 do
+		tries = tries + 1
+		
+		for pass = 1, 10 do
+			-- orthogonal testing:
+			-- orientation:
+			local turn =  quat.fromAxisY(srandom() * orthogonal_turn * 0.05)
+						* quat.fromAxisX(srandom() * orthogonal_turn * 0.05)
+						* quat.fromAxisZ(srandom() * orthogonal_turn * 0.01)
+			turn:normalize()
+			local q1 = nav3.q * turn
+			q1:normalize()
+			local vmat = mat4.lookatu(nav3.pos, q1:ux(), q1:uy(), q1:uz())
+			
+			for i, v in ipairs(parallel_point_set) do	
+				-- transform by current vmat:
+				local v1 = pmat:transform(vmat:transform(v))
+				-- only care about xy positions:
+				local v2 = vec2(v1.x / v1.w, v1.y / v1.w)
+				screen_point_set[i] = v2
+			end
+			
+			local errtotal = 0
+			for i = 1, #screen_point_set, 6 do
+				local err = compute_orthogonal_error(
+					screen_point_set[i+0],
+					screen_point_set[i+1],
+					screen_point_set[i+3],
+					screen_point_set[i+4]
+				)
+				errtotal = errtotal + sqrt(err)
+			end
+			local new_orthogonal_err = (errtotal / numtests) * (errtotal / numtests)
+			
+			--orthogonal_turn = orthogonal_turn * 0.999
+			if new_orthogonal_err < orthogonal_err then
+				-- keep it:
+				nav3.q = q1
+				orthogonal_err = new_orthogonal_err
+				tries = 0
+			end
+			
+		end
+		-- average error:
+		print("orthogonal_err", orthogonal_err, new_orthogonal_err, orthogonal_turn)
+		
+		gl.LineWidth(0.3)
+		gl.Color(1, 1, 1, 0.1)
+		gl.Begin(gl.LINES)
+		for i = 1, #screen_point_set, 3 do
+			gl.Vertex(screen_point_set[i+0].x, screen_point_set[i+0].y)
+			gl.Vertex(screen_point_set[i+1].x, screen_point_set[i+1].y)
+			gl.Vertex(screen_point_set[i+0].x, screen_point_set[i+0].y)
+			gl.Vertex(screen_point_set[i+2].x, screen_point_set[i+2].y)
+		end
+		gl.End()
+		
+		coroutine.yield()
+	end
+	
+	print("done")
+	
+	while true do
+		coroutine.yield()
+	end
+end)
+
 
 function draw()
 	-- always update nav: 
@@ -761,7 +979,10 @@ function draw()
 		gl.Color(0.5, 0.5, 0.5, 0.5)
 		gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
 		allosphere:drawframe()
+		gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
 		
+		
+		--gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
 		-- render each projector:
 		gl.Color(1,1,1, 0.8)
 		for i, p in ipairs(projectors) do
@@ -788,112 +1009,6 @@ function draw()
 		end	
 	end
 end
-
--- the closer this gets to zero, the more parallel are the lines:
-local parallel_err = 1
-local parallel_move = 1
-
-local parallel_point_set = {}
-
-
-
-function compute_parallel_error(tv1, tv2, tv3)
-	-- we only care about the xy components:
-	local pv1 = vec2(tv1.x / tv1.w, tv1.y / tv1.w)
-	local pv2 = vec2(tv2.x / tv2.w, tv2.y / tv2.w)
-	local pv3 = vec2(tv3.x / tv3.w, tv3.y / tv3.w)	
-	
-	gl.Vertex(pv1.x, pv1.y)
-	gl.Vertex(pv2.x, pv2.y)
-	gl.Vertex(pv1.x, pv1.y)
-	gl.Vertex(pv3.x, pv3.y)
-		
-	-- get the relative vectors
-	local r1 = (pv1 - pv2):normalize()
-	local r2 = (pv1 - pv3):normalize()
-	-- compute error in terms of absolute angle between these:
-	local err = 1 - abs(r1:dot(r2))
-	return err
-end
-
-function estimate(p)
-
-	-- generate a set of points to apply the parallel test to:
-	local numtests = 400
-	if #parallel_point_set == 0 then
-		parallel_move = 1
-		for i = 1, numtests do			
-			-- vertical:
-			local c = math.random(p.width)-1		
-			local r1 = math.random(p.height)-1
-			local r2 = math.random(p.height)-1
-			local r3 = math.random(p.height)-1
-			table.insert(parallel_point_set, 
-				vec4.fromvec3(p:getpixel(c, r1)))
-			table.insert(parallel_point_set, 
-				vec4.fromvec3(p:getpixel(c, r2)))
-			table.insert(parallel_point_set, 
-				vec4.fromvec3(p:getpixel(c, r3)))
-			
-			-- and horizontal:
-			local c1 = math.random(p.width)-1		
-			local c2 = math.random(p.width)-1		
-			local c3 = math.random(p.width)-1		
-			local r = math.random(p.height)-1
-			table.insert(parallel_point_set, 		
-				vec4.fromvec3(p:getpixel(c1, r)))
-			table.insert(parallel_point_set, 
-				vec4.fromvec3(p:getpixel(c2, r)))
-			table.insert(parallel_point_set, 
-				vec4.fromvec3(p:getpixel(c3, r)))		
-		end
-	end
-	
-	
-	-- try adjusting the position:
-	local newpos = nav3.pos + vec3.random(parallel_move)
-	parallel_move = parallel_move * 0.99
-	
-	local vmat = mat4.lookatu(newpos, nav3.ux, nav3.uy, nav3.uz)
-
-	
-	gl.LineWidth(0.3)
-	gl.Begin(gl.LINES)
-	
-	local errtotal = 0
-	for i = 1, #parallel_point_set, 3 do
-		local err = compute_parallel_error(
-			pmat:transform(vmat:transform(parallel_point_set[i+0])),
-			pmat:transform(vmat:transform(parallel_point_set[i+1])),
-			pmat:transform(vmat:transform(parallel_point_set[i+2]))
-		)
-		errtotal = errtotal + sqrt(err)
-	end
-	
-	gl.End()
-	
-	local new_parallel_err = (errtotal / numtests) * (errtotal / numtests)
-	
-	if new_parallel_err < parallel_err then
-		-- keep it:
-		nav3.pos = newpos
-		parallel_err = new_parallel_err
-	end
-	
-	-- average error:
-	print("parallel_err", parallel_err, new_parallel_err, parallel_move)
-	print(nav3.pos)
-	
-	--[[
-	gl.Color(1, 1, 0)
-	gl.Begin(gl.LINES)
-	gl.Vertex(tv1)
-	gl.Vertex(tv2)
-	gl.Vertex(tv1)
-	gl.Vertex(tv3)
-	gl.End()
-	--]]
-end	
 
 function lookat_projector(i)
 	local p = projectors[i]

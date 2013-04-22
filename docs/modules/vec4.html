@@ -55,46 +55,38 @@
   <li><a href="../modules/string.html">string</a></li>
   <li><a href="../modules/table.html">table</a></li>
   <li><a href="../modules/util.html">util</a></li>
-  <li><strong>vec2</strong></li>
+  <li><a href="../modules/vec2.html">vec2</a></li>
   <li><a href="../modules/vec3.html">vec3</a></li>
-  <li><a href="../modules/vec4.html">vec4</a></li>
+  <li><strong>vec4</strong></li>
 </ul>
 
 </div>
 
 <div id="content">
 
-<h1>Module <code>vec2</code></h1>
+<h1>Module <code>vec4</code></h1>
 
-<p>vec2: A simple 2-component vector</p>
+<p>vec4: A simple 3-component vector</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#vec2">vec2&nbsp;(x, y)</a></td>
-	<td class="summary">Create a new vector with components x, y:
- (Can also be used to duplicate a vector: vec2(v))</td>
+	<td class="name" nowrap><a href="#vec4">vec4&nbsp;(x, y, z, w)</a></td>
+	<td class="summary">Create a new vector with components x, y, z:
+ (Can also be used to duplicate a vector: vec4(v))</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#copy">copy&nbsp;(v)</a></td>
 	<td class="summary">Create a copy of a vector:</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:set">vec2:set&nbsp;(x, y)</a></td>
+	<td class="name" nowrap><a href="#vec4:set">vec4:set&nbsp;(x, y, z, w)</a></td>
 	<td class="summary">Set the components of a vector:</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#fromAngle">fromAngle&nbsp;(angle)</a></td>
-	<td class="summary">Create a unit (length 1) vector from an angle</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#fromPolar">fromPolar&nbsp;(length, angle)</a></td>
-	<td class="summary">Create a vector from a polar form length and angle</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#vec2:add">vec2:add&nbsp;(v)</a></td>
+	<td class="name" nowrap><a href="#vec4:add">vec4:add&nbsp;(v)</a></td>
 	<td class="summary">Add a vector (or number) to self (in-place)</td>
 	</tr>
 	<tr>
@@ -102,7 +94,7 @@
 	<td class="summary">Add two vectors (or numbers) to create a new vector</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:sub">vec2:sub&nbsp;(v)</a></td>
+	<td class="name" nowrap><a href="#vec4:sub">vec4:sub&nbsp;(v)</a></td>
 	<td class="summary">Subtract a vector (or number) to self (in-place)</td>
 	</tr>
 	<tr>
@@ -110,7 +102,7 @@
 	<td class="summary">Subtract two vectors (or numbers) to create a new vector</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:mul">vec2:mul&nbsp;(v)</a></td>
+	<td class="name" nowrap><a href="#vec4:mul">vec4:mul&nbsp;(v)</a></td>
 	<td class="summary">Multiply a vector (or number) to self (in-place)</td>
 	</tr>
 	<tr>
@@ -118,7 +110,7 @@
 	<td class="summary">Multiply two vectors (or numbers) to create a new vector</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:div">vec2:div&nbsp;(v)</a></td>
+	<td class="name" nowrap><a href="#vec4:div">vec4:div&nbsp;(v)</a></td>
 	<td class="summary">Divide a vector (or number) to self (in-place)</td>
 	</tr>
 	<tr>
@@ -126,7 +118,7 @@
 	<td class="summary">Divide two vectors (or numbers) to create a new vector</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:pow">vec2:pow&nbsp;(v)</a></td>
+	<td class="name" nowrap><a href="#vec4:pow">vec4:pow&nbsp;(v)</a></td>
 	<td class="summary">Raise to power a vector (or number) to self (in-place)</td>
 	</tr>
 	<tr>
@@ -134,7 +126,7 @@
 	<td class="summary">Raise to power two vectors (or numbers) to create a new vector</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:mod">vec2:mod&nbsp;(v)</a></td>
+	<td class="name" nowrap><a href="#vec4:mod">vec4:mod&nbsp;(v)</a></td>
 	<td class="summary">Calculate modulo a vector (or number) to self (in-place)</td>
 	</tr>
 	<tr>
@@ -142,15 +134,15 @@
 	<td class="summary">Calculate modulo two vectors (or numbers) to create a new vector</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:relativewrap">vec2:relativewrap&nbsp;(dimx, dimy)</a></td>
+	<td class="name" nowrap><a href="#vec4:relativewrap">vec4:relativewrap&nbsp;(dimx, dimy, dimz, dimw)</a></td>
 	<td class="summary">Determine shortest relative vector in a toroidal space</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:relativewrapnew">vec2:relativewrapnew&nbsp;(dimx, dimy)</a></td>
+	<td class="name" nowrap><a href="#vec4:relativewrapnew">vec4:relativewrapnew&nbsp;(dimx, dimy)</a></td>
 	<td class="summary">Create new vector as shortest relative vector in a toroidal space</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:lerp">vec2:lerp&nbsp;(v, f)</a></td>
+	<td class="name" nowrap><a href="#vec4:lerp">vec4:lerp&nbsp;(v, f)</a></td>
 	<td class="summary">interpolate from self to v by factor of f</td>
 	</tr>
 	<tr>
@@ -158,76 +150,44 @@
 	<td class="summary">create a vector from the linear interpolation of two vectors:</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:normalize">vec2:normalize&nbsp;()</a></td>
+	<td class="name" nowrap><a href="#vec4:normalize">vec4:normalize&nbsp;()</a></td>
 	<td class="summary">set the length of the vector to 1 (unit vector)
  (randomized direction if self length was zero)</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:normalizenew">vec2:normalizenew&nbsp;()</a></td>
+	<td class="name" nowrap><a href="#vec4:normalizenew">vec4:normalizenew&nbsp;()</a></td>
 	<td class="summary">return a normalized copy of the vector
  (randomized direction if self length was zero)</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:limit">vec2:limit&nbsp;(maximum)</a></td>
+	<td class="name" nowrap><a href="#vec4:limit">vec4:limit&nbsp;(maximum)</a></td>
 	<td class="summary">Impose a maximum magnitude
  Rescales vector if greater than maximum</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:limitnew">vec2:limitnew&nbsp;(maximum)</a></td>
+	<td class="name" nowrap><a href="#vec4:limitnew">vec4:limitnew&nbsp;(maximum)</a></td>
 	<td class="summary">Create a copy of a vector, limited to a maximum magnitude
  Rescales vector if greater than maximum</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:setangle">vec2:setangle&nbsp;(a)</a></td>
-	<td class="summary">Rotate a vector to a specific angle:</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#vec2:setanglenew">vec2:setanglenew&nbsp;(a)</a></td>
-	<td class="summary">Return a copy rotated to a specific angle:</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#vec2:setmag">vec2:setmag&nbsp;(m)</a></td>
+	<td class="name" nowrap><a href="#vec4:setmag">vec4:setmag&nbsp;(m)</a></td>
 	<td class="summary">Rescale a vector to a specific magnitude:</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:setmagnew">vec2:setmagnew&nbsp;(m)</a></td>
+	<td class="name" nowrap><a href="#vec4:setmagnew">vec4:setmagnew&nbsp;(m)</a></td>
 	<td class="summary">Return a vector copy rescaled to a specific magnitude:</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:rotate">vec2:rotate&nbsp;(angle)</a></td>
-	<td class="summary">Rotate a vector by an angle</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#vec2:rotatenew">vec2:rotatenew&nbsp;(angle)</a></td>
-	<td class="summary">Create a vector by rotating a vector by an angle</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#random">random&nbsp;(mag)</a></td>
-	<td class="summary">Create a new vector in a uniformly random direction:</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#vec2:randomize">vec2:randomize&nbsp;(mag)</a></td>
-	<td class="summary">Set to a vector of magnitude 1 in a uniformly random direction:</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#vec2:length">vec2:length&nbsp;()</a></td>
+	<td class="name" nowrap><a href="#vec4:length">vec4:length&nbsp;()</a></td>
 	<td class="summary">return the length of a vector
  (Can also use #vector)</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#vec2:angle">vec2:angle&nbsp;()</a></td>
-	<td class="summary">Return the angle to the vector (direction)</td>
-	</tr>
-	<tr>
-	<td class="name" nowrap><a href="#vec2:polar">vec2:polar&nbsp;()</a></td>
-	<td class="summary">Return the magnitude and angle (polar form):</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#dot">dot&nbsp;(a, b)</a></td>
 	<td class="summary">return the dot product of two vectors:</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#vec2:distance">vec2:distance&nbsp;(p)</a></td>
+	<td class="name" nowrap><a href="#vec4:distance">vec4:distance&nbsp;(p)</a></td>
 	<td class="summary">The distance between two vectors (two points)
  (The relative distance from self to p)</td>
 	</tr>
@@ -245,18 +205,22 @@
     <h2><a name="Functions"></a>Functions</h2>
     <dl class="function">
     <dt>
-    <a name = "vec2"></a>
-    <strong>vec2&nbsp;(x, y)</strong>
+    <a name = "vec4"></a>
+    <strong>vec4&nbsp;(x, y, z, w)</strong>
     </dt>
     <dd>
-    Create a new vector with components x, y:
- (Can also be used to duplicate a vector: vec2(v))
+    Create a new vector with components x, y, z:
+ (Can also be used to duplicate a vector: vec4(v))
 
     <h3>Parameters:</h3>
     <ul>
       <li><span class="parameter">x</span>
        number or vector (optional, default 0)</li>
       <li><span class="parameter">y</span>
+       number (optional, default 0)</li>
+      <li><span class="parameter">z</span>
+       number (optional, default 0)</li>
+      <li><span class="parameter">w</span>
        number (optional, default 0)</li>
     </ul>
 
@@ -284,8 +248,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:set"></a>
-    <strong>vec2:set&nbsp;(x, y)</strong>
+    <a name = "vec4:set"></a>
+    <strong>vec4:set&nbsp;(x, y, z, w)</strong>
     </dt>
     <dd>
     Set the components of a vector:
@@ -296,6 +260,10 @@
        component</li>
       <li><span class="parameter">y</span>
        component</li>
+      <li><span class="parameter">z</span>
+       component</li>
+      <li><span class="parameter">w</span>
+      </li>
     </ul>
 
     <h3>Returns:</h3>
@@ -309,46 +277,8 @@
 
 </dd>
     <dt>
-    <a name = "fromAngle"></a>
-    <strong>fromAngle&nbsp;(angle)</strong>
-    </dt>
-    <dd>
-    Create a unit (length 1) vector from an angle
-
-    <h3>Parameters:</h3>
-    <ul>
-      <li><span class="parameter">angle</span>
-       in radians</li>
-    </ul>
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "fromPolar"></a>
-    <strong>fromPolar&nbsp;(length, angle)</strong>
-    </dt>
-    <dd>
-    Create a vector from a polar form length and angle
-
-    <h3>Parameters:</h3>
-    <ul>
-      <li><span class="parameter">length</span>
-       magnitude</li>
-      <li><span class="parameter">angle</span>
-       in radians</li>
-    </ul>
-
-
-
-
-
-</dd>
-    <dt>
-    <a name = "vec2:add"></a>
-    <strong>vec2:add&nbsp;(v)</strong>
+    <a name = "vec4:add"></a>
+    <strong>vec4:add&nbsp;(v)</strong>
     </dt>
     <dd>
     Add a vector (or number) to self (in-place)
@@ -395,8 +325,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:sub"></a>
-    <strong>vec2:sub&nbsp;(v)</strong>
+    <a name = "vec4:sub"></a>
+    <strong>vec4:sub&nbsp;(v)</strong>
     </dt>
     <dd>
     Subtract a vector (or number) to self (in-place)
@@ -443,8 +373,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:mul"></a>
-    <strong>vec2:mul&nbsp;(v)</strong>
+    <a name = "vec4:mul"></a>
+    <strong>vec4:mul&nbsp;(v)</strong>
     </dt>
     <dd>
     Multiply a vector (or number) to self (in-place)
@@ -491,8 +421,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:div"></a>
-    <strong>vec2:div&nbsp;(v)</strong>
+    <a name = "vec4:div"></a>
+    <strong>vec4:div&nbsp;(v)</strong>
     </dt>
     <dd>
     Divide a vector (or number) to self (in-place)
@@ -539,8 +469,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:pow"></a>
-    <strong>vec2:pow&nbsp;(v)</strong>
+    <a name = "vec4:pow"></a>
+    <strong>vec4:pow&nbsp;(v)</strong>
     </dt>
     <dd>
     Raise to power a vector (or number) to self (in-place)
@@ -587,8 +517,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:mod"></a>
-    <strong>vec2:mod&nbsp;(v)</strong>
+    <a name = "vec4:mod"></a>
+    <strong>vec4:mod&nbsp;(v)</strong>
     </dt>
     <dd>
     Calculate modulo a vector (or number) to self (in-place)
@@ -635,8 +565,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:relativewrap"></a>
-    <strong>vec2:relativewrap&nbsp;(dimx, dimy)</strong>
+    <a name = "vec4:relativewrap"></a>
+    <strong>vec4:relativewrap&nbsp;(dimx, dimy, dimz, dimw)</strong>
     </dt>
     <dd>
     Determine shortest relative vector in a toroidal space
@@ -647,6 +577,10 @@
        width of space (optional, default 1)</li>
       <li><span class="parameter">dimy</span>
        height of space (optional, default dimx)</li>
+      <li><span class="parameter">dimz</span>
+       depth of space (optional, default dimx)</li>
+      <li><span class="parameter">dimw</span>
+      </li>
     </ul>
 
     <h3>Returns:</h3>
@@ -660,8 +594,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:relativewrapnew"></a>
-    <strong>vec2:relativewrapnew&nbsp;(dimx, dimy)</strong>
+    <a name = "vec4:relativewrapnew"></a>
+    <strong>vec4:relativewrapnew&nbsp;(dimx, dimy)</strong>
     </dt>
     <dd>
     Create new vector as shortest relative vector in a toroidal space
@@ -685,8 +619,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:lerp"></a>
-    <strong>vec2:lerp&nbsp;(v, f)</strong>
+    <a name = "vec4:lerp"></a>
+    <strong>vec4:lerp&nbsp;(v, f)</strong>
     </dt>
     <dd>
     interpolate from self to v by factor of f
@@ -737,8 +671,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:normalize"></a>
-    <strong>vec2:normalize&nbsp;()</strong>
+    <a name = "vec4:normalize"></a>
+    <strong>vec4:normalize&nbsp;()</strong>
     </dt>
     <dd>
     set the length of the vector to 1 (unit vector)
@@ -756,8 +690,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:normalizenew"></a>
-    <strong>vec2:normalizenew&nbsp;()</strong>
+    <a name = "vec4:normalizenew"></a>
+    <strong>vec4:normalizenew&nbsp;()</strong>
     </dt>
     <dd>
     return a normalized copy of the vector
@@ -775,8 +709,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:limit"></a>
-    <strong>vec2:limit&nbsp;(maximum)</strong>
+    <a name = "vec4:limit"></a>
+    <strong>vec4:limit&nbsp;(maximum)</strong>
     </dt>
     <dd>
     Impose a maximum magnitude
@@ -799,8 +733,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:limitnew"></a>
-    <strong>vec2:limitnew&nbsp;(maximum)</strong>
+    <a name = "vec4:limitnew"></a>
+    <strong>vec4:limitnew&nbsp;(maximum)</strong>
     </dt>
     <dd>
     Create a copy of a vector, limited to a maximum magnitude
@@ -823,54 +757,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:setangle"></a>
-    <strong>vec2:setangle&nbsp;(a)</strong>
-    </dt>
-    <dd>
-    Rotate a vector to a specific angle:
-
-    <h3>Parameters:</h3>
-    <ul>
-      <li><span class="parameter">a</span>
-       new angle</li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        self
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "vec2:setanglenew"></a>
-    <strong>vec2:setanglenew&nbsp;(a)</strong>
-    </dt>
-    <dd>
-    Return a copy rotated to a specific angle:
-
-    <h3>Parameters:</h3>
-    <ul>
-      <li><span class="parameter">a</span>
-       new angle</li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        new vector
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "vec2:setmag"></a>
-    <strong>vec2:setmag&nbsp;(m)</strong>
+    <a name = "vec4:setmag"></a>
+    <strong>vec4:setmag&nbsp;(m)</strong>
     </dt>
     <dd>
     Rescale a vector to a specific magnitude:
@@ -892,8 +780,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:setmagnew"></a>
-    <strong>vec2:setmagnew&nbsp;(m)</strong>
+    <a name = "vec4:setmagnew"></a>
+    <strong>vec4:setmagnew&nbsp;(m)</strong>
     </dt>
     <dd>
     Return a vector copy rescaled to a specific magnitude:
@@ -915,100 +803,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:rotate"></a>
-    <strong>vec2:rotate&nbsp;(angle)</strong>
-    </dt>
-    <dd>
-    Rotate a vector by an angle
-
-    <h3>Parameters:</h3>
-    <ul>
-      <li><span class="parameter">angle</span>
-       in radians</li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        self
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "vec2:rotatenew"></a>
-    <strong>vec2:rotatenew&nbsp;(angle)</strong>
-    </dt>
-    <dd>
-    Create a vector by rotating a vector by an angle
-
-    <h3>Parameters:</h3>
-    <ul>
-      <li><span class="parameter">angle</span>
-       in radians</li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        new vector
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "random"></a>
-    <strong>random&nbsp;(mag)</strong>
-    </dt>
-    <dd>
-    Create a new vector in a uniformly random direction:
-
-    <h3>Parameters:</h3>
-    <ul>
-      <li><span class="parameter">mag</span>
-       magnitude (optional, default 1)</li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        new vector
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "vec2:randomize"></a>
-    <strong>vec2:randomize&nbsp;(mag)</strong>
-    </dt>
-    <dd>
-    Set to a vector of magnitude 1 in a uniformly random direction:
-
-    <h3>Parameters:</h3>
-    <ul>
-      <li><span class="parameter">mag</span>
-       magnitude (optional, default 1)</li>
-    </ul>
-
-    <h3>Returns:</h3>
-    <ol>
-
-        self
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "vec2:length"></a>
-    <strong>vec2:length&nbsp;()</strong>
+    <a name = "vec4:length"></a>
+    <strong>vec4:length&nbsp;()</strong>
     </dt>
     <dd>
     return the length of a vector
@@ -1019,42 +815,6 @@
     <ol>
 
         length
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "vec2:angle"></a>
-    <strong>vec2:angle&nbsp;()</strong>
-    </dt>
-    <dd>
-    Return the angle to the vector (direction)
-
-
-    <h3>Returns:</h3>
-    <ol>
-
-        angle (in radians)
-    </ol>
-
-
-
-
-</dd>
-    <dt>
-    <a name = "vec2:polar"></a>
-    <strong>vec2:polar&nbsp;()</strong>
-    </dt>
-    <dd>
-    Return the magnitude and angle (polar form):
-
-
-    <h3>Returns:</h3>
-    <ol>
-
-        length, angle (in radians)
     </ol>
 
 
@@ -1087,8 +847,8 @@
 
 </dd>
     <dt>
-    <a name = "vec2:distance"></a>
-    <strong>vec2:distance&nbsp;(p)</strong>
+    <a name = "vec4:distance"></a>
+    <strong>vec4:distance&nbsp;(p)</strong>
     </dt>
     <dd>
     The distance between two vectors (two points)

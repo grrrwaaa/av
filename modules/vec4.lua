@@ -37,13 +37,6 @@ local function new(x, y, z, w)
 	return ffi.new("vec4", x, y, z, w)
 end
 
---- Create a vec4 from a vec3
--- @param v vec3
--- @param w w component (optional default 1)
-function vec4.fromvec3(v, w)
-	return new(v.x, v.y, v.z, w or 1)
-end
-
 --- Create a copy of a vector:
 -- @param v vector
 function vec4.copy(v)

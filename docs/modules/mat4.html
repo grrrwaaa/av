@@ -30,6 +30,10 @@
   <li><a href="../reference.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -53,6 +57,7 @@
   <li><a href="../modules/util.html">util</a></li>
   <li><a href="../modules/vec2.html">vec2</a></li>
   <li><a href="../modules/vec3.html">vec3</a></li>
+  <li><a href="../modules/vec4.html">vec4</a></li>
 </ul>
 
 </div>
@@ -65,11 +70,48 @@
 <p></p>
 
 
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#mat4:transform">mat4:transform&nbsp;(v)</a></td>
+	<td class="summary">Computes product of matrix multiplied by column vector, r = m * vCol
+ This is typically what is required to project a vertex through a transform
+ For a better explanation, @see http://xkcd.com/184/</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "mat4:transform"></a>
+    <strong>mat4:transform&nbsp;(v)</strong>
+    </dt>
+    <dd>
+    Computes product of matrix multiplied by column vector, r = m * vCol
+ This is typically what is required to project a vertex through a transform
+ For a better explanation, @see http://xkcd.com/184/
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       vec4 column vector to multiply</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        vec4 result
+    </ol>
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->
