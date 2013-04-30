@@ -44,6 +44,8 @@ function spawn(filename)
 	L:getfield(-1, "preload")
 	L:pushcfunction(ffi.C.luaopen_lpeg)
 	L:setfield(-2, "lpeg")
+	L:pushcfunction(ffi.C.luaopen_http_parser)
+	L:setfield(-2, "http.parser")
 	L:settop(0)
 	
 	states[filename] = L

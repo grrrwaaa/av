@@ -1,4 +1,5 @@
 local gl = require "gl"
+local ffi = require "ffi"
 
 local fbo = {}
 fbo.__index = fbo
@@ -98,13 +99,35 @@ function fbo:unbind(unit)
 	gl.Disable(gl.TEXTURE_2D)
 end
 
-function fbo:startcapture()
-	self:create()
-	
+function fbo:draw()
+	self:bind()
+	gl.Begin(gl.QUADS)
+		gl.TexCoord(0, 0) gl.Vertex(0, 0)
+		gl.TexCoord(1, 0) gl.Vertex(1, 0)
+		gl.TexCoord(1, 1) gl.Vertex(1, 1)
+		gl.TexCoord(0, 1) gl.Vertex(0, 1)
+	gl.End()
+	self:unbind()
+end
+
+function fbo:bindbuffer()
 	gl.BindFramebuffer(gl.FRAMEBUFFER, self.id)
 	self.fbobound = true
 	fbo:settexture(self.currenttexture)
 	gl.DrawBuffer(gl.COLOR_ATTACHMENT0)
+end
+
+
+function fbo:unbindbuffer()
+	gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
+	self.fbobound = false
+	gl.DrawBuffer(gl.BACK)
+end
+
+function fbo:startcapture()
+	self:create()
+	
+	self:bindbuffer()
 	
 	gl.Enable(gl.SCISSOR_TEST)
 	gl.Scissor(0, 0, self.width, self.height)
@@ -114,9 +137,7 @@ function fbo:startcapture()
 end
 
 function fbo:endcapture()
-	gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
-	self.fbobound = false
-	gl.DrawBuffer(gl.BACK)
+	self:unbindbuffer()
 	gl.Disable(gl.SCISSOR_TEST)
 	gl.assert("fbo:endcapture")
 end
@@ -136,6 +157,17 @@ function fbo:generatemipmap()
 		self:unbind(0)
 	end
 end
+
+-- just the simplest implementation for now.
+-- pixel layout of ptr can be indexed as y*fbo1.width*4 + x*fbo1.height + rgba:
+function fbo:readpixels(ptr)
+	ptr = ptr or ffi.new("unsigned char [?]", self.width * self.height * 4)
+	self:bindbuffer()
+		gl.ReadPixels(0, 0, self.width, self.height, gl.RGBA, gl.UNSIGNED_BYTE, ptr)
+	self:unbindbuffer()
+	return ptr
+end
+
 setmetatable(fbo, {
 	__call = function(t, w, h, n)
 		return new(w, h, n)

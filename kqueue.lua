@@ -10,7 +10,7 @@ local C = ffi.C
 local bit = require "bit"
 local band, bor = bit.band, bit.bor
 
-local sys = require "darwin"
+local sys = require "modules.system.osx.darwin"
 
 --------------------------------------------------------------------------------
 -- Socket utils
