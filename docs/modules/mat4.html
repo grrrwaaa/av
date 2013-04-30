@@ -73,10 +73,76 @@
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
+	<td class="name" nowrap><a href="#mat4:index">mat4:index&nbsp;(column, row)</a></td>
+	<td class="summary">Get the array index in a matrix:</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mat4:getcell">mat4:getcell&nbsp;(column, row)</a></td>
+	<td class="summary">Get the value of a matrix cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mat4:setcell">mat4:setcell&nbsp;(column, row, value)</a></td>
+	<td class="summary">Set the value of a matrix cell</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mat4:row">mat4:row&nbsp;(i)</a></td>
+	<td class="summary">Get a row of the matrix as a vec4</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mat4:col">mat4:col&nbsp;(i)</a></td>
+	<td class="summary">Get a column of the matrix as a vec4</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mat4:row3">mat4:row3&nbsp;(i)</a></td>
+	<td class="summary">Get a row of the matrix as a vec3</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mat4:col3">mat4:col3&nbsp;(i)</a></td>
+	<td class="summary">Get a column of the matrix as a vec3</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mat4:copy">mat4:copy&nbsp;()</a></td>
+	<td class="summary">Create a copy of the matrix</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mat4:transposenew">mat4:transposenew&nbsp;()</a></td>
+	<td class="summary">Get transposed copy of the matrix</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mat4:set">mat4:set&nbsp;(...)</a></td>
+	<td class="summary">Set the values of a matrix from a list of arguments</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mat4:identity">mat4:identity&nbsp;()</a></td>
+	<td class="summary">Set or create identity matrix
+ If called without object (mat4.identity()), returns a new matrix
+ If called with object (mat4:identity()), resets the matrix to identity</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#mat4:transform">mat4:transform&nbsp;(v)</a></td>
 	<td class="summary">Computes product of matrix multiplied by column vector, r = m * vCol
  This is typically what is required to project a vertex through a transform
- For a better explanation, @see http://xkcd.com/184/</td>
+ For a better explanation, @see http:--xkcd.com/184/</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#mat4:transform_transposed">mat4:transform_transposed&nbsp;(v)</a></td>
+	<td class="summary">Computes product of a vec4 with the transpose of the matrix</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fromPositionAxis">fromPositionAxis&nbsp;(pos, ux, uy, uz)</a></td>
+	<td class="summary">Generate a matrix from a position and three unit axes</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#perspectivePlane">perspectivePlane&nbsp;(nearBL, nearBR, nearTL, eye, near, far)</a></td>
+	<td class="summary">Calculate perspective projection for near plane and eye coordinates
+ (nearBL, nearBR, nearTL, eye) all share the same coordinate system
+ (nearBR,nearBL) and (nearTL,nearBL) should form a right angle
+ (eye) can be set freely, allowing diverse off-axis projections
+ See Generalized Perspective Projection, Robert Kooima, 2009, EVL</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#perspectiveOffAxis">perspectiveOffAxis&nbsp;(fovy, aspect, near, far, xshift, yshift, focal)</a></td>
+	<td class="summary">Generalized off-axis perspective:</td>
 	</tr>
 </table>
 
@@ -87,13 +153,261 @@
     <h2><a name="Functions"></a>Functions</h2>
     <dl class="function">
     <dt>
+    <a name = "mat4:index"></a>
+    <strong>mat4:index&nbsp;(column, row)</strong>
+    </dt>
+    <dd>
+    Get the array index in a matrix:
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">column</span>
+       (zero-based)</li>
+      <li><span class="parameter">row</span>
+       (zero-based)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        index
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mat4:getcell"></a>
+    <strong>mat4:getcell&nbsp;(column, row)</strong>
+    </dt>
+    <dd>
+    Get the value of a matrix cell
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">column</span>
+       (zero-based)</li>
+      <li><span class="parameter">row</span>
+       (zero-based)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        value
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mat4:setcell"></a>
+    <strong>mat4:setcell&nbsp;(column, row, value)</strong>
+    </dt>
+    <dd>
+    Set the value of a matrix cell
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">column</span>
+       (zero-based)</li>
+      <li><span class="parameter">row</span>
+       (zero-based)</li>
+      <li><span class="parameter">value</span>
+       (optional, default 0)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mat4:row"></a>
+    <strong>mat4:row&nbsp;(i)</strong>
+    </dt>
+    <dd>
+    Get a row of the matrix as a vec4
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">i</span>
+       (zero-based)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        vec4
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mat4:col"></a>
+    <strong>mat4:col&nbsp;(i)</strong>
+    </dt>
+    <dd>
+    Get a column of the matrix as a vec4
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">i</span>
+       (zero-based)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        vec4
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mat4:row3"></a>
+    <strong>mat4:row3&nbsp;(i)</strong>
+    </dt>
+    <dd>
+    Get a row of the matrix as a vec3
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">i</span>
+       (zero-based)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        vec3
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mat4:col3"></a>
+    <strong>mat4:col3&nbsp;(i)</strong>
+    </dt>
+    <dd>
+    Get a column of the matrix as a vec3
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">i</span>
+       (zero-based)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        vec3
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mat4:copy"></a>
+    <strong>mat4:copy&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create a copy of the matrix
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new matrix
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mat4:transposenew"></a>
+    <strong>mat4:transposenew&nbsp;()</strong>
+    </dt>
+    <dd>
+    Get transposed copy of the matrix
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        new matrix
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mat4:set"></a>
+    <strong>mat4:set&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Set the values of a matrix from a list of arguments
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       arguments to set</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        self
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mat4:identity"></a>
+    <strong>mat4:identity&nbsp;()</strong>
+    </dt>
+    <dd>
+    Set or create identity matrix
+ If called without object (mat4.identity()), returns a new matrix
+ If called with object (mat4:identity()), resets the matrix to identity
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        matrix
+    </ol>
+
+
+
+
+</dd>
+    <dt>
     <a name = "mat4:transform"></a>
     <strong>mat4:transform&nbsp;(v)</strong>
     </dt>
     <dd>
     Computes product of matrix multiplied by column vector, r = m * vCol
  This is typically what is required to project a vertex through a transform
- For a better explanation, @see http://xkcd.com/184/
+ For a better explanation, @see http:--xkcd.com/184/
 
     <h3>Parameters:</h3>
     <ul>
@@ -106,6 +420,120 @@
 
         vec4 result
     </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "mat4:transform_transposed"></a>
+    <strong>mat4:transform_transposed&nbsp;(v)</strong>
+    </dt>
+    <dd>
+    Computes product of a vec4 with the transpose of the matrix
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       vec4 vector to multiply</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        vec4
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "fromPositionAxis"></a>
+    <strong>fromPositionAxis&nbsp;(pos, ux, uy, uz)</strong>
+    </dt>
+    <dd>
+    Generate a matrix from a position and three unit axes
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">pos</span>
+       vec3 position</li>
+      <li><span class="parameter">ux</span>
+       vec3 right-vector (unit length)</li>
+      <li><span class="parameter">uy</span>
+       vec3 up-vector (unit length)</li>
+      <li><span class="parameter">uz</span>
+       vec3 rear-vector (unit length)</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        matrix
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "perspectivePlane"></a>
+    <strong>perspectivePlane&nbsp;(nearBL, nearBR, nearTL, eye, near, far)</strong>
+    </dt>
+    <dd>
+    Calculate perspective projection for near plane and eye coordinates
+ (nearBL, nearBR, nearTL, eye) all share the same coordinate system
+ (nearBR,nearBL) and (nearTL,nearBL) should form a right angle
+ (eye) can be set freely, allowing diverse off-axis projections
+ See Generalized Perspective Projection, Robert Kooima, 2009, EVL
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">nearBL</span>
+      	bottom-left near-plane coordinate (world-space)</li>
+      <li><span class="parameter">nearBR</span>
+      	bottom-right near-plane coordinate (world-space)</li>
+      <li><span class="parameter">nearTL</span>
+      	top-left near-plane coordinate (world-space)</li>
+      <li><span class="parameter">eye</span>
+      		eye coordinate (world-space)</li>
+      <li><span class="parameter">near</span>
+      		near plane distance from eye</li>
+      <li><span class="parameter">far</span>
+      		far plane distance from eye</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "perspectiveOffAxis"></a>
+    <strong>perspectiveOffAxis&nbsp;(fovy, aspect, near, far, xshift, yshift, focal)</strong>
+    </dt>
+    <dd>
+    Generalized off-axis perspective:
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">fovy</span>
+      </li>
+      <li><span class="parameter">aspect</span>
+      </li>
+      <li><span class="parameter">near</span>
+      </li>
+      <li><span class="parameter">far</span>
+      </li>
+      <li><span class="parameter">xshift</span>
+      </li>
+      <li><span class="parameter">yshift</span>
+      </li>
+      <li><span class="parameter">focal</span>
+      </li>
+    </ul>
+
 
 
 

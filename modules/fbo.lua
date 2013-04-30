@@ -121,6 +121,12 @@ function fbo:endcapture()
 	gl.assert("fbo:endcapture")
 end
 
+function fbo:capture(func, ...)
+	self:startcapture()
+	func(...)
+	self:endcapture()
+end
+
 function fbo:generatemipmap()	
 	for i, tex in ipairs(self.tex) do
 		-- FBOs don't generate mipmaps by default; do it here:
@@ -130,13 +136,6 @@ function fbo:generatemipmap()
 		self:unbind(0)
 	end
 end
-
-function fbo:capture(func, ...)
-	self:startcapture()
-	func(...)
-	self:endcapture()
-end
-
 setmetatable(fbo, {
 	__call = function(t, w, h, n)
 		return new(w, h, n)

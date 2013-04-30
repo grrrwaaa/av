@@ -118,6 +118,9 @@ typedef struct av_clang_visitor {
 } av_clang_visitor;
 AV_EXPORT int av_clang_visit(CXCursor cursor, CXCursor parent, void * ud);
 
+typedef struct lua_State lua_State;
+AV_EXPORT int luaopen_lpeg (lua_State *L);
+
 #ifdef __cplusplus
 }
 #endif

@@ -38,6 +38,14 @@ function spawn(filename)
 	-- create a child Lua state to run user code in:
 	L = lua.open()
 	L:openlibs()
+	
+	-- preload lpeg:
+	L:getglobal("package")
+	L:getfield(-1, "preload")
+	L:pushcfunction(ffi.C.luaopen_lpeg)
+	L:setfield(-2, "lpeg")
+	L:settop(0)
+	
 	states[filename] = L
 	
 	-- 'prime' this state with the module search path and built-in FFI header:

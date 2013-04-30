@@ -5,6 +5,7 @@ local sin, cos = math.sin, math.cos
 local atan2 = math.atan2
 local acos = math.acos
 local random = math.random
+local min, max = math.min, math.max
 local pi = math.pi
 local twopi = pi * 2
 local format = string.format
@@ -41,6 +42,13 @@ end
 -- @param v vector
 function vec3.copy(v)
 	return new(v.x, v.y, v.z)
+end
+
+--- Create a copy of a vec2 vector:
+-- @param v vec3
+-- @param z number
+function vec3.fromvec2(v, z)
+	return new(v.x, v.y, z or 0)
 end
 
 --- Set the components of a vector:

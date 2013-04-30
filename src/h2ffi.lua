@@ -10,7 +10,7 @@ local r = {
 	"local header = [[",
 }
 
-local h = io.popen(string.format("gcc -E %s", input))
+local h = io.popen(string.format("gcc -E -P %s", input))
 for l in h:lines() do
 	local s = l:gsub("(#[^\n]+)", "")
 	if #s > 0 then

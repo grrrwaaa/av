@@ -446,14 +446,14 @@ end
 
 function quat:axisAngle()
 	local unit = self.w*self.w
-	if unit < EPSILON then
+	if unit < 0.999999 then
 		-- |cos x| must always be less than or equal to 1!
 		local invsin = 1/sqrt(1 - unit) --approx = 1/sqrt(1 - cos^2(theta/2))
 		return 2*acos(self.w), vec3(self.x*invsin, self.y*invsin, self.z*invsin)
 	else
 		if self.x == 0 and self.y == 0 and self.z == 0 then
 			-- change to some default axis:
-			return 0, vec3()
+			return 0, vec3.random()
 		else
 			-- for small angles, axis is roughly equal to i,j,k components
 			-- axes are close to zero, should be normalized:

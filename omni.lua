@@ -27,49 +27,66 @@ local usefitting = true
 local datapath = "/Users/grahamwakefield/code/calibration-current"
 local projectors = {}
 
-function import(filename)
-	local f = C.open(filename, C.O_RDONLY)
-	assert(f ~= -1, filename)	
-	local dim = ffi.new("int32_t[2]")
-	C.read(f, dim, ffi.sizeof(dim))
-	local w = dim[1]
-	local h = dim[0] / 3
-	local elems = w*h	
-	print(string.format("%s x %s pixels (%s total)", w, h, elems))
-	local t = ffi.new("float[?]", elems)
-	local u = ffi.new("float[?]", elems)
-	local v = ffi.new("float[?]", elems)
-	C.read(f, t, ffi.sizeof(t))
-	C.read(f, u, ffi.sizeof(u))
-	C.read(f, v, ffi.sizeof(v))	
-	local data = ffi.new("vec4f[?]", elems)
-	for y = 0, h-1 do
-		for x = 0, w-1 do
-			local idx = y*w + x
-			local v = vec3(t[idx], u[idx], v[idx])
-			
-			-- now fit it:
-			if usefitting then
-				v = allosphere:capsuleFitting(v) 
-			end
-			
-			data[idx].x = v.x
-			data[idx].y = v.y
-			data[idx].z = v.z
-			
-		end
-	end
-	C.close(f)
-	
-	return {
-		width = w,
-		height = h,
-		elems = elems,
-		
-		map3D = data,
-	}
-end
+--[[
 
+If we have the camera in the right place (at the center of projection), the projected image on the surface looks almost like a proper rectangle. There should be a way to use this fact to derive the pose of projection (pos + unit vectors). Facts:
+- lines between adjacent pixels are near horizontal (or vertical)
+- spacing between pixels is even
+- aspect ratio of pixels is regular
+
+There's a lot of data to work from, so this is a good candidate for optimization.
+
+We assume the projector has a regular perspective and view matrix, and project the raw points through this matrix to get the screen locations. Then optimize this matrix by stages:
+
+1. move view until lines become straight (but not parallel)
+	- initial guess from eyeballing
+	- mutate projector location
+	- pick random pairs on a row or column
+		-> unit vector error between near and far neighbors is minimized
+2. orient view (XY) until lines become parallel/orthogonal
+	- initial guess from projection-to-center and mid-side axes
+	- mutate X or Y rotation
+		- probably mostly X rotation (off-axis center for table/ceiling-style 
+	- pick random pairs of h or v lines
+		-> unit vector error between lines is minimized
+	- pick random pairs of h and v lines
+		-> orthogonality error between h/v lines is minimizedprojectors)
+
+[possible to interleave steps (1) and (2)]		
+	
+3. orient view (Z) until lines become properly horizontal/vertical
+	-> simple rotation, probably minimal
+4. derive scale parameters from corners
+	- scale by fovy/fovx (fovy, aspect)
+	- initial guess of aspect from projector resolution
+5. derive shift parameters from center
+	- shift by off-axis projection matrix
+
+If the assumption holds, then we should be able to project a raw map3D point (on the surface of the screen) through the matrix and get the corresponding UV coordinate of the point back with minimal error. 
+
+We could plot the error to see how close we got, and see what shape the error surface has. The most important places to be correct are the edges (overlaps). If using several matrices is better, we can do that and interpolate between them.
+
+The last step is to bake a cubemap of projected points.
+
+Calculating depth is trickier, but tractable
+Calculating stereo offset is also trickier
+
+--------------------------------------------------------------------------------
+
+The assumption: there is an imaginary projection plane where the UV origin is exactly 1 unit distance from the lens. The desired UV coordinates are on this plane. We need to know the orientation of the plane, and where the UV origin is relative to the projector. The orientation of the plane can be given in terms of the two (orthogonal) vectors on the surface. The position of UV origin can be given as a unit vector relative to the projector.
+
+Initial guesses can be made:
+	The UV origin could be the unit vector from projector to the center pixel.
+	The V vector direction can be estimated from the top and bottom middle pixels (but what about magnitude?)
+	Same for the U.
+
+Then for any vertex, we only need to 
+	1) make it relative to the plane
+	2) intersect it with the plane
+
+Another way: we need to find the center of projection axis (probably near to the bottom or top edge), and the UV scaling factors. The projection plane is centered on that axis, and then UV coordinates are shifted & scaled.
+
+--]]
 
 local phong = shader()
 phong:vertex[[
@@ -387,66 +404,8 @@ local initial_estimates = {
 	vec3(0.768,		-3.5495,	0.942),
 }
 
---[[
 
-If we have the camera in the right place (at the center of projection), the projected image on the surface looks almost like a proper rectangle. There should be a way to use this fact to derive the pose of projection (pos + unit vectors). Facts:
-- lines between adjacent pixels are near horizontal (or vertical)
-- spacing between pixels is even
-- aspect ratio of pixels is regular
 
-There's a lot of data to work from, so this is a good candidate for optimization.
-
-We assume the projector has a regular perspective and view matrix, and project the raw points through this matrix to get the screen locations. Then optimize this matrix by stages:
-
-1. move view until lines become straight (but not parallel)
-	- initial guess from eyeballing
-	- mutate projector location
-	- pick random pairs on a row or column
-		-> unit vector error between near and far neighbors is minimized
-2. orient view (XY) until lines become parallel/orthogonal
-	- initial guess from projection-to-center and mid-side axes
-	- mutate X or Y rotation
-		- probably mostly X rotation (off-axis center for table/ceiling-style 
-	- pick random pairs of h or v lines
-		-> unit vector error between lines is minimized
-	- pick random pairs of h and v lines
-		-> orthogonality error between h/v lines is minimizedprojectors)
-
-[possible to interleave steps (1) and (2)]		
-	
-3. orient view (Z) until lines become properly horizontal/vertical
-	-> simple rotation, probably minimal
-4. derive scale parameters from corners
-	- scale by fovy/fovx (fovy, aspect)
-	- initial guess of aspect from projector resolution
-5. derive shift parameters from center
-	- shift by off-axis projection matrix
-
-If the assumption holds, then we should be able to project a raw map3D point (on the surface of the screen) through the matrix and get the corresponding UV coordinate of the point back with minimal error. 
-
-We could plot the error to see how close we got, and see what shape the error surface has. The most important places to be correct are the edges (overlaps). If using several matrices is better, we can do that and interpolate between them.
-
-The last step is to bake a cubemap of projected points.
-
-Calculating depth is trickier, but tractable
-Calculating stereo offset is also trickier
-
---------------------------------------------------------------------------------
-
-The assumption: there is an imaginary projection plane where the UV origin is exactly 1 unit distance from the lens. The desired UV coordinates are on this plane. We need to know the orientation of the plane, and where the UV origin is relative to the projector. The orientation of the plane can be given in terms of the two (orthogonal) vectors on the surface. The position of UV origin can be given as a unit vector relative to the projector.
-
-Initial guesses can be made:
-	The UV origin could be the unit vector from projector to the center pixel.
-	The V vector direction can be estimated from the top and bottom middle pixels (but what about magnitude?)
-	Same for the U.
-
-Then for any vertex, we only need to 
-	1) make it relative to the plane
-	2) intersect it with the plane
-
-Another way: we need to find the center of projection axis (probably near to the bottom or top edge), and the UV scaling factors. The projection plane is centered on that axis, and then UV coordinates are shifted & scaled.
-
---]]
 function configure(self)
 	local pos = self.projector_position
 	local map3D = self.map3D
@@ -516,7 +475,7 @@ function configure(self)
 	self.tm = tm
 end
 
-for i = 1, 12 do
+for i = 9, 9 do
 	local self = import(string.format("%s/map3D%s.bin", datapath, i))
 	
 	self.projector_position = initial_estimates[i]
@@ -898,9 +857,13 @@ function draw()
 	end)
 	fbos:generatemipmap()	
 	
+	-- additive blending:
+	gl.Enable(gl.BLEND)
+	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE)
+	
 	-- now show the results:
 	gl.Viewport(0, 0, win.width, win.height)
-	if false and screen and projectors[screen] then
+	if true and screen and projectors[screen] then
 		-- show the view from one screen only:
 		gl.MatrixMode(gl.PROJECTION)
 		gl.LoadIdentity()
@@ -1046,8 +1009,18 @@ function keydown(k)
 	end
 end
 
-function keyup(k)
-	nav3:keyup(k)
-end
+function keyup(k) nav3:keyup(k) end
 
-lookat_projector(1)
+--lookat_projector(1)
+
+
+
+
+
+
+
+
+
+
+
+

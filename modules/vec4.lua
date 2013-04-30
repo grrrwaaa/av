@@ -5,6 +5,7 @@ local sin, cos = math.sin, math.cos
 local atan2 = math.atan2
 local acos = math.acos
 local random = math.random
+local min, max = math.min, math.max
 local pi = math.pi
 local twopi = pi * 2
 local format = string.format
@@ -38,15 +39,32 @@ local function new(x, y, z, w)
 end
 
 --- Create a copy of a vector:
--- @param v vector
+-- @param v vector to copy
 function vec4.copy(v)
 	return new(v.x, v.y, v.z, v.w)
 end
 
+--- Create a copy of a vec2 vector:
+-- @param v vec3
+-- @param w number (optional, default 1)
+function vec4.fromvec3(v, w)
+	return new(v.x, v.y, v.z, w or 1)
+end
+
+--- Create a copy of a vec3 vector:
+-- @param v vec3
+-- @param z number (optional, default 0)
+-- @param w number (optional, default 1)
+function vec4.fromvec2(v, z, w)
+	return new(v.x, v.y, z or 0, w or 1)
+end
+
+
 --- Set the components of a vector:
--- @param x component
--- @param y component
--- @param z component
+-- @param x component (optional, default 0)
+-- @param y component (optional, default 0)
+-- @param z component (optional, default 0)
+-- @param w component (optional, default 0)
 -- @return self
 function vec4:set(x, y, z, w)
 	if type(x) == "number" or type(x) == "nil" then
@@ -353,6 +371,7 @@ end
 -- @param dimx width of space (optional, default 1)
 -- @param dimy height of space (optional, default dimx)
 -- @param dimz depth of space (optional, default dimx)
+-- @param dimw fourth dimension of space (optional, default dimx)
 -- @return self
 function vec4:relativewrap(dimx, dimy, dimz, dimw)
 	local dimx = dimx or 1
@@ -373,9 +392,11 @@ end
 --- Create new vector as shortest relative vector in a toroidal space
 -- @param dimx width of space (optional, default 1)
 -- @param dimy height of space (optional, default dimx)
+-- @param dimz depth of space (optional, default dimx)
+-- @param dimw fourth dimension of space (optional, default dimx)
 -- @return new vector
-function vec4:relativewrapnew(dimx, dimy)
-	return self:copy():relativewrap(dimx, dimy)
+function vec4:relativewrapnew(dimx, dimy, dimz, dimw)
+	return self:copy():relativewrap(dimx, dimy, dimz, dimw)
 end
 
 --- interpolate from self to v by factor of f

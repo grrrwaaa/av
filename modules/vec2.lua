@@ -5,6 +5,7 @@ local sin, cos = math.sin, math.cos
 local atan2 = math.atan2
 local acos = math.acos
 local random = math.random
+local min, max = math.min, math.max
 local pi = math.pi
 local twopi = pi * 2
 local format = string.format
@@ -460,8 +461,8 @@ function vec2:rotate(angle)
 	local c = cos(angle)
 	local s = sin(angle)
 	local x, y = self.x, self.y
-	self.x = v.x * c + v.y * s
-	self.y = v.y * c - v.x * s
+	self.x = x * c - y * s
+	self.y = y * c + x * s
 	return self
 end
 
@@ -472,8 +473,8 @@ function vec2:rotatenew(angle)
 	local c = cos(angle)
 	local s = sin(angle)
 	return new(
-		self.x * c + self.y * s,
-		self.y * c - self.x * s
+		self.x * c - self.y * s,
+		self.y * c + self.x * s
 	)
 end
 
