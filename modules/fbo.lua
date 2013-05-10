@@ -1,4 +1,5 @@
 local gl = require "gl"
+local glu = require "glu"
 local ffi = require "ffi"
 
 local fbo = {}
@@ -69,7 +70,7 @@ function fbo:create()
 		gl.BindRenderbuffer(gl.RENDERBUFFER, 0)
 		gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
 		
-		gl.assert("intializing fbo")
+		glu.assert("intializing fbo")
 	end
 end
 
@@ -133,13 +134,13 @@ function fbo:startcapture()
 	gl.Scissor(0, 0, self.width, self.height)
 	gl.Viewport(0, 0, self.width, self.height)
 	
-	gl.assert("fbo:startcapture")
+	glu.assert("fbo:startcapture")
 end
 
 function fbo:endcapture()
 	self:unbindbuffer()
 	gl.Disable(gl.SCISSOR_TEST)
-	gl.assert("fbo:endcapture")
+	glu.assert("fbo:endcapture")
 end
 
 function fbo:capture(func, ...)
@@ -153,7 +154,7 @@ function fbo:generatemipmap()
 		-- FBOs don't generate mipmaps by default; do it here:
 		self:bind(0, i)
 		gl.GenerateMipmap(gl.TEXTURE_2D)
-		gl.assert("generating mipmap");
+		glu.assert("generating mipmap");
 		self:unbind(0)
 	end
 end

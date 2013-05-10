@@ -1,4 +1,5 @@
 local gl = require "gl"
+local glu = require "glu"
 
 local cubefbo = {}
 cubefbo.__index = cubefbo
@@ -85,7 +86,7 @@ function cubefbo:create()
 		gl.BindRenderbuffer(gl.RENDERBUFFER, 0)
 		gl.BindFramebuffer(gl.FRAMEBUFFER, 0)
 		
-		gl.assert("intializing cubefbo")
+		glu.assert("intializing cubefbo")
 	end
 end
 
@@ -127,7 +128,7 @@ function cubefbo:startcapture()
 	gl.Scissor(0, 0, self.width, self.height)
 	gl.Viewport(0, 0, self.width, self.height)
 	
-	gl.assert("cubefbo:startcapture")
+	glu.assert("cubefbo:startcapture")
 end
 
 function cubefbo:face(face)
@@ -139,14 +140,14 @@ function cubefbo:endcapture()
 	self.cubefbobound = false
 	gl.DrawBuffer(gl.BACK)
 	gl.Disable(gl.SCISSOR_TEST)
-	gl.assert("cubefbo:endcapture")
+	glu.assert("cubefbo:endcapture")
 end
 
 function cubefbo:generatemipmap()	
 	-- FBOs don't generate mipmaps by default; do it here:
 	self:bind()
 	gl.GenerateMipmap(gl.TEXTURE_CUBE_MAP)
-	gl.assert("generating mipmap");
+	glu.assert("generating mipmap");
 	self:unbind()
 end
 

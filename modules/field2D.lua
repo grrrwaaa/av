@@ -2,6 +2,7 @@
 
 local ffi = require "ffi"
 local gl = require "gl"
+local glu = require "glu"
 local sketch = gl.sketch
 
 local floor = math.floor
@@ -415,10 +416,10 @@ field2D.drawHueRange = (function()
 			
 			]]
 			program = gl.Program(vert, frag)
-			gl.assert("creating shader")
+			glu.assert("creating shader")
 			gl.UseProgram(program)
 			program_scale = gl.GetUniformLocation(program, "scale")
-			gl.assert("binding shader")
+			glu.assert("binding shader")
 		else
 			gl.UseProgram(program)
 		end
@@ -466,12 +467,12 @@ field2D.drawRGB = (function()
 			
 			]]
 			program = gl.Program(vert, frag)
-			gl.assert("creating shader")
+			glu.assert("creating shader")
 			gl.UseProgram(program)
 			program_r = gl.GetUniformLocation(program, "red")
 			program_g = gl.GetUniformLocation(program, "green")
 			program_b = gl.GetUniformLocation(program, "blue")	
-			gl.assert("binding shader")
+			glu.assert("binding shader")
 		else
 			gl.UseProgram(program)
 		end
@@ -526,10 +527,10 @@ field2D.drawWeird = (function()
 			
 			]]
 			program = gl.Program(vert, frag)
-			gl.assert("creating shader")
+			glu.assert("creating shader")
 			gl.UseProgram(program)
 			program_scale = gl.GetUniformLocation(program, "scale")
-			gl.assert("binding shader")
+			glu.assert("binding shader")
 		else
 			gl.UseProgram(program)
 		end
@@ -593,11 +594,11 @@ field2D.drawFlow = (function()
 			
 			]]
 			program = gl.Program(vert, frag)
-			gl.assert("creating shader")
+			glu.assert("creating shader")
 			gl.UseProgram(program)
 			program_fx = gl.GetUniformLocation(program, "fx")
 			program_fy = gl.GetUniformLocation(program, "fy")
-			gl.assert("binding shader")
+			glu.assert("binding shader")
 		else
 			gl.UseProgram(program)
 		end

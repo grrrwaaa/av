@@ -1,4 +1,5 @@
 local gl = require "gl"
+local glu = require "glu"
 
 local texture = {}
 texture.__index = texture
@@ -72,7 +73,7 @@ function texture:create()
 		end
 		gl.BindTexture(self.target, 0)
 		self.bound = false
-		gl.assert("intializing texture")
+		glu.assert("intializing texture")
 	end
 end
 

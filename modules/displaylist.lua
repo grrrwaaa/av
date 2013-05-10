@@ -1,6 +1,7 @@
 --- displaylist: A friendly wrapper for OpenGL display lists
 
 local gl = require "gl"
+local glu = require "glu"
 
 local displaylist = {}
 displaylist.__index = displaylist
@@ -23,7 +24,7 @@ function displaylist:draw()
 		gl.NewList(id, gl.COMPILE)
 		self.ctor()
 		gl.EndList()
-		gl.assert("displaylist")
+		glu.assert("displaylist")
 		self.id = id
 	end
 	gl.CallList(self.id)

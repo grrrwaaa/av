@@ -1,6 +1,7 @@
 -- shader: Friendly wrapper for OpenGL GLSL shaders
 
 local gl = require "gl"
+local glu = require "glu"
 local ffi = require "ffi"
 local util = require "util"
 
@@ -113,7 +114,7 @@ function shader:bind()
 		
 	end
 	gl.UseProgram(self.id)
-	gl.assert("binding shader")
+	glu.assert("binding shader")
 	self.bound = true
 	return self
 end
