@@ -66,17 +66,34 @@
 
 <h1>Module <code>util</code></h1>
 
-<p>return an object that will call func when it is garbage collected:
- (Sentinel pattern)
- Note: this is not necessary in Lua 5.2 where tables can have __gc metamethods</p>
+<p>A collection of highly re-usable Lua utilities</p>
 <p></p>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#table_tostring">table_tostring&nbsp;(t)</a></td>
-	<td class="summary">return a pretty-formatted string representation of a table:</td>
+	<td class="name" nowrap><a href="#gc">gc&nbsp;(self, gcfunc)</a></td>
+	<td class="summary">return an object that will call func when it is garbage collected:
+ (Sentinel pattern)
+ Note: this is not necessary in Lua 5.2 where tables can have __gc metamethods</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#conflat">conflat&nbsp;(v, sep, ext)</a></td>
+	<td class="summary">Return a string concatenation of all elements in v
+ Similar to table.concat, however conflat also recurses to all nested tables
+ and calls tostring() on all non-table values
+ Any nested functions will also be invoked, and conflat called on their results.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#template">template&nbsp;(source)</a></td>
+	<td class="summary">Generate a template-filling function based on a template string
+ The template source can contain various template substitution items, indicated by the "$" character followed by a valid Lua variable name, e.g.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tostring">tostring&nbsp;(t)</a></td>
+	<td class="summary">Return a pretty-formatted string representation of a table
+ Array portion is printed after dict portion.</td>
 	</tr>
 </table>
 
@@ -87,16 +104,103 @@
     <h2><a name="Functions"></a>Functions</h2>
     <dl class="function">
     <dt>
-    <a name = "table_tostring"></a>
-    <strong>table_tostring&nbsp;(t)</strong>
+    <a name = "gc"></a>
+    <strong>gc&nbsp;(self, gcfunc)</strong>
     </dt>
     <dd>
-    return a pretty-formatted string representation of a table:
+    return an object that will call func when it is garbage collected:
+ (Sentinel pattern)
+ Note: this is not necessary in Lua 5.2 where tables can have __gc metamethods
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">self</span>
+       an object to pass to this gcfunc</li>
+      <li><span class="parameter">gcfunc</span>
+       a function to call</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        obj (for method chaining)
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "conflat"></a>
+    <strong>conflat&nbsp;(v, sep, ext)</strong>
+    </dt>
+    <dd>
+    Return a string concatenation of all elements in v
+ Similar to table.concat, however conflat also recurses to all nested tables
+ and calls tostring() on all non-table values
+ Any nested functions will also be invoked, and conflat called on their results.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">v</span>
+       the item to concat (e.g. a list)</li>
+      <li><span class="parameter">sep</span>
+      </li>
+      <li><span class="parameter">ext</span>
+      </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        string
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "template"></a>
+    <strong>template&nbsp;(source)</strong>
+    </dt>
+    <dd>
+    Generate a template-filling function based on a template string
+ The template source can contain various template substitution items, indicated by the "$" character followed by a valid Lua variable name, e.g.  "$foo", "$_x1", etc.
+ A template item can optionally be terminated using "{}", in order to distinguish the item name from plain text. E.g. "$foo{}plain" defines the item "foo" followed by the string "plain".
+ The returned function takes a Lua table as an argument. All substitution item names index corresponding fields in this table to find their data. If the data value is a table, util.conflat() is used to convert this to a string.
+ If a template item is preceded by a newline and whitespace, the newline and whitespace are repeated for all items substituted (via the argument to conflat()).
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">source</span>
+       string template source</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        function to apply a model
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "tostring"></a>
+    <strong>tostring&nbsp;(t)</strong>
+    </dt>
+    <dd>
+    Return a pretty-formatted string representation of a table
+ Array portion is printed after dict portion.
+ Keys are sorted alphanumerically.
+ Could also be used as a replacement of the global tostring()
 
     <h3>Parameters:</h3>
     <ul>
       <li><span class="parameter">t</span>
-       the table to print</li>
+       the value (e.g. table) to print</li>
     </ul>
 
     <h3>Returns:</h3>

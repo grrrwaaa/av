@@ -12,6 +12,7 @@ echo generate FFI code
 luajit h2ffi.lua av.h av_ffi_header
 
 echo clean
+rm -f lpeg-0.11/*.o
 rm -f *.o
 rm -f *.d
 
@@ -72,8 +73,7 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	CFLAGS="-O3 -Wall -fPIC -ffast-math -Wno-unknown-pragmas -MMD"
 	DEFINES="-D_GNU_SOURCE -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__"
 	INCLUDEPATHS="-I/usr/local/include/luajit-2.0 -I/usr/include/luajit-2.0 -Irtaudio-4.0.11 -Ilpeg-0.11 -Iinclude"
-	SOURCES="av.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp lpeg-0.11/*.c"
-	
+	SOURCES="av.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp"
 	
 	LINK=$CC
 	LDFLAGS="-w -rdynamic -Wl,-E "
@@ -83,8 +83,9 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	
 	echo compile
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS $SOURCES
+	gcc -c $CFLAGS $DEFINES $INCLUDEPATHS lpeg-0.11/*.c
 	echo link
-	$LINK $LDFLAGS $LINKERPATHS $LIBRARIES -Wl,-whole-archive *.o -Wl,-no-whole-archive $LIBRARIES -o $PRODUCT_NAME
+	$LINK $LDFLAGS -Wl,-whole-archive *.o -Wl,-no-whole-archive $LINKERPATHS  $LIBRARIES -o $PRODUCT_NAME
 
 	echo copy
 	cp $PRODUCT_NAME ../
