@@ -3,6 +3,10 @@ local audio = require "audio"
 local ffi = require "ffi"
 local C = ffi.C
 
+local util = require "util"
+local conflat = util.conflat
+local template = util.template
+
 local win = require "window"
 win:setdim(100, 50)
 
@@ -15,26 +19,6 @@ local id = 0
 local gensym = function(name)
 	id = id + 1
 	return format("%s_%d", name, id)
-end
-
-local function conflat(v, sep)
-	if type(v) == "table" then
-		local args = {}
-		for i, e in ipairs(v) do args[i] = conflat(e, sep) end
-		return concat(args, sep)
-	elseif type(v) == "nil" then
-		return ""
-	else
-		return tostring(v)
-	end
-end
-
-function template(str)
-	return function(dict)
-		return (str:gsub("(%s*)%$([%a_][%w_]*)[{}]*", function(ind, name)
-			return ind .. conflat(dict[name], ind)
-		end))
-	end
 end
 
 local set_mt = {}
