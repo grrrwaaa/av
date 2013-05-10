@@ -1,6 +1,7 @@
 -- glu: binding to the OpenGL Utility library
 
 local ffi  = require( "ffi" )
+local gl = require "gl"
 
 local libs = ffi_glu_libs or {
    OSX     = { x86 = "OpenGL.framework/OpenGL", x64 = "OpenGL.framework/OpenGL" },
@@ -82,6 +83,14 @@ void           gluTessVertex (GLUtesselator* tess, GLdouble *location, GLvoid* d
 GLint          gluUnProject (GLdouble winX, GLdouble winY, GLdouble winZ, const GLdouble *model, const GLdouble *proj, const GLint *view, GLdouble* objX, GLdouble* objY, GLdouble* objZ);
 GLint          gluUnProject4 (GLdouble winX, GLdouble winY, GLdouble winZ, GLdouble clipW, const GLdouble *model, const GLdouble *proj, const GLint *view, GLdouble nearPlane, GLdouble farPlane, GLdouble* objX, GLdouble* objY, GLdouble* objZ, GLdouble* objW);
 ]]
+
+function glu.assert(msg)
+	local err = gl.GetError()
+	if err ~= gl.NO_ERROR then
+		local ok, str = pcall(glu.ErrorString, err)
+		error(string.format("gl error (%d): %s %s", err, msg, (ok and ffi.string(str) or "?")), 2)
+	end
+end
 
 return setmetatable({}, {
 	__index = function(t, k)

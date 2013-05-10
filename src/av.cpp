@@ -130,7 +130,11 @@ av_Window_GLUT win;
 // the application Lua state (not used by user scripts):
 lua_State * L = 0;
 
+bool firstcb = true;
+
 void av_tick() {
+	printf(".");
+
 	lua_getfield(L, LUA_REGISTRYINDEX, "debug.traceback");
 	int debugtraceback = lua_gettop(L);
 
@@ -150,6 +154,8 @@ void av_tick() {
 
 void timerfunc(int id) {
 	static int f = 0;
+	
+	if (firstcb) { printf("first callback timer\n"); firstcb = false; }
 
 	// trigger filewatching etc:
 	if (f++ > 10) {
@@ -287,11 +293,14 @@ void onpassivemotion(int x, int y) {
 }
 
 void onvisibility(int state) {
+	if (firstcb) { printf("first callback vis\n"); firstcb = false; }
 	if (win.onvisible) (win.onvisible)(&win, state);
 }
 
-void ondisplay() {}
+void ondisplay() {
+	if (firstcb) { printf("first callback display\n"); firstcb = false; }}
 void onreshape(int w, int h) {
+	if (firstcb) { printf("first callback reshape\n"); firstcb = false; }
 	win.width = w;
 	win.height = h;
 	if (!win.is_fullscreen) {
@@ -301,6 +310,7 @@ void onreshape(int w, int h) {
 	if (win.onresize) {
 		(win.onresize)(&win, w, h);
 	}
+	glutPostRedisplay();
 }
 
 #ifdef AV_WINDOWS
@@ -461,11 +471,17 @@ lua_State * av_init_lua() {
 	luaL_dostring(L, "package.path = './modules/?.lua;./modules/?/init.lua;'..package.path");
 	lua_settop(L, 0); // clean stack
 	return L;
+} 
+
+void gluterr( const char *fmt, va_list ap) {
+
 }
 
 int main(int argc, char * argv[]) {
 
-
+	// configure GLUT:
+	glutInit(&argc, argv);
+	
 	// initialize paths:
 	// getpaths(argc, argv);	
 	
@@ -497,20 +513,17 @@ int main(int argc, char * argv[]) {
 	chdir(startpath);
 	
 	
-	// configure GLUT:
-	glutInit(&argc, argv);
 	
 //	screen_width = glutGet(GLUT_SCREEN_WIDTH);
 //	screen_height = glutGet(GLUT_SCREEN_HEIGHT);	
-	//glutInitDisplayString("rgb double depth>=16 alpha samples<=4");
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
+	glutInitDisplayString("rgb double depth>=16 alpha samples<=4");
+	//glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH); // | GLUT_MULTISAMPLE);
 	glutInitWindowSize(win.width, win.height);
 	glutInitWindowPosition(0, 0);
 	
-	win.id = glutCreateWindow("");	// << FAIL?
-	
-	//printf("initializing window\n");
+	win.id = glutCreateWindow("");
 	glutSetWindow(win.id);
+	printf("initializing window\n");
 	
 	// Force VSYNC on.
 	#if defined AV_OSX
