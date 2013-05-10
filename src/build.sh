@@ -83,7 +83,7 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	
 	echo compile
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS $SOURCES
-	gcc -c $CFLAGS $DEFINES $INCLUDEPATHS lpeg-0.11/*.c
+	gcc -c $CFLAGS $DEFINES $INCLUDEPATHS lpeg-0.11/*.c http-parser/*.c
 	echo link
 	$LINK $LDFLAGS -Wl,-whole-archive *.o -Wl,-no-whole-archive $LINKERPATHS  $LIBRARIES -o $PRODUCT_NAME
 

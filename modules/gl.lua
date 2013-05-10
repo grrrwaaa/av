@@ -4313,17 +4313,19 @@ if ffi.os == "Windows" then
 	]]
 end
 
+
 local function glfun(k) return lib["gl"..k] end
-local function wglfun(k)
-	local name = "gl"..k
-	local funcptr = lib.wglGetProcAddress(name)
-	assert(funcptr ~= nil)
-	local protoname = string.format("PFN%sPROC", name:upper())
-	local castfunc = ffi.cast(protoname, funcptr)
-	return castfunc
-end
 
 if ffi.os == "Windows" then
+	local function wglfun(k)
+		local name = "gl"..k
+		local funcptr = lib.wglGetProcAddress(name)
+		assert(funcptr ~= nil)
+		local protoname = string.format("PFN%sPROC", name:upper())
+		local castfunc = ffi.cast(protoname, funcptr)
+		return castfunc
+	end
+	
 	-- use wgl:
 	glfun = function(k)
 		local ok, fun = pcall(wglfun, k)
@@ -4334,6 +4336,7 @@ if ffi.os == "Windows" then
 	end
 end
  
+
 local function glenum(k) return lib["GL_"..k] end
 local function glindex(t, k)
 	-- check functions first
@@ -4352,11 +4355,17 @@ local function glindex(t, k)
 	end
 	return t[k]
 end
+
+
 -- add lazy loader:
 setmetatable(gl, { __index = glindex, })
 
 local glGetString = gl.GetString
-function gl.GetString(p) return ffi.string(glGetString(p)) end
+function gl.GetString(p) 
+	local s = glGetString(p) 
+	if s == nil then error("failed to load gl (no current context)")
+	else return ffi.string(s) end
+end
 
 print("using OpenGL", gl.GetString(gl.VERSION))
 
@@ -4759,6 +4768,6 @@ function gl.assert(msg)
 	end
 end
 
-
+--]]
 
 return gl

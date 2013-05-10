@@ -1,7 +1,9 @@
 local ffi = require "ffi"
 local lib = ffi.C
 
+
 local gl = require "gl"
+
 
 local Window = {}
 
@@ -25,7 +27,7 @@ local t = lib.av_time()
 
 function Window:__newindex(k, v)
 	if k == "key" then
-		--[[
+		--[=[
 		self.onkey:set(function(self, e, k)
 			e = key_events[e]
 			
@@ -38,9 +40,9 @@ function Window:__newindex(k, v)
 			local ok, err = pcall(v, self, e, k)
 			if not ok then print(debug.traceback(err)) end
 		end)
-		--]]
+		--]=]
 	elseif k == "draw" then
-		--[[
+		--[=[
 		self.ondraw:set(function(self)
 			
 			collectgarbage()
@@ -62,7 +64,7 @@ function Window:__newindex(k, v)
 			local ok, err = pcall(v, self, w, h, dt)
 			if not ok then print(debug.traceback(err)) end	
 		end)
-		--]]
+		--]=]
 	elseif k == "create" then
 		self.oncreate:set(function(self)
 			local ok, err = pcall(v, self)
@@ -83,22 +85,22 @@ function Window:__newindex(k, v)
 		end)
 		
 	elseif k == "mouse" then
-		--[[
+		--[=[
 		self.onmouse:set(function(self, e, b, x, y)
 			local ok, err = pcall(v, self, mouse_events[e], b, x, self.height-y-1)
 			if not ok then print(debug.traceback(err)) end
 		end)
-		--]]
+		--]=]
 	elseif k == "fullscreen" then
 		self:setfullscreen(v)
 		
-	--[[
+	--[=[
 	elseif k == "title" then
 		self:settitle(v)
 		
 	elseif k == "dim" then
 		self:setdim(unpack(v))
-	--]]	
+	--]=]	
 	else
 		error("cannot assign to Window: "..k)
 	end
@@ -173,10 +175,11 @@ win.ondraw = function(self)
 	
 	gl.Disable(lib.GL_DEPTH_TEST)
 	gl.Color(1, 1, 1)
-
+	
 	if draw and type(draw) == "function" then
 		local ok, err = pcall(draw, w, h)
 		if not ok then 
+			print("error in draw")
 			print(debug.traceback(err)) 
 			-- prevent error spew:
 			draw = nil

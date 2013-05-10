@@ -170,6 +170,7 @@ void timerfunc(int id) {
 		(win.ondraw)(&win);
 	}	
 	glutSwapBuffers();
+	glutPostRedisplay();
 	
 	// reschedule:
 	glutTimerFunc((unsigned int)(1000.0/win.fps), timerfunc, 0);
@@ -192,6 +193,7 @@ void av_window_setfullscreen(av_Window * self, int b) {
 
 void av_window_setdim(av_Window * self, int x, int y) {
 	glutReshapeWindow(x, y);
+	glutPostRedisplay();
 }
 
 av_Window * av_window_create() {
@@ -500,12 +502,13 @@ int main(int argc, char * argv[]) {
 	
 //	screen_width = glutGet(GLUT_SCREEN_WIDTH);
 //	screen_height = glutGet(GLUT_SCREEN_HEIGHT);	
-	glutInitDisplayString("rgb double depth>=16 alpha samples<=4");
-	//glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
+	//glutInitDisplayString("rgb double depth>=16 alpha samples<=4");
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 	glutInitWindowSize(win.width, win.height);
 	glutInitWindowPosition(0, 0);
 	
 	win.id = glutCreateWindow("");	// << FAIL?
+	
 	//printf("initializing window\n");
 	glutSetWindow(win.id);
 	
@@ -539,6 +542,7 @@ int main(int argc, char * argv[]) {
 	lua_getfield(L, LUA_REGISTRYINDEX, "debug.traceback");
 	int debugtraceback = lua_gettop(L);
 	int err = luaL_loadstring(L, av_main);
+	
 	if (err == 0) {
 		for (int i=0; i<argc; i++) {
 			lua_pushstring(L, argv[i]);
@@ -552,7 +556,7 @@ int main(int argc, char * argv[]) {
 	
 	// start it up:
 	glutTimerFunc((unsigned int)(1000.0/win.fps), timerfunc, 0);
-	
+	printf("start\n");
 	//atexit(terminate);
 	glutMainLoop();
 	
