@@ -8,26 +8,27 @@ local ffi = require 'ffi'
 local bit = require 'bit'
 local C = ffi.C
 
--- load from active executable rather than dynamic library
---local lib = ffi.C
 
-local libs = ffi_OpenGL_libs or {
-   OSX     = { x86 = "OpenGL.framework/OpenGL", x64 = "OpenGL.framework/OpenGL" },
-   Windows = { x86 = "OPENGL32.DLL",            x64 = "OPENGL32.DLL" },
-   Linux   = { x86 = "libGL.so",                x64 = "libGL.so", arm = "libGL.so" },
-   Linux = { x86 = "libGL.so", x64 = "libGL.so" },
-   BSD     = { x86 = "libGL.so",                x64 = "libGL.so" },
-   POSIX   = { x86 = "libGL.so",                x64 = "libGL.so" },
-   Other   = { x86 = "libGL.so",                x64 = "libGL.so" },
-}
+local ok, lib
+if ffi.os == "Linux" then
+	-- hack for Ubuntu, which loads mesa rather than nvidia by default:
+	-- if Nvidia is not installed, then it will fall back to system default GL.
+	ok, lib = pcall(ffi.load, "/usr/lib/nvidia-current/libGL.so")
+	if not ok then
+		ok, lib = pcall(ffi.load, "GL")
+	end
+	
+elseif ffi.os == "OSX" then
+	ok, lib = pcall(ffi.load, "OpenGL.framework/OpenGL")
 
-local lib = lib or ffi.load( ffi_OpenGL_lib or libs[ ffi.os ][ ffi.arch ] )
-
-if ffi.os == "Windows" then
+elseif ffi.os == "Windows" then
+	ok, lib = pcall(ffi.load, "OPENGL32.DLL")
 	ffi.cdef[[
 		void * wglGetProcAddress(const char *);
 	]]
 end
+-- fall back to looking in executable:
+if not ok then lib = ffi.C end
 
 ffi.cdef [[
 enum {
@@ -1063,7 +1064,7 @@ typedef signed char GLbyte;
 typedef short GLshort;
 typedef int GLint;
 typedef int GLsizei;
-typedef unsigned char GLubyte;
+typedef uint8_t GLubyte;
 typedef unsigned short GLushort;
 typedef unsigned int GLuint;
 typedef float GLfloat;
@@ -4756,16 +4757,6 @@ function gl.extensions()
 		end
 	end
 	return gl.extensions_table
-end
-
-local glu = require "glu"
-
-function gl.assert(msg)
-	local err = gl.GetError()
-	if err ~= gl.NO_ERROR then
-		local ok, str = pcall(glu.ErrorString, err)
-		error(string.format("gl error (%d): %s %s", err, msg, (ok and ffi.string(str) or "?")), 2)
-	end
 end
 
 --]]
