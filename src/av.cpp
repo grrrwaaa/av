@@ -133,8 +133,6 @@ lua_State * L = 0;
 bool firstcb = true;
 
 void av_tick() {
-	printf(".");
-
 	lua_getfield(L, LUA_REGISTRYINDEX, "debug.traceback");
 	int debugtraceback = lua_gettop(L);
 
@@ -155,8 +153,6 @@ void av_tick() {
 void timerfunc(int id) {
 	static int f = 0;
 	
-	if (firstcb) { printf("first callback timer\n"); firstcb = false; }
-
 	// trigger filewatching etc:
 	if (f++ > 10) {
 		av_tick();
@@ -293,14 +289,11 @@ void onpassivemotion(int x, int y) {
 }
 
 void onvisibility(int state) {
-	if (firstcb) { printf("first callback vis\n"); firstcb = false; }
 	if (win.onvisible) (win.onvisible)(&win, state);
 }
 
-void ondisplay() {
-	if (firstcb) { printf("first callback display\n"); firstcb = false; }}
+void ondisplay() {}
 void onreshape(int w, int h) {
-	if (firstcb) { printf("first callback reshape\n"); firstcb = false; }
 	win.width = w;
 	win.height = h;
 	if (!win.is_fullscreen) {
@@ -444,8 +437,12 @@ int luaopen_builtin(lua_State * L) {
 	};
 	luaL_register(L, "builtin", lib);
 	
-	luaL_loadstring(L, av_ffi_header);
-	lua_pcall(L, 0, 1, 0);
+	if (luaL_loadstring(L, av_ffi_header)) {	
+		printf("error loading ffi header %s\n", lua_tostring(L, -1));
+	}
+	if (lua_pcall(L, 0, 1, 0)) {
+		printf("error loading ffi header %s\n", lua_tostring(L, -1));
+	}
 	lua_setfield(L, -2, "header");
 	
 	return 1;

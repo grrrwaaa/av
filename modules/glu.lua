@@ -84,6 +84,8 @@ GLint          gluUnProject (GLdouble winX, GLdouble winY, GLdouble winZ, const 
 GLint          gluUnProject4 (GLdouble winX, GLdouble winY, GLdouble winZ, GLdouble clipW, const GLdouble *model, const GLdouble *proj, const GLint *view, GLdouble nearPlane, GLdouble farPlane, GLdouble* objX, GLdouble* objY, GLdouble* objZ, GLdouble* objW);
 ]]
 
+local glu = {}
+
 function glu.assert(msg)
 	local err = gl.GetError()
 	if err ~= gl.NO_ERROR then
@@ -92,7 +94,7 @@ function glu.assert(msg)
 	end
 end
 
-return setmetatable({}, {
+return setmetatable(glu, {
 	__index = function(t, k)
 		local fun = lib["glu"..k]
 		t[k] = fun

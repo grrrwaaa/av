@@ -1,7 +1,7 @@
 #!/bin/bash   
 
 # debugging: 
-set -x
+#set -x
 
 SRCROOT=`pwd`
 PLATFORM=`uname`
@@ -28,15 +28,15 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	CC='clang++'
 	CFLAGS="-fno-stack-protector -O3 -Wall -fPIC"
 	DEFINES="-DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__MACOSX_CORE__"
-	INCLUDEPATHS="-Iosx/include -Iinclude -Irtaudio-4.0.11 -Ilpeg-0.11" #"-I/usr/local/include/luajit-2.0"
-	SOURCES="-x c++ av.cpp rgbd.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp -x c lpeg-0.11/*.c http-parser/*.c"
+	INCLUDEPATHS="-Iosx/include -Iinclude -Irtaudio-4.0.11 -Ilpeg-0.11 -I/usr/local/include/bullet/"
+	SOURCES="-x c++ av.cpp bullet.cpp rgbd.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp -x c lpeg-0.11/*.c http-parser/*.c"
 	
 	LINK='clang++'
 	LDFLAGS32="-w -keep_private_externs"
 	LDFLAGS64="$LDFLAGS32 -pagezero_size 10000 -image_base 100000000"
 	
 	LINKERPATHS="-Losx/lib"
-	LIBRARIES="osx/lib/libluajit.a osx/lib/libfreenect.a osx/lib/libusb-1.0.a -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL -framework IOKit"
+	LIBRARIES="osx/lib/libluajit.a osx/lib/libfreenect.a osx/lib/libusb-1.0.a -framework Carbon -framework Cocoa -framework CoreAudio -framework GLUT -framework OpenGL -framework IOKit -lBulletDynamics -lBulletCollision -lLinearMath"
 	
 	#-framework AudioUnit -framework CoreAudio -framework AudioToolbox"
 	
@@ -59,7 +59,7 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	mv app64 $PRODUCT_NAME
 
 	# documentation:
-	./ldoc.lua -v --dir ../docs --output reference ../modules	
+	#./ldoc.lua -v --dir ../docs --output reference ../modules	
 	
 	echo copy
 	cp $PRODUCT_NAME ../

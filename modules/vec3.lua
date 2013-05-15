@@ -4,6 +4,7 @@ local sqrt = math.sqrt
 local sin, cos = math.sin, math.cos
 local atan2 = math.atan2
 local acos = math.acos
+local floor = math.floor
 local random = math.random
 local min, max = math.min, math.max
 local pi = math.pi
@@ -267,6 +268,15 @@ function vec3.modnew(a, b)
 	end
 end
 vec3.__mod = vec3.modnew
+
+--- Apply math.floor to all elements:
+-- @return self
+function vec3:floor()
+	self.x = floor(self.x)
+	self.y = floor(self.y)
+	self.z = floor(self.z)
+	return self
+end
 
 --- Calculate minimum of elements (in-place)
 -- @param v number or vector limit
