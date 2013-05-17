@@ -1,14 +1,16 @@
 -- main.lua
 
+local exepath = select(1, ...) or "."
 local filename = select(2, ...) or "start.lua"
 local args = { select(3, ...) }
 
 local startupscript = [[
+	local exepath, builtin_header = ...
+	
 	-- also search in /modules for Lua modules:
-	package.path = './modules/?.lua;./modules/?/init.lua;'..package.path; 
+	package.path = string.format('%s/modules/?.lua;%s/modules/?/init.lua;%s', exepath, exepath, package.path); 
 
 	-- define the AV header in FFI:
-	local builtin_header = ...
 	local ffi = require 'ffi'
 	ffi.cdef(builtin_header)
 	package.loaded.builtin = builtin_header
@@ -22,9 +24,12 @@ local ffi = require "ffi"
 local C = ffi.C
 local builtin = require "builtin"
 
+-- also search in /modules for Lua modules:
+package.path = string.format('%s/modules/?.lua;%s/modules/?/init.lua;%s', exepath, exepath, package.path); 
 local lua = require "lua"
+
 -- a bit of helpful info:
-print(string.format("using %s on %s (%s)", jit.version, jit.os, jit.arch))
+print(string.format("Using %s on %s (%s)", jit.version, jit.os, jit.arch))
 
 local watched = {}
 local states = {}
@@ -65,7 +70,7 @@ function spawn(filename)
 	states[filename] = L
 	
 	-- 'prime' this state with the module search path and built-in FFI header:
-	L:dostring(startupscript, builtin.header)
+	L:dostring(startupscript, exepath, builtin.header)
 	---[[
 	
 	print(string.format("running %s at %s", filename, os.date()))

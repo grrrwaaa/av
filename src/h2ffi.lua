@@ -9,7 +9,7 @@ local r = {
 	string.format("-- generated from %s on %s", input, os.date()),
 }
 
-table.insert(r, string.format("print('Binary built on %s')", os.date()))
+table.insert(r, string.format("print('Built on %s')", os.date()))
 table.insert(r, "local header = [[")
 
 local h = io.popen(string.format("gcc -E -P %s", input))

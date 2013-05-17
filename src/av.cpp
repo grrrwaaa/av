@@ -487,27 +487,32 @@ int main(int argc, char * argv[]) {
 	// whether launched from terminal or double-clicked
 	// does that work on Linux?
 	// next stage will be drag & drop startfile onto app...
-	char startpath[AV_PATH_MAX];
+	char exepath[AV_PATH_MAX];
 	#ifdef AV_WINDOWS
-		if (AV_GETCWD(startpath, AV_PATH_MAX) == 0) {
+		if (AV_GETCWD(exepath, AV_PATH_MAX) == 0) {
 			printf("could not derive working path\n");
 			exit(0);
 		}
+		// TODO: GetFullPathName
 	#else
-		// grab it from argv[0] (application name)
-		AV_SNPRINTF(startpath, AV_PATH_MAX, "%s", dirname(argv[0]));
+		char tmp[AV_PATH_MAX];
 		#ifdef AV_OSXAPP
 			// if launched as app, then the path has /av.app/Contents/MacOS prefixed
 			// (which needs to be removed)
-			char tmp[AV_PATH_MAX];
-			AV_SNPRINTF(tmp, AV_PATH_MAX, "%s/../../../", startpath);
-			realpath(tmp, startpath);		
+			char tmp1[AV_PATH_MAX];
+			AV_SNPRINTF(tmp1, AV_PATH_MAX, "%s", dirname(argv[0]));
+			AV_SNPRINTF(tmp, AV_PATH_MAX, "%s/../../../", tmp1);
+		#else
+			// grab it from argv[0] (application name)
+			AV_SNPRINTF(tmp, AV_PATH_MAX, "%s", dirname(argv[0]));
 		#endif
+		// convert to a non-relative path:
+		realpath(tmp, exepath);
 	#endif
 	
 	// use this as the current working directory from now on:
-	printf("running from %s\n", startpath);
-	chdir(startpath);
+	printf("Launched executable %s\n", exepath);
+	//chdir(startpath);
 	
 	
 	
@@ -520,7 +525,6 @@ int main(int argc, char * argv[]) {
 	
 	win.id = glutCreateWindow("");
 	glutSetWindow(win.id);
-	printf("initializing window\n");
 	
 	// Force VSYNC on.
 	#if defined AV_OSX
@@ -554,7 +558,8 @@ int main(int argc, char * argv[]) {
 	int err = luaL_loadstring(L, av_main);
 	
 	if (err == 0) {
-		for (int i=0; i<argc; i++) {
+		lua_pushstring(L, exepath);
+		for (int i=1; i<argc; i++) {
 			lua_pushstring(L, argv[i]);
 		}
 		err = lua_pcall(L, argc, LUA_MULTRET, debugtraceback);
@@ -566,7 +571,6 @@ int main(int argc, char * argv[]) {
 	
 	// start it up:
 	glutTimerFunc((unsigned int)(1000.0/win.fps), timerfunc, 0);
-	printf("start\n");
 	//atexit(terminate);
 	glutMainLoop();
 	
