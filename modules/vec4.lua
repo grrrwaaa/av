@@ -500,6 +500,12 @@ function vec4:length()
 end
 vec4.__len = vec4.length
 
+--- return the squared length of a vector
+-- @return length
+function vec4:magSqr()
+	return self:dot(self)
+end
+
 --- return the dot product of two vectors:
 -- @param a vector
 -- @param b vector

@@ -519,6 +519,12 @@ function vec3:length()
 end
 vec3.__len = vec3.length
 
+--- return the squared length of a vector
+-- @return length
+function vec3:magSqr()
+	return self:dot(self)
+end
+
 --- return the dot product of two vectors:
 -- @param a vector
 -- @param b vector
@@ -545,6 +551,9 @@ end
 -- @return distance
 function vec3:distance(p)
 	return (p - self):length()
+end
+function vec3:distanceSquared(p)
+	return (p - self):magSqr()
 end
 
 --- The angle between two vectors (two points)

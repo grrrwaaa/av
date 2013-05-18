@@ -504,6 +504,12 @@ function vec2:length()
 end
 vec2.__len = vec2.length
 
+--- return the squared length of a vector
+-- @return length
+function vec2:magSqr()
+	return self:dot(self)
+end
+
 --- Return the angle to the vector (direction)
 -- @return angle (in radians)
 function vec2:angle()
