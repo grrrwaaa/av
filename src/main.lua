@@ -6,6 +6,7 @@ local args = { select(3, ...) }
 
 local startupscript = [[
 	local exepath, builtin_header = ...
+	_G.exepath = exepath
 	
 	-- also search in /modules for Lua modules:
 	package.path = string.format('%s/modules/?.lua;%s/modules/?/init.lua;%s', exepath, exepath, package.path); 

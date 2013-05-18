@@ -3,6 +3,9 @@ local ffi = require 'ffi'
 local lib
 if ffi.os == "Linux" then
 	lib = ffi.load("freeimage")
+elseif ffi.os == "OSX" then
+	local exepath = exepath or ""
+	lib = ffi.load(exepath .. "/modules/lib/OSX/freeimage.dylib")
 else
 	lib = ffi.C
 end	
