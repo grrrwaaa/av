@@ -20,6 +20,7 @@ ffi.cdef [[
 typedef struct quatf {
 	float x, y, z, w;
 } quatf;
+
 typedef struct quatd {
 	double x, y, z, w;
 } quatd;
@@ -42,8 +43,8 @@ local function new(x, y, z, w)
 	return ffi.new("quat", x, y, z, w)
 end
 
---- Create a copy of a vector:
--- @param v vector
+--- Create a copy:
+-- @param v quaternion
 function quat.copy(v)
 	return new(v.x, v.y, v.z, v.w)
 end

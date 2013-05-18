@@ -36,8 +36,10 @@ static GLuint gl_rgb_tex = 0;
 
 static vec2f texcoords[RGBD_POINTS_SIZE];
 
-void av_rgbd_draw(int dev, int w, int h) {
-	glViewport(0,0,w,h);
+void av_rgbd_draw(int dev, int x, int y, int w, int h) {
+	glViewport(x,y,w,h);
+	glEnable(GL_SCISSOR_TEST);
+	glScissor(x,y,w,h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho (0, 1, 1, 0, -1.0f, 1.0f);
@@ -91,7 +93,7 @@ void av_rgbd_draw(int dev, int w, int h) {
 	glEnd();
 	
 	glBindTexture(GL_TEXTURE_2D, 0);
-	
+	glDisable(GL_SCISSOR_TEST);
 }	
 
 void av_rgbd_transform_rawpoints(av_RGBDSensor& sensor) {
@@ -249,7 +251,6 @@ void av_rgbd_write_obj(int dev, const char * path) {
 
 void rgb_cb(freenect_device *dev, void *rgb, uint32_t timestamp) {
 	av_RGBDSensor& sensor = *(av_RGBDSensor *)freenect_get_user(dev);
-
 }
 
 void *freenect_threadfunc(void *arg) {
@@ -329,7 +330,7 @@ av_RGBD * av_rgbd_init() {
 		
 	}
 	
-	freenect_set_log_level(f_ctx, FREENECT_LOG_INFO);
+	freenect_set_log_level(f_ctx, FREENECT_LOG_ERROR);
 	freenect_select_subdevices(f_ctx, (freenect_device_flags)(FREENECT_DEVICE_CAMERA));
 
 	int nr_devices = freenect_num_devices (f_ctx);
@@ -340,18 +341,23 @@ av_RGBD * av_rgbd_init() {
 	int numdevs = freenect_list_device_attributes(f_ctx, &attrs);
 	rgbd.numdevices = numdevs;
 	
+	printf ("Number of RGBD devices attributed: %d\n", numdevs);
+	
 	i=0;
 	for (; i<numdevs; i++) {
-		printf("RGBD device %d: %s\n", i, attrs[i].camera_serial);
-		
-		rgbd.sensors[i].serial = attrs[i].camera_serial;
+		if (attrs) {
+			printf("RGBD device %d: %s\n", i, attrs->camera_serial);
+			//rgbd.sensors[i].serial = attrs->camera_serial;
+			sprintf(rgbd.sensors[i].serial, "%s", attrs->camera_serial);
+			attrs = attrs->next;
+		}
 		
 		if (freenect_open_device(f_ctx, &rgbd.sensors[i].dev, i) < 0) {
 			printf("Could not open device\n");
 		}
 	}
 	for (; i<RGBD_MAX_SENSORS; i++) {
-		rgbd.sensors[i].serial = 0;
+		rgbd.sensors[i].serial[0] = 0;
 		rgbd.sensors[i].dev = 0;
 	}
 	

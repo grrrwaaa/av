@@ -1,17 +1,13 @@
 local ffi = require "ffi"
 
-local libs = ffi_OpenGL_libs or {
-   OSX     = { x86 = "modules/lib/OSX/png.dylib", x64 = "modules/lib/OSX/png.dylib" },
-   --[[
-   Windows = { x86 = "OPENGL32.DLL",            x64 = "OPENGL32.DLL" },
-   Linux   = { x86 = "libGL.so",                x64 = "libGL.so", arm = "libGL.so" },
-   Linux = { x86 = "libGL.so", x64 = "libGL.so" },
-   BSD     = { x86 = "libGL.so",                x64 = "libGL.so" },
-   POSIX   = { x86 = "libGL.so",                x64 = "libGL.so" },
-   Other   = { x86 = "libGL.so",                x64 = "libGL.so" },
-   --]]
-}
-local lib = lib or ffi.load( ffi_OpenGL_lib or libs[ ffi.os ][ ffi.arch ] )
+local libname
+if ffi.os == "OSX" then
+	libname = "modules/lib/OSX/png.dylib"
+elseif ffi.os == "Linux" then
+	libname = "png"
+end
+
+local lib = ffi.load( libname )
 
 ffi.cdef [[
 
@@ -101,10 +97,6 @@ typedef struct png_color_8_struct
 typedef png_color_8 * png_color_8p;
 typedef png_color_8 * * png_color_8pp;
 
-
-
-
-
 typedef struct png_sPLT_entry_struct
 {
    png_uint_16 red;
@@ -115,11 +107,6 @@ typedef struct png_sPLT_entry_struct
 } png_sPLT_entry;
 typedef png_sPLT_entry * png_sPLT_entryp;
 typedef png_sPLT_entry * * png_sPLT_entrypp;
-
-
-
-
-
 
 typedef struct png_sPLT_struct
 {
@@ -357,12 +344,6 @@ typedef struct png_row_info_struct
 typedef png_row_info * png_row_infop;
 typedef png_row_info * * png_row_infopp;
 
-
-
-
-
-
-
 typedef struct png_struct png_struct;
 typedef png_struct * png_structp;
 typedef const png_struct * png_const_structp;
@@ -370,66 +351,30 @@ typedef const png_struct * png_const_structp;
 typedef void ( *png_error_ptr) (png_structp, png_const_charp);
 typedef void ( *png_rw_ptr) (png_structp, png_bytep, png_size_t);
 typedef void ( *png_flush_ptr) (png_structp);
-typedef void ( *png_read_status_ptr) (png_structp, png_uint_32, int)
-        ;
-typedef void ( *png_write_status_ptr) (png_structp, png_uint_32, int)
-        ;
-
+typedef void ( *png_read_status_ptr) (png_structp, png_uint_32, int);
+typedef void ( *png_write_status_ptr) (png_structp, png_uint_32, int);
 
 typedef void ( *png_progressive_info_ptr) (png_structp, png_infop)
               ;
 typedef void ( *png_progressive_end_ptr) (png_structp, png_infop);
-typedef void ( *png_progressive_row_ptr) (png_structp, png_bytep, png_uint_32, int)
-                     ;
+typedef void ( *png_progressive_row_ptr) (png_structp, png_bytep, png_uint_32, int);
+   
+typedef void ( *png_user_transform_ptr) (png_structp, png_row_infop, png_bytep);
 
-
-
-
-typedef void ( *png_user_transform_ptr) (png_structp, png_row_infop, png_bytep)
-                              ;
-
-
-
-typedef int ( *png_user_chunk_ptr) (png_structp, png_unknown_chunkp)
-                       ;
-
-
+typedef int ( *png_user_chunk_ptr) (png_structp, png_unknown_chunkp);
+ 
 typedef void ( *png_unknown_chunk_ptr) (png_structp);
 
 
-
-
-
-
-
-// 1102 "png.h"
 typedef png_voidp (*png_malloc_ptr) (png_structp, png_alloc_size_t);
 typedef void (*png_free_ptr) (png_structp, png_voidp);
 
-
-
-
-
-
-
 typedef png_structp version_1_4_9beta01;
-
 typedef png_struct * * png_structpp;
-// 1507 "png.h"
+
  png_uint_32  png_access_version_number (void);
-
-
-
-
- void  png_set_sig_bytes (png_structp png_ptr, int num_bytes)
-                  ;
-
-
-
-
-
-
- int  png_sig_cmp (png_bytep sig, png_size_t start, png_size_t num_to_check)
+ void  png_set_sig_bytes (png_structp png_ptr, int num_bytes);
+ int  png_sig_cmp (png_bytep sig, png_size_t start, png_size_t num_to_check);
                             ;
 
 

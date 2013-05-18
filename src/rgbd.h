@@ -23,7 +23,7 @@ typedef glm::detail::tquat<float> quatf;
 
 #else
 
-typedef struct vec1 { double x, y; } vec1;
+typedef struct vec2 { double x, y; } vec1;
 typedef struct vec3 { double x, y, z; } vec3;
 typedef struct vec4 { double x, y, z, w; } vec4;
 typedef struct quat { double x, y, z, w; } quat;
@@ -53,7 +53,7 @@ typedef struct rgbd_device rgbd_device;
 typedef struct av_RGBDSensor {
 
 	rgbd_device * dev;
-	const char * serial;
+	char serial[256];
 	
 	void (*onframe)(struct av_RGBDSensor * self);
 	
@@ -86,7 +86,7 @@ typedef struct av_RGBD {
 AV_EXPORT av_RGBD * av_rgbd_init();
 AV_EXPORT void av_rgbd_start();
 AV_EXPORT void av_rgbd_transform_rawpoints(av_RGBDSensor& sensor);
-AV_EXPORT void av_rgbd_draw(int dev, int w, int h);
+AV_EXPORT void av_rgbd_draw(int dev, int x, int y, int w, int h);
 AV_EXPORT void av_rgbd_write_obj(int dev, const char * path);
 
 #ifdef __cplusplus

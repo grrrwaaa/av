@@ -1,6 +1,6 @@
 const char * av_ffi_header = ""
-"-- generated from av.h on Wed May 15 17:32:38 2013 \n"
-"print('Binary built on Wed May 15 17:32:38 2013') \n"
+"-- generated from av.h on Fri May 17 15:28:47 2013 \n"
+"print('Built on Fri May 17 15:28:47 2013') \n"
 "local header = [[ \n"
 " void av_sleep(double seconds); \n"
 " double av_time(); \n"
