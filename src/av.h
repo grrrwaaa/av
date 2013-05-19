@@ -40,6 +40,7 @@ typedef struct av_Window {
 	int is_fullscreen;
 	int button;
 	int shift, alt, ctrl;
+	int is_stereo;
 	double fps;
 	
 	void (*oncreate)(struct av_Window * self);

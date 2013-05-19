@@ -4,6 +4,10 @@ local exepath = select(1, ...) or "."
 local filename = select(2, ...) or "start.lua"
 local args = { select(3, ...) }
 
+print("exepath", exepath)
+print("filename", filename)
+print("args", unpack(args))
+
 local startupscript = [[
 	local exepath, builtin_header = ...
 	_G.exepath = exepath

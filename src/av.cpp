@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 /*
 // the path from where it was invoked:
@@ -104,6 +105,7 @@ struct av_Window_GLUT : public av_Window {
 		width = 720;
 		height = 480;
 		is_fullscreen = 0;
+		is_stereo = 0;
 		reset();
 	}
 	
@@ -479,6 +481,18 @@ int main(int argc, char * argv[]) {
 	// configure GLUT:
 	glutInit(&argc, argv);
 	
+	// parse any special arguments:
+	int firstarg = 1;
+	while (1) {
+		if (strcmp(argv[firstarg], "stereo") == 0) {
+			printf("enabling stereo\n");
+			win.is_stereo = 1;
+			firstarg++;
+		} else {
+			break;
+		}
+	}
+	
 	// initialize paths:
 	// getpaths(argc, argv);	
 	
@@ -514,11 +528,13 @@ int main(int argc, char * argv[]) {
 	printf("Launched executable %s\n", exepath);
 	//chdir(startpath);
 	
-	
-	
 //	screen_width = glutGet(GLUT_SCREEN_WIDTH);
-//	screen_height = glutGet(GLUT_SCREEN_HEIGHT);	
-	glutInitDisplayString("rgb double depth>=16 alpha samples<=4");
+//	screen_height = glutGet(GLUT_SCREEN_HEIGHT);
+	if (win.is_stereo) {
+		glutInitDisplayString("rgb double depth>=16 alpha samples<=4 stereo");
+	} else {	
+		glutInitDisplayString("rgb double depth>=16 alpha samples<=4");
+	}
 	//glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH); // | GLUT_MULTISAMPLE);
 	glutInitWindowSize(win.width, win.height);
 	glutInitWindowPosition(0, 0);
@@ -559,10 +575,12 @@ int main(int argc, char * argv[]) {
 	
 	if (err == 0) {
 		lua_pushstring(L, exepath);
-		for (int i=1; i<argc; i++) {
+		int nargs = 1;
+		for (int i=firstarg; i<argc; i++) {
 			lua_pushstring(L, argv[i]);
+			nargs++;
 		}
-		err = lua_pcall(L, argc, LUA_MULTRET, debugtraceback);
+		err = lua_pcall(L, nargs, LUA_MULTRET, debugtraceback);
 	}
 	if (err) {
 		printf("error in av_main: %s\n", lua_tostring(L, -1));
