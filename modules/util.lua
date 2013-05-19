@@ -16,9 +16,13 @@ setmetatable(gcmap, { __mode = 'v' })
 -- @param gcfunc a function to call
 -- @return obj (for method chaining)
 local function gc(self, gcfunc)
+	if not gcfunc then
+		gcfunc, self = self, true
+	end
+	assert(type(gcfunc) == "function", "gc handler must be a function")
 	-- create new raw userdata with metatable:
 	local gc = newproxy(true)
-	getmetatable(gc).__gc = function() gcfunc(self) end
+	getmetatable(gc).__gc = gcfunc
 	-- keep gc alive as long as self exists:
 	gcmap[gc] = self
 	-- return self for method chaining (also like ffi.gc)
