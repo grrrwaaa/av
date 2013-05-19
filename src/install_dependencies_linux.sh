@@ -1,3 +1,5 @@
+sudo apt-get install g++ cmake luajit-5.1-dev libusb-1.0-0-dev freeglut3-dev libxmu-dev libxi-dev libasound2-dev
+
 mkdir -p externs
 cd externs
 
