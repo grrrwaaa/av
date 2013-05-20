@@ -1,9 +1,7 @@
 local ffi = require "ffi"
 local lib = ffi.C
 
-
 local gl = require "gl"
-
 
 local Window = {}
 

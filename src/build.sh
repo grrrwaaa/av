@@ -78,7 +78,7 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	
 	LINK=$CC
 	LDFLAGS="-w -rdynamic -Wl,-E "
-	LINKERPATHS="-L/usr/local/lib -L/usr/lib"
+	LINKERPATHS="-L/usr/lib/nvidia-current/ -L/usr/local/lib -L/usr/lib"
 	#LIBRARIES="-lluajit-5.1 -lfreeimage -lGLEW -lGLU -lGL -lglut -lasound ../externs/libuv/libuv.a -lrt -lpthread"
 	LIBRARIES="-lluajit-5.1 -lGLU -lGL -lglut -lasound -lrt -lpthread linux/lib64/libfreenect.a -lusb-1.0"
 	
