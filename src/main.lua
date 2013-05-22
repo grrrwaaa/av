@@ -4,10 +4,6 @@ local exepath = select(1, ...) or "."
 local filename = select(2, ...) or "start.lua"
 local args = { select(3, ...) }
 
-print("exepath", exepath)
-print("filename", filename)
-print("args", unpack(args))
-
 local startupscript = [[
 	local exepath, builtin_header = ...
 	_G.exepath = exepath
@@ -17,9 +13,11 @@ local startupscript = [[
 
 	-- define the AV header in FFI:
 	local ffi = require 'ffi'
-	ffi.cdef(builtin_header)
+
 	package.loaded.builtin = builtin_header
+	ffi.cdef(builtin_header)
 	
+	print("initialize window")
 	-- initialize the window bindings:
 	win = require "window"	
 ]]
@@ -76,7 +74,6 @@ function spawn(filename)
 	
 	-- 'prime' this state with the module search path and built-in FFI header:
 	L:dostring(startupscript, exepath, builtin.header)
-	---[[
 	
 	print(string.format("running %s at %s", filename, os.date()))
 	print(string.rep("-", 80))
@@ -84,7 +81,6 @@ function spawn(filename)
 	L:dofile(filename, unpack(args))
 	
 	return L
-	--]]
 end
 
 function cancel(L)

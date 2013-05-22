@@ -477,13 +477,13 @@ void gluterr( const char *fmt, va_list ap) {
 }
 
 int main(int argc, char * argv[]) {
-
+	
 	// configure GLUT:
 	glutInit(&argc, argv);
 	
 	// parse any special arguments:
 	int firstarg = 1;
-	while (1) {
+	while (firstarg < argc) {
 		if (strcmp(argv[firstarg], "stereo") == 0) {
 			printf("enabling stereo\n");
 			win.is_stereo = 1;
@@ -492,7 +492,8 @@ int main(int argc, char * argv[]) {
 			break;
 		}
 	}
-	
+	printf("main\n");
+
 	// initialize paths:
 	// getpaths(argc, argv);	
 	
