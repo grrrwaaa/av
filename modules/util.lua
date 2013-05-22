@@ -22,7 +22,8 @@ local function gc(self, gcfunc)
 	assert(type(gcfunc) == "function", "gc handler must be a function")
 	-- create new raw userdata with metatable:
 	local gc = newproxy(true)
-	getmetatable(gc).__gc = gcfunc
+	-- needs to be wrapped in a Lua function:
+	getmetatable(gc).__gc = function() gcfunc(self) end
 	-- keep gc alive as long as self exists:
 	gcmap[gc] = self
 	-- return self for method chaining (also like ffi.gc)

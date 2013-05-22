@@ -16,7 +16,6 @@ local function new(vcode, fcode)
 		attributes = {},
 		uniforms = {},
 	}
-	
 	return util.gc(setmetatable(self, shader), shader.destroy)
 end
 
@@ -150,7 +149,7 @@ function shader:addUniform(index)
 		length = length[0],
 		setter = assert(uniformsetters[type[0] ]),
 	}
-	--print(string.format("adding uniform setter for %s: index %d (%d), type %d, size %d length %d", k, u.index, u.loc, u.type, u.size, u.length))
+	print(string.format("adding uniform setter for %s: index %d (%d), type %d, size %d length %d", k, u.index, u.loc, u.type, u.size, u.length))
 	self.uniforms[k] = u
 end
 
