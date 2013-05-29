@@ -1,5 +1,3 @@
 
-local win = require "window"
-print("stereo?", win.is_stereo)
+local audio = require "audio"
 
-local gl = require "gl"

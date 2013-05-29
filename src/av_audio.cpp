@@ -49,11 +49,18 @@ void av_audio_start() {
 		
 		unsigned int devices = rta.getDeviceCount();
 		if (devices < 1) {
-			printf("no audio devices found\n");
+			printf("No audio devices found\n");
 			return;
 		}
 		
 		RtAudio::DeviceInfo info;
+		
+		printf("Available audio devices:\n");
+		for (unsigned int i=0; i<devices; i++) {
+			info = rta.getDeviceInfo(i);
+			printf("Device %d: %dx%d (%d) %s\n", audio.indevice, info.inputChannels, info.outputChannels, info.duplexChannels, info.name.c_str());
+		}
+		
 		
 		info = rta.getDeviceInfo(audio.indevice);
 		printf("Using audio input %d: %dx%d (%d) %s\n", audio.indevice, info.inputChannels, info.outputChannels, info.duplexChannels, info.name.c_str());
