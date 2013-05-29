@@ -41,55 +41,59 @@ int av_rtaudio_callback(void *outputBuffer,
 }
 
 void av_audio_start() {
-	if (!rta.isStreamRunning()) {
-		if (rta.isStreamOpen()) {
-			// close it:
-			rta.closeStream();
-		}	
-		
-		unsigned int devices = rta.getDeviceCount();
-		if (devices < 1) {
-			printf("No audio devices found\n");
-			return;
-		}
-		
-		RtAudio::DeviceInfo info;
-		
-		printf("Available audio devices:\n");
-		for (unsigned int i=0; i<devices; i++) {
-			info = rta.getDeviceInfo(i);
-			printf("Device %d: %dx%d (%d) %s\n", audio.indevice, info.inputChannels, info.outputChannels, info.duplexChannels, info.name.c_str());
-		}
-		
-		
-		info = rta.getDeviceInfo(audio.indevice);
-		printf("Using audio input %d: %dx%d (%d) %s\n", audio.indevice, info.inputChannels, info.outputChannels, info.duplexChannels, info.name.c_str());
-		
-		info = rta.getDeviceInfo(audio.outdevice);
-		printf("Using audio output %d: %dx%d (%d) %s\n", audio.outdevice, info.inputChannels, info.outputChannels, info.duplexChannels, info.name.c_str());
-		
-		RtAudio::StreamParameters iParams, oParams;
-		
-		iParams.deviceId = audio.indevice;
-		iParams.nChannels = audio.inchannels;
-		iParams.firstChannel = 0;
-		
-		oParams.deviceId = audio.outdevice;
-		oParams.nChannels = audio.outchannels;
-		oParams.firstChannel = 0;
+	if (rta.isStreamRunning()) {
+		rta.stopStream();
+	}
+	if (rta.isStreamOpen()) {
+		// close it:
+		rta.closeStream();
+	}	
+	
+	unsigned int devices = rta.getDeviceCount();
+	if (devices < 1) {
+		printf("No audio devices found\n");
+		return;
+	}
+	
+	RtAudio::DeviceInfo info;
+	RtAudio::StreamParameters iParams, oParams;
+	
+	printf("Available audio devices:\n");
+	for (unsigned int i=0; i<devices; i++) {
+		info = rta.getDeviceInfo(i);
+		printf("Device %d: %dx%d (%d) %s\n", i, info.inputChannels, info.outputChannels, info.duplexChannels, info.name.c_str());
+	}
+	
+	
+	info = rta.getDeviceInfo(audio.indevice);
+	printf("Using audio input %d: %dx%d (%d) %s\n", audio.indevice, info.inputChannels, info.outputChannels, info.duplexChannels, info.name.c_str());
+	
+	audio.inchannels = info.inputChannels;
+	
+	iParams.deviceId = audio.indevice;
+	iParams.nChannels = audio.inchannels;
+	iParams.firstChannel = 0;
+	
+	info = rta.getDeviceInfo(audio.outdevice);
+	printf("Using audio output %d: %dx%d (%d) %s\n", audio.outdevice, info.inputChannels, info.outputChannels, info.duplexChannels, info.name.c_str());
+	
+	audio.outchannels = info.outputChannels;
+	
+	oParams.deviceId = audio.outdevice;
+	oParams.nChannels = audio.outchannels;
+	oParams.firstChannel = 0;
 
-		RtAudio::StreamOptions options;
-		options.flags |= RTAUDIO_NONINTERLEAVED;
-		options.streamName = "av";
-		
-		try {
-			rta.openStream( &oParams, &iParams, RTAUDIO_FLOAT32, audio.samplerate, &audio.blocksize, &av_rtaudio_callback, NULL, &options );
-			rta.startStream();
-			printf("Audio started\n");
-		}
-		catch ( RtError& e ) {
-			fprintf(stderr, "%s\n", e.getMessage().c_str());
-		}
+	RtAudio::StreamOptions options;
+	options.flags |= RTAUDIO_NONINTERLEAVED;
+	options.streamName = "av";
+	
+	try {
+		rta.openStream( &oParams, &iParams, RTAUDIO_FLOAT32, audio.samplerate, &audio.blocksize, &av_rtaudio_callback, NULL, &options );
+		rta.startStream();
+		printf("Audio started\n");
+	}
+	catch ( RtError& e ) {
+		fprintf(stderr, "%s\n", e.getMessage().c_str());
 	}
 }
 

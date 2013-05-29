@@ -143,10 +143,15 @@ function audio.dump()
 	msgbuffer_dump()
 end
 
-if not pcall(C.av_audio_start) then
-	print("unable to start audio")
+function audio.start()
+	if not pcall(C.av_audio_start) then
+		print("unable to start audio")
+	else
+		print("audio started")
+	end
 end
 
 audio.clear()
+audio.start()
 
 return audio
