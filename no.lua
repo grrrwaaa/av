@@ -247,44 +247,74 @@ print("loop", loop)
 function readbytes(id)
 	local buf = ffi.new("char[1024]")
 	local bytesread = C.read(id, buf, 1024)
-	print(id, "bytesread", bytesread)
+	--print(id, "bytesread", bytesread)
 	if bytesread > 0 then
-		print(ffi.string(buf, bytesread))
+		return ffi.string(buf, bytesread)
 	end
 end
 
-function sendmsg(fd, str)
-	no.socket_write(fd, str, #str)
-	--C.send(fd, str .. "\n", #str, 0)
+local socket = {}
+socket.__index = socket
+
+function socket:send(str)
+	return no.socket_write(self.fd, str, #str)
 end
 
--- creates & binds this socket:
-local server = no.tcp_socket_server("127.0.0.1", "8080")
-print("server", server)	
-assert(no.socket_listen(server, 10) == 0)
+function socket:on(event, callback)
+	local list = self.listeners[event]
+	assert(list, "no such event")
+	list[#list+1] = callback
+end
 
-assert(no.loop_add_fd(loop, server) == 0)
-readers[server] = function(fd)
-	print("read data from", fd)
+function socket:pipe(dst)
+	self:on("data", function(data) dst:send(data) end)
+end
+
+local net = {}
+
+function net.server(port, callback)
+	port = port and tostring(port) or "8080"
+	local fd = no.tcp_socket_server("127.0.0.1", port)
+	assert(fd >= 0, "failed to create server socket")
 	
-	-- accept this connection:
-	local client = no.socket_accept(fd)
-	assert(client >= 0)
-	
-	sendmsg(client, "welcome!")
-	
-	-- add client:
-	assert(no.loop_add_fd(loop, client) == 0)
-	readers[client] = function(fd)
-		print("from client")
-		readbytes(fd)
+	readers[fd] = function(fd)
+		print("incoming connection from", fd)
+		
+		-- accept this connection:
+		local clientfd = no.socket_accept(fd)
+		assert(clientfd >= 0)
+		
+		local client = setmetatable({ 
+			fd = clientfd,
+			listeners = {
+				data = {},
+			}, 
+		}, socket)
+		
+		-- add client automatically:
+		assert(no.loop_add_fd(loop, clientfd) == 0)
+		readers[clientfd] = function(fd)
+			local data = readbytes(fd)
+			for i, l in ipairs(client.listeners.data) do
+				l(data)
+			end
+		end
+		
+		callback(client)
 	end
+	assert(no.loop_add_fd(loop, fd) == 0)
+	assert(no.socket_listen(fd, 10) == 0)
+	
+	return fd
 end
+
+
 -- also listen to stdin:
 assert(no.loop_add_fd(loop, 0) == 0)
 readers[0] = function(fd)
 	readbytes(fd)
 end
+
 -- also add a timer:
 local timerid = 1
 assert(no.loop_add_timer(loop, 1, 2.5) == 0)
@@ -293,7 +323,7 @@ timers[timerid] = function()
 end
 
 local ev = ffi.new("no_event_t[1]")
-for i = 1, 1000 do
+function run_once()
 	local n = no.loop_run_once(loop, ev, 1.)
 	if n > 0 then
 		local ty = ev[0].type
@@ -319,14 +349,27 @@ for i = 1, 1000 do
 			print("unhandled event type")
 		end
 	end
-end	
+end		
 
---local server_addr = 
+function run()
+	while true do
+		run_once()
+	end	
+end
 
+--------------------------------------------------------------------------------
+-- TEST
+--------------------------------------------------------------------------------
 
+local server = net.server(8080, function(client)
+	-- send a welcoming message:
+	client:send("welcome!")
+	-- echo back to client:
+	client:pipe(client)
+	-- print all received:
+	client:on("data", function(data)
+		print("received", data)
+	end)
+end)
 
-
-
-
-
-
+run()
