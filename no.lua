@@ -442,6 +442,7 @@ function net.server(port, callback)
 			fd = clientfd,
 			listeners = {
 				data = {},
+				finish = {},
 			}, 
 		}, socket)
 		
@@ -449,8 +450,14 @@ function net.server(port, callback)
 		assert(no.loop_add_fd(loop, clientfd) == 0)
 		readers[clientfd] = function(fd)
 			local data = readbytes(fd)
-			for i, l in ipairs(client.listeners.data) do
-				l(data)
+			if data then
+				for i, l in ipairs(client.listeners.data) do
+					l(data)
+				end
+			else
+				for i, l in ipairs(client.listeners.finish) do
+					l(data)
+				end
 			end
 		end
 		
@@ -514,7 +521,7 @@ function run_once()
 	if timer then
 		timeout = max(min(timeout, timer.t - now), mintimeout)
 	end
-	print(timeout)
+	--print(timeout)
 
 	local n = no.loop_run_once(loop, ev, timeout)
 	local t = no.update_clocktime()
@@ -596,10 +603,17 @@ local server = net.server(8080, function(client)
 	end)
 end)
 
-
-local client = net.connect(8080, "127.0.0.1", function(sock)
+local remoteaddr = "172.16.247.155"
+local client = net.connect(8080, remoteaddr, function(sock)
 	print("connected")
 	sock:send("thanks")
+	
+	sock:on("data", function(data)
+		print("client received", data)
+	end)
+	sock:on("finish", function(data)
+		print("client closed")
+	end)
 end)
 
 
@@ -610,6 +624,7 @@ readers[0] = function(fd)
 	for i, v in ipairs(clients) do
 		v:send(data)
 	end
+	client:send(data)
 end
 
 --[[
