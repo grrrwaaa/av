@@ -25,7 +25,7 @@ typedef struct no_event_t {
 } no_event_t;
 
 typedef struct no_loop_t {
-	int kq;
+	int q;
 } no_loop_t;
 
 no_loop_t * loop_new();
@@ -45,7 +45,8 @@ int stream_read(int fd, char * buf, int size);
 ]]
 
 local src = header .. [[
-#include <sys/event.h>
+
+
 #include <sys/socket.h>       /*  socket definitions        */
 #include <sys/time.h> 
 #include <sys/types.h>        /*  socket types              */
@@ -57,26 +58,49 @@ local src = header .. [[
 #include <string.h>
 #include <errno.h>
 
+#ifdef __APPLE__
+	#define NO_POLL_USE_KQUEUE
+	#include <sys/event.h>
+	#define NO_POLL_CREATE(n) kqueue()
+	#define NO_POLL_EVENT	struct kevent
+#else
+	#define NO_POLL_USE_EPOLL
+	#include <sys/epoll.h>
+	#define NO_POLL_CREATE(n) epoll_create(n)
+	#define NO_POLL_EVENT	struct epoll_event
+#endif
+
 no_loop_t * loop_new() {
 	no_loop_t * loop;
-	int kq;
+	int q;
 	
-	kq = kqueue();
-	if (kq == -1) {
-		fprintf(stderr, "failed to create kqueue");
+	q = NO_POLL_CREATE(100);
+	if (q == -1) {
+		fprintf(stderr, "failed to create epoll/kqueue");
 		fprintf(stderr, "%s\n", strerror( errno ));
 	}
 	
 	loop = calloc(1, sizeof(no_loop_t));
-	loop->kq = kq;
+	loop->q = q;
 	return loop;
 }
 
-struct kevent newevent;
+NO_POLL_EVENT newevent;
 
 int loop_add_fd(no_loop_t * loop, int fd) {
+	int res;
+	
+	#ifdef NO_POLL_USE_KQUEUE
 	EV_SET(&newevent, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-	int res = kevent(loop->kq, &newevent, 1, NULL, 0, NULL) == -1;
+	res = kevent(loop->q, &newevent, 1, NULL, 0, NULL) == -1;
+	#endif
+	
+	#ifdef NO_POLL_USE_EPOLL
+	newevent.data.fd = fd;
+	newevent.events = EPOLLIN;
+	res = epoll_ctl(loop->q, EPOLL_CTL_ADD, fd, &newevent);
+	#endif
+	
 	if (res != 0) {
 		fprintf(stderr, "%s\n", strerror( errno ));
 	}
@@ -84,24 +108,46 @@ int loop_add_fd(no_loop_t * loop, int fd) {
 }
 
 int loop_add_timer(no_loop_t * loop, int id, double seconds) {
+	int res;
+	
+	#ifdef NO_POLL_USE_KQUEUE
 	EV_SET(&newevent, id, EVFILT_TIMER, EV_ADD | EV_ENABLE, 0, seconds * 1000.0, NULL);
-	int res = kevent(loop->kq, &newevent, 1, NULL, 0, NULL) == -1;
+	res = kevent(loop->q, &newevent, 1, NULL, 0, NULL) == -1;
+	#endif
+	
+	#ifdef NO_POLL_USE_EPOLL
+	res = -1; /// NYI
+	//newevent.data.fd = fd;
+	//newevent.events = EPOLLIN;
+	//res = epoll_ctl(loop->q, EPOLL_CTL_ADD, fd, &newevent);
+	#endif
+	
 	if (res != 0) {
 		fprintf(stderr, "%s\n", strerror( errno ));
 	}
 	return res;
 }
 
-struct kevent change;
+NO_POLL_EVENT change;
 
 int loop_run_once(no_loop_t * loop, no_event_t * event, double seconds) {
+	int nev, fd;
+	
+	#ifdef NO_POLL_USE_KQUEUE
 	struct timespec timeout;
-	int nev;
 	timeout.tv_sec = seconds;
 	timeout.tv_nsec = (seconds - (long)seconds) * 1.0e9;
-	nev = kevent(loop->kq, NULL, 0, &change, 1, &timeout);
+	nev = kevent(loop->q, NULL, 0, &change, 1, &timeout);
+	#endif
+	
+	#ifdef NO_POLL_USE_EPOLL
+	int timeout = seconds * 1000.;
+	nev = epoll_wait(loop->q, &change, 1, timeout);
+	#endif
+	
 	if (nev) {
-		int fd = change.ident;
+		#ifdef NO_POLL_USE_KQUEUE
+		fd = change.ident;
 		event->fd = fd;
 		if ((change.flags & EV_ERROR) != 0) {
 			fprintf(stderr, "%s\n", strerror( errno ));
@@ -114,12 +160,27 @@ int loop_run_once(no_loop_t * loop, no_event_t * event, double seconds) {
 		} else {
 			event->type = EVENT_TYPE_READ;
 		}
+		#endif
+		
+		#ifdef NO_POLL_USE_EPOLL
+		fd = change.data.fd;
+		event->fd = fd;
+		if (change.events & EPOLLERR) {
+			fprintf(stderr, "%s\n", strerror( errno ));
+		} else if (change.events & EPOLLHUP) {
+			// file closed.
+			event->type = EVENT_TYPE_CLOSE;
+			close(fd); // safe assumption?
+		} else if (change.events & EPOLLIN) {
+			event->type = EVENT_TYPE_READ;
+		}
+		#endif
 	}
 	return nev;
 }
 
 void loop_destroy(no_loop_t * loop) {
-	close(loop->kq);
+	close(loop->q);
 	free(loop);
 }
 
@@ -236,13 +297,16 @@ int stream_read(int fd, char * buf, int size) {
 local f = io.open("no.c", "w")
 f:write(src)
 f:close()
+local libname
 if ffi.os == "Linux" then
 	local res = cmd("gcc -O3 -fPIC no.c -shared -o libno.so")
+	libname = "./libno.so"
 elseif ffi.os == "OSX" then
 	local res = cmd("gcc -arch i386 -arch x86_64 -O3 -fPIC no.c -shared -o libno.dylib")
+	libname = "no"
 end
 if res then error(res) end
-local no = ffi.load("no")
+local no = ffi.load(libname)
 ffi.cdef(header)
 
 local loop = no.loop_new()
@@ -321,12 +385,14 @@ readers[0] = function(fd)
 	readbytes(fd)
 end
 
+--[[
 -- also add a timer:
 local timerid = 1
-assert(no.loop_add_timer(loop, 1, 2.5) == 0)
+assert(no.loop_add_timer(loop, 1, 2.5) == 0, "failed to add timer")
 timers[timerid] = function()
 	print("timer callback")
 end
+--]]
 
 local ev = ffi.new("no_event_t[1]")
 function run_once()
@@ -334,6 +400,7 @@ function run_once()
 	if n > 0 then
 		local ty = ev[0].type
 		local id = ev[0].fd
+		print("event", ty, id)
 		if ty == no.EVENT_TYPE_READ then
 			print("read", id)
 			local f = readers[id]
