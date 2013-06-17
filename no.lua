@@ -604,7 +604,7 @@ local server = net.server(8080, function(client)
 end)
 print("server", server.fd)
 
-local remoteaddr = "172.16.247.155"
+local remoteaddr = ...
 local client = net.connect(8080, remoteaddr, function(sock)
 	print("connected")
 	sock:send("thanks")
