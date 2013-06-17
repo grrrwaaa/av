@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef AV_OSX
+#include "hidapi/hidapi/hidapi.h"
+#endif
+
 /*
 // the path from where it was invoked:
 char launchpath[AV_PATH_MAX+1];
