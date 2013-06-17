@@ -28,6 +28,8 @@ typedef struct no_loop_t {
 	int q;
 } no_loop_t;
 
+double update_clocktime();
+
 no_loop_t * loop_new();
 void loop_destroy(no_loop_t * loop);
 int loop_add_fd(no_loop_t * loop, int fd);
@@ -57,6 +59,7 @@ local src = header .. [[
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <time.h>
 
 #ifdef __APPLE__
 	#define NO_POLL_USE_KQUEUE
@@ -70,11 +73,29 @@ local src = header .. [[
 	#define NO_POLL_EVENT	struct epoll_event
 #endif
 
+void setnonblocking(int fd) {
+	int flags;
+	if (-1 == (flags = fcntl(fd, F_GETFL, 0))) {
+        flags = 0;
+		if (fcntl(fd, F_SETFL, flags | O_NONBLOCK)) { 
+			fprintf(stderr, "%s\n", strerror( errno ));
+		}
+	}	
+}
+
+struct timespec clocktime;
+	
+double update_clocktime() {
+	clock_gettime(CLOCK_MONOTONIC, &clocktime);
+	return clocktime.tv_sec + clocktime.tv_nsec * 1.0e-9;
+}
+
 no_loop_t * loop_new() {
 	no_loop_t * loop;
 	int q;
 	
 	q = NO_POLL_CREATE(100);
+	setnonblocking(q);
 	if (q == -1) {
 		fprintf(stderr, "failed to create epoll/kqueue");
 		fprintf(stderr, "%s\n", strerror( errno ));
@@ -107,6 +128,40 @@ int loop_add_fd(no_loop_t * loop, int fd) {
 	return res;
 }
 
+/*
+epoll does not have a timer type built in.
+options:
+	1. use timerfd. results in a regular 'read' event; we'd have to distinguish between regular files and timers separately.
+	2. use a priority queue of timers, and have the 'next timer' as the timeout in epoll_wait. we'd have to implement the queue manually, and distinguish between scheduler & timeout, and also the case of many short-lived timers in a single timeout window.
+	STILL, might want to use ONE timerfd for CLOCK_MONOTONIC high-resolution time source.
+
+typedef struct {
+	timer * next;
+	int id;				// unique timer id
+	int flag;			// repeat?
+	double interval; 	// or timeval / itimerspec etc.?
+} timer;
+
+lazy way of insertion-sort, might be good enough. 
+or just do it in lua anyway; makes it easier to cache the callback.
+
+elapsed = newnow - now
+head = loop.timerhead
+while elapsed > head.interval do
+	
+	now += head.interval
+	
+	// callback.
+	
+	elapsed -= head.interval
+	head = head.next
+	loop.timerhead = head
+end
+
+NOTE there's possible drift in the above code because of float add/sub error... 
+
+	*/
+
 int loop_add_timer(no_loop_t * loop, int id, double seconds) {
 	int res;
 	
@@ -117,9 +172,7 @@ int loop_add_timer(no_loop_t * loop, int id, double seconds) {
 	
 	#ifdef NO_POLL_USE_EPOLL
 	res = -1; /// NYI
-	//newevent.data.fd = fd;
-	//newevent.events = EPOLLIN;
-	//res = epoll_ctl(loop->q, EPOLL_CTL_ADD, fd, &newevent);
+	
 	#endif
 	
 	if (res != 0) {
@@ -184,16 +237,6 @@ void loop_destroy(no_loop_t * loop) {
 	free(loop);
 }
 
-void set_nonblocking(int fd) {
-	int flags;
-	if (-1 == (flags = fcntl(fd, F_GETFL, 0))) {
-        flags = 0;
-		if (fcntl(fd, F_SETFL, flags | O_NONBLOCK)) { 
-			fprintf(stderr, "%s\n", strerror( errno ));
-		}
-	}	
-}
-
 int tcp_socket_server(const char * address, const char * port) {
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
@@ -242,7 +285,7 @@ int tcp_socket_server(const char * address, const char * port) {
         return -1;
     }
     
-	set_nonblocking(sfd);
+	setnonblocking(sfd);
     
 	return sfd;
 }
@@ -270,7 +313,7 @@ int socket_accept(int fd) {
 	// FD_ISSET(client, &working_set);
 	
 	// set non-blocking
-    set_nonblocking(client);
+    setnonblocking(client);
 	
 	return client;
 }
@@ -299,7 +342,7 @@ f:write(src)
 f:close()
 local libname
 if ffi.os == "Linux" then
-	local res = cmd("gcc -O3 -fPIC no.c -shared -o libno.so")
+	local res = cmd("gcc -O3 -fPIC no.c -lrt -shared -o libno.so")
 	libname = "./libno.so"
 elseif ffi.os == "OSX" then
 	local res = cmd("gcc -arch i386 -arch x86_64 -O3 -fPIC no.c -shared -o libno.dylib")
@@ -308,6 +351,8 @@ end
 if res then error(res) end
 local no = ffi.load(libname)
 ffi.cdef(header)
+
+local min, max = math.min, math.max
 
 local loop = no.loop_new()
 local timers = {}
@@ -394,9 +439,83 @@ timers[timerid] = function()
 end
 --]]
 
+local now = no.update_clocktime()
+local timers = {}
+local maxtimercallbacks = 100
+local mintimeout = 0.001
+
+local function addtimer(t, timer)	
+	timer.t = t
+	
+	-- insertion sort to derive prev & next timers:
+	local p, n = nil, timers.head
+	while n and n.t < t do
+		p = n
+		n = n.next
+	end
+	
+	if not p then
+		-- n might or might not be nil, either way works:
+		timer.next = n
+		timers.head = timer
+	else
+		-- p exists but n might not.
+		-- if p exists, timers.head is not changed.
+		timer.next = p.next
+		p.next = timer
+	end
+end
+
+-- we could implement go, wait etc. in terms of this:
+function setTimeout(delay, callback)
+	local t = now + delay
+	local timer = {
+		callback = callback,
+	}
+	addtimer(t, timer)
+end
+
 local ev = ffi.new("no_event_t[1]")
 function run_once()
-	local n = no.loop_run_once(loop, ev, 1.)
+	
+	-- derive our timeout:
+	local timeout = 1
+	local timer = timers.head
+	if timer then
+		timeout = max(min(timeout, timer.t - now), mintimeout)
+	end
+	print(timeout)
+
+	local n = no.loop_run_once(loop, ev, timeout)
+	local t = no.update_clocktime()
+	
+	-- run timers before IO, or after?
+	local dt = t - now
+	--print(t, dt)
+	local calls = 0
+	while timer and timer.t < t do
+		-- advance head before callback
+		timers.head = timer.next
+		-- change current time before callback:
+		now = timer.t
+		local rpt = timer.callback()
+		if rpt and rpt > 0 then
+			-- re-insert:
+			addtimer(now + rpt, timer)
+		end
+		-- repeat
+		timer = timers.head
+		-- TODO: break at maxtimers?
+		calls = calls + 1
+		if calls > maxtimercallbacks then
+			print("warning: aborting timers (suspected feedback loop)")
+			break
+		end
+	end
+	-- now update to real time
+	now = t
+		
+	-- now handle IO:
 	if n > 0 then
 		local ty = ev[0].type
 		local id = ev[0].fd
@@ -443,6 +562,17 @@ local server = net.server(8080, function(client)
 	client:on("data", function(data)
 		print("received", data)
 	end)
+end)
+
+setTimeout(1, function()
+	print("tick", now)
+	return math.random()
+end)
+
+
+setTimeout(0.1, function()
+	print("tock", now)
+	return math.random()
 end)
 
 run()
