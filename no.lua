@@ -385,8 +385,19 @@ end
 local socket = {}
 socket.__index = socket
 
+function socket:init(fd)
+	self.fd = fd or self.fd
+	self.listeners = {
+		data = {},
+		finish = {},
+	}
+	return self
+end
+
 function socket:send(str)
-	return no.socket_write(self.fd, str, #str)
+	print("sending", str, self.fd, #str)
+	local res = no.socket_write(self.fd, str, #str)
+	return res
 end
 
 function socket:on(event, callback)
@@ -407,12 +418,8 @@ function net.connect(port, address, callback)
 	local fd = no.tcp_socket_client(address, port)
 	assert(fd >= 0, "failed to create client socket")
 	
-	local self = setmetatable({
-		fd = fd,
-		listeners = {
-			data = {},
-		},
-	}, socket)
+	local self = setmetatable({}, socket)
+	socket.init(self, fd)
 	
 	readers[fd] = function(fd)
 		print("connected to", fd)
@@ -432,19 +439,16 @@ function net.server(port, callback)
 	assert(fd >= 0, "failed to create server socket")
 	
 	readers[fd] = function(fd)
-		print("incoming connection from", fd)
+		print("incoming connection to", fd)
 		
 		-- accept this connection:
 		local clientfd = no.socket_accept(fd)
 		assert(clientfd >= 0)
+		print("incoming connection from", clientfd)
 		
-		local client = setmetatable({ 
-			fd = clientfd,
-			listeners = {
-				data = {},
-				finish = {},
-			}, 
-		}, socket)
+		local client = setmetatable({}, socket)	
+		socket.init(client, clientfd)
+		
 		
 		-- add client automatically:
 		assert(no.loop_add_fd(loop, clientfd) == 0)
@@ -466,12 +470,8 @@ function net.server(port, callback)
 	assert(no.loop_add_fd(loop, fd) == 0)
 	assert(no.socket_listen(fd, 10) == 0)
 	
-	return setmetatable({
-		fd = fd,
-		listeners = {
-			data = {},
-		},
-	}, socket)
+	local self = socket.init({}, fd)
+	return setmetatable(self, socket)
 end
 
 
@@ -602,6 +602,7 @@ local server = net.server(8080, function(client)
 		print("server received", data)
 	end)
 end)
+print("server", server.fd)
 
 local remoteaddr = "172.16.247.155"
 local client = net.connect(8080, remoteaddr, function(sock)
