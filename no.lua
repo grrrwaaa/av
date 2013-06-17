@@ -6,7 +6,7 @@ on OSX, use kqueue
 local ffi = require "ffi"
 local C = ffi.C
 
-local syscall = require "syscall"
+--local syscall = require "syscall"
 
 local function cmd(str) print(str) return io.popen(str):read("*a") end
 local header = [[
@@ -40,6 +40,8 @@ int socket_listen(int sfd, int backlog);
 int socket_accept(int fd);
 
 int socket_write(int fd, const char * msg, int len);
+
+int stream_read(int fd, char * buf, int size);
 ]]
 
 local src = header .. [[
@@ -226,6 +228,10 @@ int socket_write(int fd, const char * msg, int len) {
 	return res;
 }
 
+int stream_read(int fd, char * buf, int size) {
+	return read(fd, buf, size);
+}
+
 ]]
 local f = io.open("no.c", "w")
 f:write(src)
@@ -246,7 +252,7 @@ print("loop", loop)
 
 function readbytes(id)
 	local buf = ffi.new("char[1024]")
-	local bytesread = C.read(id, buf, 1024)
+	local bytesread = no.stream_read(id, buf, 1024) --C.read(id, buf, 1024)
 	--print(id, "bytesread", bytesread)
 	if bytesread > 0 then
 		return ffi.string(buf, bytesread)
