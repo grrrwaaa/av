@@ -16,7 +16,6 @@ local function new(vcode, fcode)
 		attributes = {},
 		uniforms = {},
 	}
-	
 	return util.gc(setmetatable(self, shader), shader.destroy)
 end
 

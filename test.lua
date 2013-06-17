@@ -1,5 +1,6 @@
 
-local win = require "window"
-print("stereo?", win.is_stereo)
+local audio = require "audio"
 
-local gl = require "gl"
+audio.driver.outdevice = 4
+audio.start()
+print(audio.driver.outchannels)

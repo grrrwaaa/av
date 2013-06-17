@@ -193,8 +193,10 @@ void av_window_setfullscreen(av_Window * self, int b) {
 	win.is_fullscreen = b;
 	if (b) {
 		glutFullScreen();
+		glutSetCursor(GLUT_CURSOR_NONE);
 	} else {
 		glutReshapeWindow(win.non_fullscreen_width, win.non_fullscreen_height);
+		glutSetCursor(GLUT_CURSOR_INHERIT);
 	}
 }
 

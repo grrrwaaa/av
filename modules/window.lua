@@ -1,9 +1,7 @@
 local ffi = require "ffi"
 local lib = ffi.C
 
-
 local gl = require "gl"
-
 
 local Window = {}
 
@@ -149,7 +147,7 @@ win.ondraw = function(self)
 	t = t1
 	
 	if updating and update and type(update) == "function" then
-		local ok, err = pcall(update, dt)
+		local ok, err = xpcall(function() update(dt) end, debug.traceback)
 		if not ok then 
 			print(debug.traceback(err)) 
 			-- prevent error spew:
@@ -177,7 +175,7 @@ win.ondraw = function(self)
 	gl.Color(1, 1, 1)
 	
 	if draw and type(draw) == "function" then
-		local ok, err = pcall(draw, w, h)
+		local ok, err = xpcall(function() draw(w, h) end, debug.traceback)
 		if not ok then 
 			print("error in draw")
 			print(debug.traceback(err)) 
