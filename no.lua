@@ -39,6 +39,8 @@ int tcp_socket_server(const char * address, const char * port);
 int socket_listen(int sfd, int backlog);
 int socket_accept(int fd);
 
+int tcp_socket_client(const char * address, const char * port);
+
 int socket_write(int fd, const char * msg, int len);
 
 int stream_read(int fd, char * buf, int size);
@@ -281,6 +283,55 @@ int socket_accept(int fd) {
 	return client;
 }
 
+int tcp_socket_client(const char * address, const char * port) {
+	struct addrinfo hints;
+	struct addrinfo *result, *rp;
+	int sfd, s;
+	int yes = 1;
+	
+	memset(&hints, 0, sizeof(struct addrinfo));
+	hints.ai_family = AF_UNSPEC;    /* Allow IPv4 or IPv6 */
+    hints.ai_socktype = SOCK_STREAM; /* TCP socket */
+    hints.ai_flags = AI_PASSIVE;    /* For wildcard IP address */
+    hints.ai_protocol = 0;          /* Any protocol */
+    hints.ai_canonname = NULL;
+    hints.ai_addr = NULL;
+    hints.ai_next = NULL;
+
+	s = getaddrinfo(address, port, &hints, &result);
+    if (s != 0) {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(s));
+       	return -1;
+    }
+    
+    /* getaddrinfo() returns a list of address structures.
+       Try each address until we successfully bind(2).
+       If socket(2) (or bind(2)) fails, we (close the socket
+       and) try the next address. */
+	for (rp = result; rp != NULL; rp = rp->ai_next) {
+		sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+		if (sfd == -1)
+			continue;
+		
+		//if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
+		if (connect(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
+			break;                  /* Success */
+		close(sfd);
+	}
+
+  	freeaddrinfo(result);           /* No longer needed */
+	
+	if (rp == NULL) {               /* No address succeeded */
+        fprintf(stderr, "%s\n", strerror( errno ));
+        return -1;
+    }
+    
+	setnonblocking(sfd);
+    
+	return sfd;
+}
+
+
 int socket_write(int fd, const char * msg, int len) {
 	int res;
 	res = write(fd, msg, len);
@@ -350,9 +401,34 @@ end
 
 local net = {}
 
+function net.connect(port, address, callback)
+	port = port and tostring(port) or "8080"
+	address = address or "127.0.0.1"
+	local fd = no.tcp_socket_client(address, port)
+	assert(fd >= 0, "failed to create client socket")
+	
+	local self = setmetatable({
+		fd = fd,
+		listeners = {
+			data = {},
+		},
+	}, socket)
+	
+	readers[fd] = function(fd)
+		print("connected to", fd)
+		local data = readbytes(fd)
+		print(data)
+	end
+	assert(no.loop_add_fd(loop, fd) == 0)
+	
+	callback(self)
+	
+	return self
+end
+
 function net.server(port, callback)
 	port = port and tostring(port) or "8080"
-	local fd = no.tcp_socket_server("127.0.0.1", port)
+	local fd = no.tcp_socket_server("0.0.0.0", port)
 	assert(fd >= 0, "failed to create server socket")
 	
 	readers[fd] = function(fd)
@@ -383,15 +459,15 @@ function net.server(port, callback)
 	assert(no.loop_add_fd(loop, fd) == 0)
 	assert(no.socket_listen(fd, 10) == 0)
 	
-	return fd
+	return setmetatable({
+		fd = fd,
+		listeners = {
+			data = {},
+		},
+	}, socket)
 end
 
 
--- also listen to stdin:
-assert(no.loop_add_fd(loop, 0) == 0)
-readers[0] = function(fd)
-	readbytes(fd)
-end
 
 local now = no.update_clocktime()
 local timers = {}
@@ -507,26 +583,44 @@ end
 -- TEST
 --------------------------------------------------------------------------------
 
+local clients = {}
 local server = net.server(8080, function(client)
+	clients[#clients+1] = client
 	-- send a welcoming message:
 	client:send("welcome!")
 	-- echo back to client:
 	client:pipe(client)
 	-- print all received:
 	client:on("data", function(data)
-		print("received", data)
+		print("server received", data)
 	end)
 end)
 
+
+local client = net.connect(8080, "127.0.0.1", function(sock)
+	print("connected")
+	sock:send("thanks")
+end)
+
+
+-- also listen to stdin:
+assert(no.loop_add_fd(loop, 0) == 0)
+readers[0] = function(fd)
+	local data = readbytes(fd)
+	for i, v in ipairs(clients) do
+		v:send(data)
+	end
+end
+
+--[[
 setTimeout(1, function()
 	print("tick", now)
 	return math.random()
 end)
-
-
 setTimeout(0.1, function()
 	print("tock", now)
 	return math.random()
 end)
+--]]
 
 run()
