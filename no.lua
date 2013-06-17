@@ -174,10 +174,6 @@ int loop_run_once(no_loop_t * loop, no_event_t * event, double seconds) {
 			printf("warning: closing %d\n", fd);
 			event->type = EVENT_TYPE_CLOSE;
 			close(fd); // safe assumption?
-			
-			newevent.data.fd = fd;
-			newevent.events = EPOLLIN | EPOLLOUT;
-			res = epoll_ctl(loop->q, EPOLL_CTL_REMOVE, fd, &newevent);
 		} else if (change.filter == EVFILT_TIMER) {
 			event->type = EVENT_TYPE_TIMER;
 		} else {
