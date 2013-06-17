@@ -33,8 +33,6 @@ double update_clocktime();
 no_loop_t * loop_new();
 void loop_destroy(no_loop_t * loop);
 int loop_add_fd(no_loop_t * loop, int fd);
-int loop_add_timer(no_loop_t * loop, int id, double seconds);
-
 int loop_run_once(no_loop_t * loop, no_event_t * event, double seconds);
 
 int tcp_socket_server(const char * address, const char * port);
@@ -61,6 +59,11 @@ local src = header .. [[
 #include <errno.h>
 #include <time.h>
 
+#if defined(__MACH__) && defined(__APPLE__)
+	#include <mach/mach.h>
+	#include <mach/mach_time.h>
+#endif
+
 #ifdef __APPLE__
 	#define NO_POLL_USE_KQUEUE
 	#include <sys/event.h>
@@ -86,8 +89,21 @@ void setnonblocking(int fd) {
 struct timespec clocktime;
 	
 double update_clocktime() {
-	clock_gettime(CLOCK_MONOTONIC, &clocktime);
-	return clocktime.tv_sec + clocktime.tv_nsec * 1.0e-9;
+	#ifdef __APPLE__
+		static double timeConvert = 0.0;
+		if ( timeConvert == 0.0 )
+		{
+			mach_timebase_info_data_t timeBase;
+			(void)mach_timebase_info( &timeBase );
+			timeConvert = (double)timeBase.numer /
+				(double)timeBase.denom /
+				1000000000.0;
+		}
+		return (double)mach_absolute_time( ) * timeConvert;
+	#else
+		clock_gettime(CLOCK_MONOTONIC, &clocktime);
+		return clocktime.tv_sec + clocktime.tv_nsec * 1.0e-9;
+	#endif
 }
 
 no_loop_t * loop_new() {
@@ -120,59 +136,6 @@ int loop_add_fd(no_loop_t * loop, int fd) {
 	newevent.data.fd = fd;
 	newevent.events = EPOLLIN;
 	res = epoll_ctl(loop->q, EPOLL_CTL_ADD, fd, &newevent);
-	#endif
-	
-	if (res != 0) {
-		fprintf(stderr, "%s\n", strerror( errno ));
-	}
-	return res;
-}
-
-/*
-epoll does not have a timer type built in.
-options:
-	1. use timerfd. results in a regular 'read' event; we'd have to distinguish between regular files and timers separately.
-	2. use a priority queue of timers, and have the 'next timer' as the timeout in epoll_wait. we'd have to implement the queue manually, and distinguish between scheduler & timeout, and also the case of many short-lived timers in a single timeout window.
-	STILL, might want to use ONE timerfd for CLOCK_MONOTONIC high-resolution time source.
-
-typedef struct {
-	timer * next;
-	int id;				// unique timer id
-	int flag;			// repeat?
-	double interval; 	// or timeval / itimerspec etc.?
-} timer;
-
-lazy way of insertion-sort, might be good enough. 
-or just do it in lua anyway; makes it easier to cache the callback.
-
-elapsed = newnow - now
-head = loop.timerhead
-while elapsed > head.interval do
-	
-	now += head.interval
-	
-	// callback.
-	
-	elapsed -= head.interval
-	head = head.next
-	loop.timerhead = head
-end
-
-NOTE there's possible drift in the above code because of float add/sub error... 
-
-	*/
-
-int loop_add_timer(no_loop_t * loop, int id, double seconds) {
-	int res;
-	
-	#ifdef NO_POLL_USE_KQUEUE
-	EV_SET(&newevent, id, EVFILT_TIMER, EV_ADD | EV_ENABLE, 0, seconds * 1000.0, NULL);
-	res = kevent(loop->q, &newevent, 1, NULL, 0, NULL) == -1;
-	#endif
-	
-	#ifdef NO_POLL_USE_EPOLL
-	res = -1; /// NYI
-	
 	#endif
 	
 	if (res != 0) {
@@ -429,15 +392,6 @@ assert(no.loop_add_fd(loop, 0) == 0)
 readers[0] = function(fd)
 	readbytes(fd)
 end
-
---[[
--- also add a timer:
-local timerid = 1
-assert(no.loop_add_timer(loop, 1, 2.5) == 0, "failed to add timer")
-timers[timerid] = function()
-	print("timer callback")
-end
---]]
 
 local now = no.update_clocktime()
 local timers = {}
