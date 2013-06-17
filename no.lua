@@ -171,8 +171,13 @@ int loop_run_once(no_loop_t * loop, no_event_t * event, double seconds) {
 			fprintf(stderr, "%s\n", strerror( errno ));
 		} else if ((change.flags & EV_EOF) != 0) {
 			// file closed.
+			printf("warning: closing %d\n", fd);
 			event->type = EVENT_TYPE_CLOSE;
 			close(fd); // safe assumption?
+			
+			newevent.data.fd = fd;
+			newevent.events = EPOLLIN | EPOLLOUT;
+			res = epoll_ctl(loop->q, EPOLL_CTL_REMOVE, fd, &newevent);
 		} else if (change.filter == EVFILT_TIMER) {
 			event->type = EVENT_TYPE_TIMER;
 		} else {
@@ -460,7 +465,7 @@ function net.server(port, callback)
 				end
 			else
 				for i, l in ipairs(client.listeners.finish) do
-					l(data)
+					l()
 				end
 			end
 		end
@@ -563,7 +568,8 @@ function run_once()
 			if f then
 				f(id)
 			else
-				print("no reader", id)
+				local data = readbytes(fd)
+				print("no reader", id, data)
 			end
 		elseif ty == no.EVENT_TYPE_TIMER then
 			local f = timers[id]
@@ -574,6 +580,7 @@ function run_once()
 			end
 		elseif ty == no.EVENT_TYPE_CLOSE then
 			print("closed", id)
+			error()
 		else
 			print("unhandled event type")
 		end
@@ -596,7 +603,7 @@ local server = net.server(8080, function(client)
 	-- send a welcoming message:
 	client:send("welcome!")
 	-- echo back to client:
-	client:pipe(client)
+	--client:pipe(client)
 	-- print all received:
 	client:on("data", function(data)
 		print("server received", data)
