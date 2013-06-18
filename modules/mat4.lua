@@ -479,7 +479,7 @@ function mat4.lookat(eye, at, up)
 	local uz = (eye - at):normalize()
 	local uy = up:copy():normalize()
 	local ux = up:cross(uz):normalize()
-	return lookatu(eye, ux, uy, uz)
+	return mat4.lookatu(eye, ux, uy, uz)
 end
 
 function mat4:__tostring()
