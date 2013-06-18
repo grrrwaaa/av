@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef AV_OSX
+#ifdef AV_OSX_HID
 #include "hidapi/hidapi/hidapi.h"
 #endif
 

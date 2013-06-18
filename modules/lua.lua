@@ -311,6 +311,8 @@ function lua.setglobal(L,s)	return lib.lua_setfield(L, lua.GLOBALSINDEX, (s)) en
 function lua.getglobal(L,s)	return lib.lua_getfield(L, lua.GLOBALSINDEX, (s)) end
 function lua.tostring(L,i)	return lib.lua_tolstring(L, (i), nil) end
 
+function lua.call(L, arg, ret) return lib.lua_call(L, arg or 0, ret or 0) end
+
 -- Note: this does not install a __gc handler (by intention)
 -- the state must be closed manually using L:close()
 function lua.open()	return lib.luaL_newstate() end
@@ -426,7 +428,6 @@ e.g.:
 
 --]]
 lua.__index = lua
-ffi.metatype("struct lua_State", lua)
 
 local function index(t, k)
 	local prefixed = "lua_" .. k
@@ -435,4 +436,6 @@ local function index(t, k)
 	return v
 end
 setmetatable(lua, { __index = index, })
+
+ffi.metatype("struct lua_State", lua)
 return lua
