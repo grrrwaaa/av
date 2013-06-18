@@ -28,8 +28,8 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	CC='clang++'
 	CFLAGS="-fno-stack-protector -O3 -Wall -fPIC"
 	DEFINES="-DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__MACOSX_CORE__"
-	INCLUDEPATHS="-Iosx/include -Iinclude -Irtaudio-4.0.11 -Ilpeg-0.11 -I/usr/local/include/bullet/"
-	SOURCES="-x c++ av.cpp rgbd.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp -x c lpeg-0.11/*.c http-parser/*.c"
+	INCLUDEPATHS="-Iosx/include -Iinclude -Irtaudio-4.0.11 -Ilpeg-0.11 -Ihidapi/hidapi -I/usr/local/include/bullet/"
+	SOURCES="-x c++ av.cpp rgbd.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp -x c lpeg-0.11/*.c http-parser/*.c hidapi/mac/hid.c"
 	# bullet.cpp
 	
 	LINK='clang++'

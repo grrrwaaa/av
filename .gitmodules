@@ -1,3 +1,6 @@
 [submodule "src/luajit-2.0"]
 	path = src/luajit-2.0
 	url = http://luajit.org/git/luajit-2.0.git
+[submodule "src/hidapi"]
+	path = src/hidapi
+	url = git://github.com/signal11/hidapi.git
