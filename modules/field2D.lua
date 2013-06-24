@@ -641,8 +641,14 @@ function field2D:create()
 	if not self.texID then
 		self.texID = gl.GenTextures(1)
 		gl.BindTexture(gl.TEXTURE_2D, self.texID)
-		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+		
+		if self.drawsmooth then
+			gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+			gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+		else
+			gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+			gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+		end		
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP)
 		self:send()	
@@ -677,16 +683,23 @@ function field2D.new(dimx, dimy)
 		height = dimy,
 		-- size in bytes:
 		size = ffi.sizeof(data),
+		-- whether to draw smoothly or pixelly:
+		drawsmooth = false,
 	}, field2D)
 end
 
 --- Create a copy of the field with the same dimensions and contents
-function field2D:copy()
-	local f2 = field2D.new(self.width, self.height)
+function field2D:copy(dst)
+	if dst then 
+		assert(dst.width == self.width and dst.height == self.height, "field dimensions must match")
+	else
+		dst = field2D.new(self.width, self.height)
+	end
 	-- copy data:
-	ffi.copy(self.data, f2.data, f2.size)
-	return f2
+	ffi.copy(dst.data, self.data, self.size)
+	return dst
 end
+
 
 return setmetatable(field2D, {
 	__call = function(_, ...)
