@@ -55,6 +55,14 @@ function field2D:index_raw(x, y)
 	return y*self.width + x
 end
 
+--- convert 0..1 indices into cell indices
+-- (use floor() for safe indices)
+function field2D:index_norm(x, y)
+	local x = (x and (((x * self.width) - 0.5) % self.width) or 0) 
+	local y = (y and (((y * self.height) - 0.5) % self.height) or 0)
+	return x, y
+end
+
 --- set the value of a cell, or of all cells.
 -- If the x,y coordinate is not specified, it will apply the value for all cells.
 -- If the value to set is a function, this function is called (passing the x, y coordinates as arguments). If the function returns a value, the cell is set to this value; otherwise the cell is left unchanged.

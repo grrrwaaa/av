@@ -15,6 +15,7 @@ local function new(width, height, numtextures)
 		format = gl.RGBA,
 		type = gl.UNSIGNED_BYTE,
 		data = nil,
+		dirty = true,
 		
 		-- assume 2D for now
 		width = width or 512,
@@ -51,6 +52,7 @@ function texture:send()
 		)
 		self:unbind()
 	end
+	self.dirty = false
 end
 
 function texture:create()
@@ -91,6 +93,10 @@ function texture:bind(unit, tex)
 	gl.Enable(self.target)
 	gl.BindTexture(self.target, self.tex[self.currenttexture])
 	self.bound = true
+	
+	if self.dirty then
+		self:send()
+	end
 end
 
 function texture:unbind(unit)
@@ -100,6 +106,15 @@ function texture:unbind(unit)
 	gl.BindTexture(self.target, 0)
 	gl.Disable(self.target)
 	self.bound = false
+end
+
+function texture:quad(x, y, w, h, unit)
+	if not y then 
+		unit, x = x, nil
+	end
+	self:bind(unit)
+	gl.sketch.quad(x, y, w, h)
+	self:unbind(unit)
 end
 
 setmetatable(texture, {
