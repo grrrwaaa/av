@@ -5,19 +5,6 @@ local concat = table.concat
 local tostring = tostring
 local floor = math.floor
 
-local ffi = require "ffi"
-ffi.cdef [[ 
-
-typedef struct vec2f {
-	float x, y;
-} vec2f;
-typedef struct vec2d {
-	double x, y;
-} vec2d;
-typedef vec2d vec2;
-
-]]
-
 -- weak-valued map of objects that have a gc sentinel referencing them:
 local gcmap = {}
 setmetatable(gcmap, { __mode = 'v' })
