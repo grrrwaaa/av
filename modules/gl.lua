@@ -13,15 +13,23 @@ print("loading OpenGL")
 
 local ok, lib
 if ffi.os == "Linux" then
-print("linux")
+	
 	-- hack for Ubuntu, which loads mesa rather than nvidia by default:
 	-- if Nvidia is not installed, then it will fall back to system default GL.
-	ok, lib = pcall(ffi.load, "/usr/lib/nvidia-current-updates/libGL.so")
-	if not ok then
-		ok, lib = pcall(ffi.load, "/usr/lib/nvidia-current/libGL.so")
-	end
-	if not ok then
-		ok, lib = pcall(ffi.load, "GL")
+
+	local sources = {
+		"/usr/lib/nvidia-current-updates/libGL.so",
+		"/usr/lib/nvidia-current/libGL.so",
+		"/usr/lib/nvidia-304/libGL.so",
+		-- last resort is mesa
+		"GL",
+	}
+	for i, v in ipairs(sources) do
+		ok, lib = pcall(ffi.load, "/usr/lib/nvidia-current-updates/libGL.so")
+		if ok then 
+			print("loaded opengl from", v)
+			break
+		end
 	end
 	
 elseif ffi.os == "OSX" then
@@ -33,8 +41,6 @@ elseif ffi.os == "Windows" then
 		void * wglGetProcAddress(const char *);
 	]]
 end
-
-print(lib)
 
 -- fall back to looking in executable:
 if not ok then lib = ffi.C end
