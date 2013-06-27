@@ -1012,7 +1012,6 @@ enum {
  GL_TEXTURE_INTENSITY_TYPE_ARB     = 0x8C15,
  GL_TEXTURE_DEPTH_TYPE_ARB         = 0x8C16,
  GL_UNSIGNED_NORMALIZED_ARB        = 0x8C17,
- GL_RGBA32F_ARB                    = 0x8814,
  GL_RGBA32F                        = 0x8814,
  GL_RGB32F                         = 0x8815,
  GL_ALPHA32F_ARB                   = 0x8816,
