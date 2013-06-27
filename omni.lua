@@ -817,7 +817,7 @@ function draw()
 			-- bind the map3D texture into unit 0:
 			if not p.map3Dtex then
 				p.map3Dtex = texture(p.width, p.height)
-				p.map3Dtex.internalformat = gl.RGB32F_ARB
+				p.map3Dtex.internalformat = gl.RGB32F
 				p.map3Dtex.type = gl.FLOAT
 				p.map3Dtex.format = gl.RGBA
 				p.map3Dtex.data = ffi.cast("float *", p.map3D)
