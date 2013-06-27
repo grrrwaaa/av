@@ -86,6 +86,11 @@ typedef struct av_Audio {
 	
 	av_msgbuffer msgbuffer;
 	
+	// a big buffer for main-thread audio generation
+	float * buffer;
+	// the buffer alternates between channels at blocksize periods:
+	int blocks, blockread, blockwrite, blockstep;
+	
 	// only access from audio thread:
 	float * input;
 	float * output;	

@@ -27,8 +27,18 @@ int av_rtaudio_callback(void *outputBuffer,
 	
 	double newtime = audio.time + frames / audio.samplerate;
 	
+	size_t size = sizeof(float) * frames;
+	
 	// zero outbuffers:
-	memset(outputBuffer, 0, sizeof(float) * frames);
+	//memset(outputBuffer, 0, size);
+	
+	// copy in the buffers:
+	float * dst = audio.output;
+	float * src = audio.buffer + audio.blockread * audio.blocksize * audio.outchannels;
+	memcpy(dst, src, size * audio.outchannels);
+	// advance the read head:
+	audio.blockread++;
+	if (audio.blockread >= audio.blocks) audio.blockread = 0;
 	
 	// this calls back into Lua via FFI:
 	if (audio.onframes) {
@@ -119,6 +129,15 @@ av_Audio * av_audio_get() {
 		audio.msgbuffer.data = (unsigned char *)malloc(audio.msgbuffer.size);
 		
 		audio.onframes = 0;
+		
+		// one second of ringbuffer:
+		int blockspersecond = audio.samplerate / audio.blocksize;
+		audio.blocks = blockspersecond + 1;
+		audio.blockstep = audio.blocksize * audio.outchannels;
+		int len = audio.blockstep * audio.blocks;
+		audio.buffer = (float *)calloc(len, sizeof(float));
+		audio.blockread = 0;
+		audio.blockwrite = 0;
 		
 		AL = av_init_lua();
 		

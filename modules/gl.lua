@@ -13,15 +13,23 @@ print("loading OpenGL")
 
 local ok, lib
 if ffi.os == "Linux" then
-print("linux")
+	
 	-- hack for Ubuntu, which loads mesa rather than nvidia by default:
 	-- if Nvidia is not installed, then it will fall back to system default GL.
-	ok, lib = pcall(ffi.load, "/usr/lib/nvidia-current-updates/libGL.so")
-	if not ok then
-		ok, lib = pcall(ffi.load, "/usr/lib/nvidia-current/libGL.so")
-	end
-	if not ok then
-		ok, lib = pcall(ffi.load, "GL")
+
+	local sources = {
+		"/usr/lib/nvidia-current-updates/libGL.so",
+		"/usr/lib/nvidia-current/libGL.so",
+		"/usr/lib/nvidia-304/libGL.so",
+		-- last resort is mesa
+		"GL",
+	}
+	for i, v in ipairs(sources) do
+		ok, lib = pcall(ffi.load, "/usr/lib/nvidia-current-updates/libGL.so")
+		if ok then 
+			print("loaded opengl from", v)
+			break
+		end
 	end
 	
 elseif ffi.os == "OSX" then
@@ -33,8 +41,6 @@ elseif ffi.os == "Windows" then
 		void * wglGetProcAddress(const char *);
 	]]
 end
-
-print(lib)
 
 -- fall back to looking in executable:
 if not ok then lib = ffi.C end
@@ -665,6 +671,30 @@ enum {
  GL_LIGHT_MODEL_COLOR_CONTROL      = 0x81F8,
  GL_SINGLE_COLOR                   = 0x81F9,
  GL_SEPARATE_SPECULAR_COLOR        = 0x81FA,
+ 
+ GL_RG                             = 0x8227,
+ GL_RG_INTEGER                     = 0x8228,
+ GL_R8                             = 0x8229,
+ GL_R16                            = 0x822A,
+ GL_RG8                            = 0x822B,
+ GL_RG16                           = 0x822C,
+ GL_R16F                           = 0x822D,
+ GL_R32F                           = 0x822E,
+ GL_RG16F                          = 0x822F,
+ GL_RG32F                          = 0x8230,
+ GL_R8I                            = 0x8231,
+ GL_R8UI                           = 0x8232,
+ GL_R16I                           = 0x8233,
+ GL_R16UI                          = 0x8234,
+ GL_R32I                           = 0x8235,
+ GL_R32UI                          = 0x8236,
+ GL_RG8I                           = 0x8237,
+ GL_RG8UI                          = 0x8238,
+ GL_RG16I                          = 0x8239,
+ GL_RG16UI                         = 0x823A,
+ GL_RG32I                          = 0x823B,
+ GL_RG32UI                         = 0x823C,
+ 
  GL_PACK_SKIP_IMAGES               = 0x806B,
  GL_PACK_IMAGE_HEIGHT              = 0x806C,
  GL_UNPACK_SKIP_IMAGES             = 0x806D,
@@ -982,8 +1012,8 @@ enum {
  GL_TEXTURE_INTENSITY_TYPE_ARB     = 0x8C15,
  GL_TEXTURE_DEPTH_TYPE_ARB         = 0x8C16,
  GL_UNSIGNED_NORMALIZED_ARB        = 0x8C17,
- GL_RGBA32F_ARB                    = 0x8814,
- GL_RGB32F_ARB                     = 0x8815,
+ GL_RGBA32F                        = 0x8814,
+ GL_RGB32F                         = 0x8815,
  GL_ALPHA32F_ARB                   = 0x8816,
  GL_INTENSITY32F_ARB               = 0x8817,
  GL_LUMINANCE32F_ARB               = 0x8818,

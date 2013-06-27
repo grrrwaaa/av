@@ -29,7 +29,7 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	CFLAGS="-fno-stack-protector -O3 -Wall -fPIC"
 	DEFINES="-DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__MACOSX_CORE__"
 	INCLUDEPATHS="-Iosx/include -Iinclude -Irtaudio-4.0.11 -Ilpeg-0.11 -Ihidapi/hidapi -I/usr/local/include/bullet/"
-	SOURCES="-x c++ av.cpp rgbd.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp -x c lpeg-0.11/*.c http-parser/*.c hidapi/mac/hid.c"
+	SOURCES="-x c++ av.cpp rgbd.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp -x c lpeg-0.11/*.c http-parser/*.c" # hidapi/mac/hid.c"
 	# bullet.cpp
 	
 	LINK='clang++'
@@ -74,13 +74,13 @@ elif [[ $PLATFORM == 'Linux' ]]; then
 	CFLAGS="-O3 -Wall -fPIC -ffast-math -Wno-unknown-pragmas -MMD"
 	DEFINES="-D_GNU_SOURCE -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__"
 	INCLUDEPATHS="-Ilinux/include -I/usr/local/include/luajit-2.0 -I/usr/include/luajit-2.0 -Irtaudio-4.0.11 -Ilpeg-0.11 -Iinclude"
-	SOURCES="av.cpp rgbd.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp"
+	SOURCES="av.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp"
 	
 	LINK=$CC
 	LDFLAGS="-w -rdynamic -Wl,-E "
 	LINKERPATHS="-L/usr/lib/nvidia-current/ -L/usr/local/lib -L/usr/lib"
 	#LIBRARIES="-lluajit-5.1 -lfreeimage -lGLEW -lGLU -lGL -lglut -lasound ../externs/libuv/libuv.a -lrt -lpthread"
-	LIBRARIES="-lluajit-5.1 -lGLU -lGL -lglut -lasound -lrt -lpthread linux/lib64/libfreenect.a -lusb-1.0"
+	LIBRARIES="-lluajit-5.1 -lGLU -lGL -lglut -lasound -lrt -lpthread" # linux/lib64/libfreenect.a -lusb-1.0"
 	
 	echo compile
 	$CC -c $CFLAGS $DEFINES $INCLUDEPATHS $SOURCES

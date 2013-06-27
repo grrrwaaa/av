@@ -86,6 +86,17 @@ end
 function cancel(L)
 	if L then
 		print('canceling', filename)
+		
+		-- trigger handler:
+		L:getglobal("close")
+		if L:isfunction(-1) then
+			if L:call(0, 0) then
+				print("error on close", L:tostring(-1))
+			end
+		else
+			L:pop(1)
+		end
+		
 		-- before calling L:close(), we need to unregister any application callbacks!
 		C.av_state_reset(L)
 		-- should be safe to shutdown now:

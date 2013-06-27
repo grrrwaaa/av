@@ -1,5 +1,4 @@
 --- vec2: A simple 2-component vector
-
 local sqrt = math.sqrt
 local sin, cos = math.sin, math.cos
 local atan2 = math.atan2
@@ -10,6 +9,18 @@ local pi = math.pi
 local twopi = pi * 2
 local format = string.format
 
+local ffi = require "ffi"
+ffi.cdef [[ 
+
+typedef struct vec2f {
+	float x, y;
+} vec2f;
+typedef struct vec2d {
+	double x, y;
+} vec2d;
+typedef vec2d vec2;
+
+]]
 --- Create a new vector with components x, y:
 -- (Can also be used to duplicate a vector: vec2(v))
 -- @param x number or vector (optional, default 0)
@@ -20,7 +31,8 @@ local vec2 = {}
 vec2.__index = vec2
 
 local function new(x, y)
-	return setmetatable({ x = x, y = y }, vec2)
+	return ffi.new("vec2", x, y)
+	--return setmetatable({ x = x, y = y }, vec2)
 end
 
 --- Create a copy of a vector:
@@ -574,5 +586,8 @@ setmetatable(vec2, {
 		end
 	end
 })
+
+ffi.metatype("vec2f", vec2)
+ffi.metatype("vec2d", vec2)
 
 return vec2

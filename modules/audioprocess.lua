@@ -115,9 +115,6 @@ local function callback(self, time, inputs, outputs, frames)
 	-- get and clear output buffers:
 	for c = 1, 2 do
 		local buf = outputs + frames * (c-1)
-		for i = 0, frames-1 do
-			buf[i] = 0
-		end
 		outbuffers[c] = buf
 	end
 	
