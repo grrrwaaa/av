@@ -40,13 +40,13 @@ local uniformsetters = {
 	[gl.INT_VEC4] = gl.Uniform4i,
 	-- gl.BOOL, gl.BOOL_VEC2, gl.BOOL_VEC3, gl.BOOL_VEC4, 
 	[gl.FLOAT_MAT2] = function(index, v)
-		gl.UniformMatrix2f(index, 1, 0, v)
+		gl.UniformMatrix2fv(index, 1, 0, v)
 	end,	
 	[gl.FLOAT_MAT3] = function(index, v)
-		gl.UniformMatrix3f(index, 1, 0, v)
+		gl.UniformMatrix3fv(index, 1, 0, v)
 	end, 
 	[gl.FLOAT_MAT4] = function(index, v)
-		gl.UniformMatrix4f(index, 1, 0, v)
+		gl.UniformMatrix4fv(index, 1, 0, v)
 	end, 
 	[gl.SAMPLER_2D] = gl.Uniform1i,
 	[gl.SAMPLER_3D] = gl.Uniform1i,

@@ -13,6 +13,7 @@ local EPSILON = 0.0000001
 local format = string.format
 
 local vec3 = require "vec3"
+local mat4 = require "mat4"
 
 local ffi = require "ffi"
 ffi.cdef [[ 
@@ -520,20 +521,16 @@ LHCS
 	[											] 
 	[ 2xz - 2wy      2yz + 2wx      1 - 2x - 2y	]
 
-
-function quat.matrix(s, m)
-	Vec<3,T> ux,uy,uz;
-	toCoordinateFrame(ux,uy,uz);
-	
-	local ux, uy, uz = s:ux(), s:uy(), s:uz()
-	
-
-	m[ 0] = ux[0];	m[ 4] = uy[0];	m[ 8] = uz[0];	m[12] = 0;
-	m[ 1] = ux[1];	m[ 5] = uy[1];	m[ 9] = uz[1];	m[13] = 0;
-	m[ 2] = ux[2];	m[ 6] = uy[2];	uz.z = uz[2];	m[14] = 0;
-	m[ 3] = 0;		m[ 7] = 0;		m[11] = 0;		m[15] = 1;
-end
 --]]
+function quat:matrix(m)
+	local ux, uy, uz = self:ux(), self:uy(), self:uz()
+	local m = mat4()
+	m[ 1] = ux.x;	m[ 2] = uy.x;	m[ 3] = uz.x;	m[ 4] = 0;
+	m[ 5] = ux.y;	m[ 6] = uy.y;	m[ 7] = uz.y;	m[ 8] = 0;
+	m[ 9] = ux.z;	m[10] = uy.z;	m[11] = uz.z;	m[12] = 0;
+	m[ 13] = 0;		m[14] = 0;		m[15] = 0;		m[16] = 1;
+	return m
+end
 
 --- Rotate a vector:
 --	q must be a normalized quaternion

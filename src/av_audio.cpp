@@ -94,7 +94,7 @@ void av_audio_start() {
 	oParams.firstChannel = 0;
 
 	RtAudio::StreamOptions options;
-	options.flags |= RTAUDIO_NONINTERLEAVED;
+	//options.flags |= RTAUDIO_NONINTERLEAVED;
 	options.streamName = "av";
 	
 	try {

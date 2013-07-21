@@ -1,7 +1,7 @@
 --- mat4: A 4x4 matrix
 
 local sqrt = math.sqrt
-local sin, cos tan = math.sin, math.cos, math.tan
+local sin, cos, tan = math.sin, math.cos, math.tan
 local atan = math.atan
 local atan2 = math.atan2
 local acos = math.acos
@@ -26,7 +26,7 @@ end
 -- @param row (zero-based)
 -- @return index
 function mat4:index(column, row)
-	return 1 + col*4 + row
+	return 1 + column*4 + row
 end
 
 --- Get the value of a matrix cell
@@ -338,7 +338,7 @@ function mat4.perspectiveOffAxisX(fovy, aspect, near, far, xShift, focal)
 end
 
 -- off-axis in Y only (e.g. planar stereo offset)
-function mat4.perspectiveOffAxisY(fovy, aspect, near, far, yShift, focal)	
+function mat4.perspectiveOffAxisY(fovy, aspect, near, far, yshift, focal)	
 	local focal = focal or 1
 	local h = near * tan(fovy*0.008726646259972)	-- height of view at distance = near
 	local w = aspect * h
@@ -347,7 +347,7 @@ function mat4.perspectiveOffAxisY(fovy, aspect, near, far, yShift, focal)
 	local t = y + h
 	local l = w
 	local r = w	
-	return perspective(l, r, b, t, near, far);
+	return mat4.frustum(l, r, b, t, near, far)
 end
 
 --- Generalized off-axis perspective:
@@ -502,5 +502,11 @@ mat4.identity_matrix = new(
 	0, 1, 0, 0,
 	0, 0, 1, 0,
 	0, 0, 0, 1)
+
+setmetatable(mat4, {
+	__call = function(s, ...)
+		return new(...)
+	end,
+})
 
 return mat4

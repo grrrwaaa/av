@@ -488,6 +488,69 @@ function vec3:setmagnew(m)
 	)
 end
 
+function vec3:rotateX(angle)
+	local c = cos(angle)
+	local s = sin(angle)
+	local y, z = self.y, self.z
+	self.y = y * c - z * s
+	self.z = z * c + y * s
+	return self
+end
+
+--- Create a vector by rotating a vector by an angle
+-- @param angle in radians
+-- @return new vector
+function vec3:rotateXnew(angle)
+	local c = cos(angle)
+	local s = sin(angle)
+	return new(
+		self.y * c - self.y * s,
+		self.y * c + self.y * s
+	)
+end
+
+function vec3:rotateY(angle)
+	local c = cos(angle)
+	local s = sin(angle)
+	local x, z = self.x, self.z
+	self.x = x * c - z * s
+	self.z = z * c + x * s
+	return self
+end
+
+--- Create a vector by rotating a vector by an angle
+-- @param angle in radians
+-- @return new vector
+function vec3:rotateYnew(angle)
+	local c = cos(angle)
+	local s = sin(angle)
+	return new(
+		self.x * c - self.z * s,
+		self.z * c + self.x * s
+	)
+end
+
+function vec3:rotateZ(angle)
+	local c = cos(angle)
+	local s = sin(angle)
+	local x, y = self.x, self.y
+	self.x = x * c - y * s
+	self.y = y * c + x * s
+	return self
+end
+
+--- Create a vector by rotating a vector by an angle
+-- @param angle in radians
+-- @return new vector
+function vec3:rotateZnew(angle)
+	local c = cos(angle)
+	local s = sin(angle)
+	return new(
+		self.x * c - self.y * s,
+		self.y * c + self.x * s
+	)
+end
+
 --- Create a new vector in a uniformly random direction:
 -- @param mag magnitude (optional, default 1)
 -- @return new vector
