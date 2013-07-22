@@ -48,6 +48,38 @@ function av_tick()
 	end
 end
 
+-- force reload all scripts:
+function av_reload()
+	for filename, mtime in pairs(watched) do
+		spawn(filename)
+	end
+end
+
+
+function cancel(L)
+	if L then
+		print('canceling', filename)
+		
+		-- trigger handler:
+		L:getglobal("close")
+		if L:isfunction(-1) then
+			if L:call(0, 0) then
+				print("error on close", L:tostring(-1))
+			end
+		else
+			L:pop(1)
+		end
+		
+		-- before calling L:close(), we need to unregister any application callbacks!
+		C.av_state_reset(L)
+		-- should be safe to shutdown now:
+		L:close()
+		print(string.rep("-", 80))
+		ffi.gc(L, nil)
+	end
+end
+
+
 -- basic file spawning. 
 -- this will allow us to scale up to filewatching and multiple states in the future
 
@@ -80,29 +112,9 @@ function spawn(filename)
 
 	L:dofile(filename, unpack(args))
 	
+	ffi.gc(L, cancel)
+	
 	return L
-end
-
-function cancel(L)
-	if L then
-		print('canceling', filename)
-		
-		-- trigger handler:
-		L:getglobal("close")
-		if L:isfunction(-1) then
-			if L:call(0, 0) then
-				print("error on close", L:tostring(-1))
-			end
-		else
-			L:pop(1)
-		end
-		
-		-- before calling L:close(), we need to unregister any application callbacks!
-		C.av_state_reset(L)
-		-- should be safe to shutdown now:
-		L:close()
-		print(string.rep("-", 80))
-	end
 end
 
 function watch(filename)

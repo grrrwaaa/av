@@ -223,8 +223,22 @@ void getmodifiers() {
 
 void onkeydown(unsigned char k, int x, int y) {
 	getmodifiers();
-	if (win.onkey) {
-		(win.onkey)(&win, 1, k);
+	
+	switch(k) {
+		case 3: 	// ctrl-C
+		case 17:	// ctrl-Q
+			lua_close(L);
+			exit(0);
+			return;
+		case 18:	// ctrl-R
+			av_reload();
+			return;
+		default: {
+			//printf("k %d s %d a %d c %d\n", k, win.shift, win.alt, win.ctrl);
+			if (win.onkey) {
+				(win.onkey)(&win, 1, k);
+			}
+		}
 	}
 }
 
@@ -422,6 +436,24 @@ double av_filetime(const char * filename) {
 			return mtime;
 		}
 	#endif
+}
+
+void av_reload() {
+	lua_getfield(L, LUA_REGISTRYINDEX, "debug.traceback");
+	int debugtraceback = lua_gettop(L);
+
+	lua_getglobal(L, "av_reload");
+	if (lua_isfunction(L, -1)) {
+		int err = lua_pcall(L, 0, LUA_MULTRET, debugtraceback);
+		if (err) {
+			printf("error: %s\n", lua_tostring(L, -1));
+		}
+	} else {
+		printf("av_main corrupt\n");
+		exit(0);
+	}
+	
+	lua_settop(L, 0);
 }
 
 /*
