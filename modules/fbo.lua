@@ -100,13 +100,17 @@ function fbo:unbind(unit)
 	gl.Disable(gl.TEXTURE_2D)
 end
 
-function fbo:draw()
+function fbo:draw(x, y, w, h)
+	x = x or 0
+	y = y or 0
+	w = w or 1
+	h = h or 1
 	self:bind()
 	gl.Begin(gl.QUADS)
-		gl.TexCoord(0, 0) gl.Vertex(0, 0)
-		gl.TexCoord(1, 0) gl.Vertex(1, 0)
-		gl.TexCoord(1, 1) gl.Vertex(1, 1)
-		gl.TexCoord(0, 1) gl.Vertex(0, 1)
+		gl.TexCoord(0, 0) gl.Vertex(x, y)
+		gl.TexCoord(1, 0) gl.Vertex(x+w, y)
+		gl.TexCoord(1, 1) gl.Vertex(x+w, y+h)
+		gl.TexCoord(0, 1) gl.Vertex(x, y+h)
 	gl.End()
 	self:unbind()
 end
