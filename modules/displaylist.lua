@@ -18,7 +18,7 @@ function displaylist:destroy()
 	self.id = nil
 end
 
-function displaylist:draw()
+function displaylist:create()
 	if not self.id then
 		local id = gl.GenLists(1)
 		gl.NewList(id, gl.COMPILE)
@@ -27,6 +27,10 @@ function displaylist:draw()
 		glu.assert("displaylist")
 		self.id = id
 	end
+end
+
+function displaylist:draw()
+	self:create()
 	gl.CallList(self.id)
 end
 displaylist.__call = displaylist.draw
