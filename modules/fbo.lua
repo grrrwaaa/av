@@ -131,7 +131,6 @@ end
 
 function fbo:startcapture()
 	self:create()
-	
 	self:bindbuffer()
 	
 	gl.Enable(gl.SCISSOR_TEST)
