@@ -40,11 +40,10 @@ if not ok then
 		print(cmd("g++ -O3 -fPIC -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__MACOSX_CORE__ -I/usr/local/include/luajit-2.0 av/src/av.cpp av/src/RtAudio.cpp /usr/local/lib/libglfw.a -framework Cocoa -framework CoreFoundation -framework IOKit -framework OpenGL -framework CoreAudio -shared -o %s", libname))
 		core = ffi.load(libname)
 	else
-		print(cmd("g++ -O3 -fPIC av/src/av.cpp /usr/local/lib/libglfw.a -shared -o %s", libname))
+		print(cmd("g++ -O3 -fPIC -ffast-math -MMD -D_GNU_SOURCE -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__ -I/usr/include/luajit-2.0/ av/src/av.cpp av/src/RtAudio.cpp -lglfw -lasound -lrt -lpthread -shared -o %s", libname))
 		core = ffi.load(libname)
 	end	
 end
-
 --print(io.popen("gcc -E -P av/src/av.h"):read("*a"))
 ffi.cdef [[
 enum {

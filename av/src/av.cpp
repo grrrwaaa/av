@@ -93,6 +93,7 @@ double av_now() {
 		}
 		return (double)mach_absolute_time( ) * timeConvert;
 	#else
+		struct timespec clocktime;
 		clock_gettime(CLOCK_MONOTONIC, &clocktime);
 		return clocktime.tv_sec + clocktime.tv_nsec * 1.0e-9;
 	#endif	
@@ -152,6 +153,7 @@ double av_filetime(const char * filename) {
 		}
 	#endif
 }
+
 
 ////////////////////////////////////////////////////////////////
 // EVENT
@@ -911,15 +913,18 @@ av_Audio * av_audio_get() {
 		audio.blockread = 0;
 		audio.blockwrite = 0;
 		
-		/*
-		AL = lua_open(); //av_init_lua();
+		
+		//AL = lua_open(); //av_init_lua();
 		
 		// unique to audio thread:
-		if (luaL_dostring(AL, "require 'audioprocess'")) {
-			printf("error: %s\n", lua_tostring(AL, -1));
-			initialized = false;
-		}
-		*/ 
+		//if (luaL_dostring(AL, "require 'audioprocess'")) {
+		//	printf("error: %s\n", lua_tostring(AL, -1));
+	//		initialized = false;
+		//}
+		 
 	}
 	return &audio;
 }
+
+/*
+*/
