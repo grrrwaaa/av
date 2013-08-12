@@ -7,3 +7,6 @@
 [submodule "lpeg"]
 	path = lpeg
 	url = https://github.com/fire/lpeg.git
+[submodule "rtaudio"]
+	path = rtaudio
+	url = git://gitorious.org/rtaudio/rtaudio.git

@@ -5,10 +5,8 @@ project(av)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 set(CMAKE_BUILD_TYPE Release)
 
-#add_subdirectory(${CMAKE_SOURCE_DIR}/lpeg)
-#get_target_property(ALLOCORE_LIBRARY allocore LOCATION)
-#get_target_property(ALLOCORE_INCLUDE_DIR allocore ALLOCORE_INCLUDE_DIR)
-
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pagezero_size 10000 -image_base 100000000")
+#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pagezero_size 10000 -image_base 100000000")
 
 find_package(LuaJIT REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -17,14 +15,18 @@ find_package(GLUT REQUIRED)
 set(SOURCES
   ${CMAKE_SOURCE_DIR}/source/av.cpp
   ${CMAKE_SOURCE_DIR}/source/av_audio.cpp
-  ${CMAKE_SOURCE_DIR}/source/rtaudio-4.0.11/RtAudio.cpp
+  ${CMAKE_SOURCE_DIR}/rtaudio/RtAudio.cpp
   ${CMAKE_SOURCE_DIR}/lpeg/lpeg.c
 )
 
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR})
+execute_process(
+  COMMAND luajit h2ffi.lua av.h av_ffi_header
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/source
+  RESULT_VARIABLE result
+)
 
 set(INCLUDE_DIRS
-  ${CMAKE_SOURCE_DIR}/source/rtaudio-4.0.11/
+  ${CMAKE_SOURCE_DIR}/rtaudio/
   ${CMAKE_SOURCE_DIR}/lpeg/
   ${LUAJIT_INCLUDE_DIR}
   ${OPENGL_INCLUDE_DIR}
@@ -38,11 +40,6 @@ set(LINK_LIBRARIES
   ${OPENGL_LIBRARY}
 )
 
-execute_process(
-  COMMAND luajit h2ffi.lua av.h av_ffi_header
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/source
-  RESULT_VARIABLE result
-)
-
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/source)
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 target_link_libraries(${CMAKE_PROJECT_NAME} ${LINK_LIBRARIES})
