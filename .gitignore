@@ -2,6 +2,10 @@
 *.lo
 *.o
 
+Makefile
+av
+source/av_ffi_header.cpp
+
 *.lai
 *.la
 *.a

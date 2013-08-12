@@ -4,3 +4,6 @@
 [submodule "src/hidapi"]
 	path = src/hidapi
 	url = git://github.com/signal11/hidapi.git
+[submodule "lpeg"]
+	path = lpeg
+	url = https://github.com/fire/lpeg.git
