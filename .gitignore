@@ -32,4 +32,8 @@ build
 .ninja_log
 build.ninja
 rules.ninja
+CMakeScripts/
+av.build/
+av.xcodeproj/
+source/Debug/
 

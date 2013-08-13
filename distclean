@@ -5,4 +5,8 @@ rm -rf .ninja_deps
 rm -rf .ninja_log
 rm -rf build.ninja
 rm -rf rules.ninja
+rm -rf CMakeScripts/
+rm -rf av.build/
+rm -rf av.xcodeproj/
+rm -rf source/Debug/
 
