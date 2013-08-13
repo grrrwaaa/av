@@ -1,0 +1,14 @@
+AntTweakBar.dylib
+cairo.dylib
+egl.dylib
+freeimage.dylib
+freenect.dylib
+gles2.dylib
+glfw.dylib
+glfw3.dylib
+libclang.dylib
+pgm.dylib
+pixman.dylib
+png.dylib
+sdl.dylib
+zmq.dylib
