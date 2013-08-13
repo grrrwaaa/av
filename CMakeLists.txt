@@ -10,7 +10,7 @@ set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -pagezero_size 10000
 
 find_package(LuaJIT REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
+find_package(GLFW REQUIRED)
 
 # generate embedded script .cpp (aka av_ffi_header). check "result" variable if desired.
 #
@@ -29,13 +29,13 @@ set(SOURCES
 set(INCLUDE_DIRS
   ${LUAJIT_INCLUDE_DIR}
   ${OPENGL_INCLUDE_DIR}
-  ${GLUT_INCLUDE_DIR}
+  ${GLFW_INCLUDE_DIR}
 )
 include_directories(${INCLUDE_DIRS})
 
 set(LINK_LIBRARIES
   ${LUAJIT_LIBRARIES}
-  ${GLUT_LIBRARIES}
+  ${GLFW_LIBRARY}
   ${OPENGL_LIBRARY}
 )
 
