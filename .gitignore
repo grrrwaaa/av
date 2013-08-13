@@ -28,3 +28,8 @@ cmake_install.cmake
 *.xcuserdatad
 
 build
+.ninja_deps
+.ninja_log
+build.ninja
+rules.ninja
+

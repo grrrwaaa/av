@@ -496,8 +496,8 @@ lua_State * av_init_lua() {
 	lua_getfield(L, -1, "preload");
 		lua_pushcfunction(L, luaopen_builtin);
 		lua_setfield(L, -2, "builtin");
-		lua_pushcfunction(L, luaopen_lpeg);
-		lua_setfield(L, -2, "lpeg");
+		//lua_pushcfunction(L, luaopen_lpeg);
+		//lua_setfield(L, -2, "lpeg");
 	lua_pop(L, 2);
 	
 	lua_getglobal(L, "debug");
