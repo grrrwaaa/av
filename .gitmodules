@@ -1,0 +1,6 @@
+[submodule "Penlight"]
+	path = Penlight
+	url = https://github.com/stevedonovan/Penlight.git
+[submodule "LDoc"]
+	path = LDoc
+	url = https://github.com/stevedonovan/LDoc.git

@@ -23,11 +23,10 @@ execute_process(
 set(SOURCES
   ${CMAKE_SOURCE_DIR}/source/av.cpp
   ${CMAKE_SOURCE_DIR}/source/av_audio.cpp
-  ${CMAKE_SOURCE_DIR}/rtaudio/RtAudio.cpp
+  ${CMAKE_SOURCE_DIR}/source/RtAudio.cpp
 )
 
 set(INCLUDE_DIRS
-  ${CMAKE_SOURCE_DIR}/rtaudio/
   ${LUAJIT_INCLUDE_DIR}
   ${OPENGL_INCLUDE_DIR}
   ${GLUT_INCLUDE_DIR}
