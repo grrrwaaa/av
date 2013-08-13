@@ -1,5 +1,5 @@
 rm -rf CMakeCache.txt cmake_install.cmake CMakeFiles/ CMakeScripts/
-rm -rf source/av
+rm -rf av/av
 rm -rf Makefile
 rm -rf .ninja_deps
 rm -rf .ninja_log
