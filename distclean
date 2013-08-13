@@ -1,0 +1,12 @@
+rm -rf CMakeCache.txt cmake_install.cmake CMakeFiles/ CMakeScripts/
+rm -rf av/av
+rm -rf Makefile
+rm -rf .ninja_deps
+rm -rf .ninja_log
+rm -rf build.ninja
+rm -rf rules.ninja
+rm -rf CMakeScripts/
+rm -rf av.build/
+rm -rf av.xcodeproj/
+rm -rf source/Debug/
+
