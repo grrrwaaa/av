@@ -10,15 +10,18 @@ local C = ffi.C
 
 print("loading OpenGL")
 
-local linux_libs = {
-	"/usr/lib/nvidia-current-updates/libGL.so",
-	"/usr/lib/nvidia-current/libGL.so",
-	"/usr/lib/nvidia-304/libGL.so",
-	"GL",
-}
+
 
 local ok, lib
 if ffi.os == "Linux" then
+	
+	-- prefer to use nvidia drivers if available:	
+	local linux_libs = {
+		"/usr/lib/nvidia-current-updates/libGL.so",
+		"/usr/lib/nvidia-current/libGL.so",
+		"/usr/lib/nvidia-304/libGL.so",
+		"GL",
+	}
 	
 	for i, v in ipairs(linux_libs) do
 		ok, lib = pcall(ffi.load, v)

@@ -398,18 +398,18 @@ glfw.SetKeyCallback(function(k, e)
 	end
 end)
 glfw.SetMousePosCallback(function(x, y)
-	print("mouse", x, y)
+	--print("mouse", x, y)
 end)
 glfw.SetMouseButtonCallback(function(btn, state)
-	print("mousebutton", btn, state)
+	--print("mousebutton", btn, state)
 end)
 glfw.SetMouseWheelCallback(function(pos)
-	print("wheel", pos)
+	--print("wheel", pos)
 end)
 glfw.SetWindowSizeCallback(function (width, height)
 	w = width
 	h = height
-	print("resized")	
+	--print("resized")	
 end)
 
 glfw.SetWindowTitle("av")

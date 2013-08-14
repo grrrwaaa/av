@@ -11,6 +11,8 @@ print("define window")
 local window = {
 	fps = 60,
 	running = true,
+	width = 800,
+	height = 600,
 }
 setmetatable(window, window)
 
