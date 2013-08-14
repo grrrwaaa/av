@@ -343,6 +343,8 @@ local w, h = desktopWidth, desktopHeight
 local depthbits = 24
 local fullscreen = true
 
+print("open window with", w, h)
+
 -- open stereo if possible:
 --glfw.OpenWindowHint(glfw.STEREO, 1)
 if glfw.OpenWindow(w, h, 0,0,0,0, depthbits,0, fullscreen and glfw.FULLSCREEN or glfw.WINDOW) == 0 then
@@ -351,7 +353,7 @@ if glfw.OpenWindow(w, h, 0,0,0,0, depthbits,0, fullscreen and glfw.FULLSCREEN or
 	glfw.OpenWindowHint(glfw.STEREO, 0)
 	-- have to send the hints again, for some reason:
 	--glfw.OpenWindowHint(glfw.WINDOW_NO_RESIZE, 1)
-	glfw.OpenWindowHint(glfw.FSAA_SAMPLES, 4)
+	--glfw.OpenWindowHint(glfw.FSAA_SAMPLES, 4)
 	assert(glfw.OpenWindow(w, h, 0,0,0,0, depthbits,0, fullscreen and glfw.FULLSCREEN or glfw.WINDOW) == 1, "failed to open GLFW window")
 end
 
