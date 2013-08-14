@@ -6,18 +6,93 @@ local gl = require "gl"
 
 local debug_traceback = debug.traceback
 
-print("define window")
+-- Get the desktop resolution.
+local desktopMode = ffi.new("GLFWvidmode[1]")
+glfw.GetDesktopMode(desktopMode)
 
 local window = {
 	fps = 60,
 	running = true,
+	stereo = 0,
+	fsaa = 2,
 	width = 800,
 	height = 600,
+	fullscreen_width = desktopMode[0].Width,
+	fullscreen_height = desktopMode[0].Height,
+	depthbits = 24,
+	isfullscreen = false,
+	isopen = false,
+	title = "av",
 }
 setmetatable(window, window)
 
 function window:__tostring()
 	return string.format("Window(%p)", self)
+end
+
+function window:__index(k, v)
+	if k == "fullscreen" then
+		return window.isfullscreen
+	end
+end
+
+local
+function window_init()
+
+	if window.isopen then
+		glfw.CloseWindow()
+	end
+
+	glfw.OpenWindowHint(glfw.STEREO, window.stereo)
+	glfw.OpenWindowHint(glfw.WINDOW_NO_RESIZE, 0)
+	glfw.OpenWindowHint(glfw.FSAA_SAMPLES, window.fsaa)
+	--glfw.OpenWindowHint(glfw.OPENGL_VERSION_MAJOR, 3)
+	--glfw.OpenWindowHint(glfw.OPENGL_VERSION_MINOR, 1)
+	--glfw.OpenWindowHint(glfw.OPENGL_FORWARD_COMPAT, 1)
+	--glfw.OpenWindowHint(glfw.OPENGL_DEBUG_CONTEXT, 1)
+	
+	-- open stereo if possible:
+	--glfw.OpenWindowHint(glfw.STEREO, 1)
+	if glfw.OpenWindow(window.width, window.height, 0,0,0,0, window.depthbits,0, window.isfullscreen and glfw.FULLSCREEN or glfw.WINDOW) == 0 then
+		error("failed to open GLFW window")
+	end
+	window.isopen = true
+
+	print("opened", glfw.GetWindowParam(glfw.OPENED)) -- ACTIVE, ICONIFIED, ACCELERATED
+	print("depth bits", glfw.GetWindowParam(glfw.DEPTH_BITS))
+	print("refresh rate", glfw.GetWindowParam(glfw.REFRESH_RATE))
+	print("stereo", glfw.GetWindowParam(glfw.STEREO))
+	print("fsaa samples", glfw.GetWindowParam(glfw.FSAA_SAMPLES))
+	print("OpenGL version", glfw.GetWindowParam(glfw.OPENGL_VERSION_MAJOR), glfw.GetWindowParam(glfw.OPENGL_VERSION_MINOR))
+
+	local dim = ffi.new("int[2]")
+	glfw.GetWindowSize(dim, dim+1)
+	print("dim", dim[0], dim[1])
+
+	glfw.SetWindowTitle(window.title)
+	--glfw.SetWindowSize(w, h)
+	--glfw.SetWindowPos(0, 0)
+	--glfw.Disable(glfw.MOUSE_CURSOR)
+
+	-- enable vsync:
+	glfw.SwapInterval(1)
+	
+	-- stop SwapBuffers from calling PollEvents():
+	--glfw.Disable(glfw.AUTO_POLL_EVENTS)
+end
+
+function window:__newindex(k, v)
+	if k == "fullscreen" then
+		if window.isfullscreen and (not v) then
+			-- leave fullscreen
+			
+			window_init()
+		elseif (not window.isfullscreen) and v then
+			-- enter fullscreen
+			
+			window_init()
+		end
+	end
 end
 
 frame = 0

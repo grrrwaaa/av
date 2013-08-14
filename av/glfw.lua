@@ -256,31 +256,6 @@ glfw_functions_t * av_load_glfw();
 
 ]]
 
-
---[[
-
-local lib = ffi.C --load("glfw")
-
-local function resolve(pre, k)
-	return lib[pre..k]
-end
-
-
-ffi.metatype("glfw_functions_t", {
-	__index = function(self, k)
-		local ok, r = pcall(resolve, "glfw", k)
-		if not ok then 
-			ok, r = pcall(resolve, "GLFW_", k)
-			if not ok then 
-				r = lib[k]
-			end
-		end
-		self[k] = r
-		return r
-	end,
-})
---]]
-
 local glfw = core.av_load_glfw()
 
 ffi.gc(glfw, function()
@@ -291,85 +266,12 @@ end)
 print(string.format("using GLFW %s.%s (rev %s)", glfw.VERSION_MAJOR, glfw.VERSION_MINOR, glfw.VERSION_REVISION))
 assert(glfw.Init() == 1, "failed to initialize GLFW")
 
---[[
--- Get the desktop resolution.
-local desktopMode = ffi.new("GLFWvidmode[1]")
-glfw.GetDesktopMode(desktopMode)
-local desktopHeight = desktopMode[0].Height
-local desktopWidth = desktopMode[0].Width
-local windowedWidth = 800
-local windowedHeight = 600
 
-glfw.OpenWindowHint(glfw.STEREO, 0)
-glfw.OpenWindowHint(glfw.WINDOW_NO_RESIZE, 1)
-glfw.OpenWindowHint(glfw.FSAA_SAMPLES, 4)
---glfw.OpenWindowHint(glfw.OPENGL_VERSION_MAJOR, 3)
---glfw.OpenWindowHint(glfw.OPENGL_VERSION_MINOR, 1)
---glfw.OpenWindowHint(glfw.OPENGL_FORWARD_COMPAT, 1)
---glfw.OpenWindowHint(glfw.OPENGL_DEBUG_CONTEXT, 1)
-
-local w, h = windowedWidth, windowedHeight
-local depthbits = 24
-local fullscreen = false
-
-if glfw.OpenWindow(w, h, 0,0,0,0, depthbits,0, fullscreen and glfw.FULLSCREEN or glfw.WINDOW) == 0 then
-	-- fall back to mono:
-	print("active stereo not available")
-	glfw.OpenWindowHint(glfw.STEREO, 0)
-	-- have to send the hints again, for some reason:
-	--glfw.OpenWindowHint(glfw.WINDOW_NO_RESIZE, 1)
-	glfw.OpenWindowHint(glfw.FSAA_SAMPLES, 4)
-	assert(glfw.OpenWindow(w, h, 0,0,0,0, depthbits,0, fullscreen and glfw.FULLSCREEN or glfw.WINDOW) == 1, "failed to open GLFW window")
-end
---]]
-
--- Get the desktop resolution.
-local desktopMode = ffi.new("GLFWvidmode[1]")
-glfw.GetDesktopMode(desktopMode)
-desktopHeight = desktopMode[0].Height
-desktopWidth = desktopMode[0].Width
-local windowedWidth = 800
-local windowedHeight = 600
-
-glfw.OpenWindowHint(glfw.STEREO, 0)
-glfw.OpenWindowHint(glfw.WINDOW_NO_RESIZE, 0)
---glfw.OpenWindowHint(glfw.FSAA_SAMPLES, 2)
---glfw.OpenWindowHint(glfw.OPENGL_VERSION_MAJOR, 3)
---glfw.OpenWindowHint(glfw.OPENGL_VERSION_MINOR, 1)
---glfw.OpenWindowHint(glfw.OPENGL_FORWARD_COMPAT, 1)
---glfw.OpenWindowHint(glfw.OPENGL_DEBUG_CONTEXT, 1)
-
-local w, h = desktopWidth, desktopHeight
-local depthbits = 24
-local fullscreen = true
-
-print("open window with", w, h)
-
--- open stereo if possible:
---glfw.OpenWindowHint(glfw.STEREO, 1)
-if glfw.OpenWindow(w, h, 0,0,0,0, depthbits,0, fullscreen and glfw.FULLSCREEN or glfw.WINDOW) == 0 then
-	-- fall back to mono:
-	print("active stereo not available")
-	glfw.OpenWindowHint(glfw.STEREO, 0)
-	-- have to send the hints again, for some reason:
-	--glfw.OpenWindowHint(glfw.WINDOW_NO_RESIZE, 1)
-	--glfw.OpenWindowHint(glfw.FSAA_SAMPLES, 4)
-	assert(glfw.OpenWindow(w, h, 0,0,0,0, depthbits,0, fullscreen and glfw.FULLSCREEN or glfw.WINDOW) == 1, "failed to open GLFW window")
-end
-
-window.width = w
-window.height = h
-
-print("window opened")
 
 local gl = require "gl"
 
 
-local lastchar
-glfw.SetCharCallback(function(id, state)
-	lastchar = string.char(id)
-end)
-
+--[[
 glfw.SetKeyCallback(function(k, e)
 	print(k, e)
 	if k == glfw.KEY_ESC then
@@ -416,28 +318,6 @@ glfw.SetWindowSizeCallback(function (width, height)
 	h = height
 	--print("resized")	
 end)
-
-glfw.SetWindowTitle("av")
---glfw.SetWindowSize(w, h)
-glfw.SetWindowPos(0, 0)
---glfw.Disable(glfw.MOUSE_CURSOR)
-
--- enable vsync:
-glfw.SwapInterval(1)
-
--- stop SwapBuffers from calling PollEvents():
---glfw.Disable(glfw.AUTO_POLL_EVENTS)
-
-
-print("opened", glfw.GetWindowParam(glfw.OPENED)) -- ACTIVE, ICONIFIED, ACCELERATED
-print("depth bits", glfw.GetWindowParam(glfw.DEPTH_BITS))
-print("refresh rate", glfw.GetWindowParam(glfw.REFRESH_RATE))
-print("stereo", glfw.GetWindowParam(glfw.STEREO))
-print("fsaa samples", glfw.GetWindowParam(glfw.FSAA_SAMPLES))
-print("OpenGL version", glfw.GetWindowParam(glfw.OPENGL_VERSION_MAJOR), glfw.GetWindowParam(glfw.OPENGL_VERSION_MINOR))
-
-local dim = ffi.new("int[2]")
-glfw.GetWindowSize(dim, dim+1)
-print("dim", dim[0], dim[1])
+--]]
 
 return glfw
