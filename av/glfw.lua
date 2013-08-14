@@ -393,9 +393,6 @@ glfw.SetKeyCallback(function(k, e)
 			glfw.SetWindowPos(0, 0)
 			
 		end
-			
-				
-		
 	end
 end)
 glfw.SetMousePosCallback(function(x, y)

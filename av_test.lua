@@ -1,7 +1,6 @@
 #!/usr/bin/env luajit
 local ffi = require "ffi"
 local av = require "av"
-local glfw = require "glfw"
 local gl = require "gl"
 
 function test_window()
@@ -65,8 +64,8 @@ function test_audioscript()
 		end
 	end	
 
-	synth0 = SinOsc(1, 2)
-	synth1 = SinOsc(1, 6)
+	synth0 = SinOsc(1, 0.1)
+	synth1 = SinOsc(1, 0.4)
 	synth2 = SinOsc(1, 500)
 	synth3 = SinOsc(1, 700)
 
@@ -87,13 +86,17 @@ function test_audioscript()
 	end)
 
 	function draw()
+		gl.Clear()
 		audio.draw()
+		
+		--if frame % 30 == 0 then print(1/dt) end
+	
 	end
 end
 
 
 test_window()
---test_timer()
-test_audioscript()
+test_timer()
+--test_audioscript()
 
 av.run()

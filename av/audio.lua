@@ -72,7 +72,7 @@ function audio.draw()
 	
 	gl.Begin(gl.LINE_STRIP)
 	local dim = driver.blocksize * driver.blocks * driver.outchannels - 1
-	for i = 0, dim do
+	for i = 0, dim, 10 do
 		local x = i / dim
 		local y = 0.5 + 0.5 * buffer[i]
 		gl.Vertex(x, y, 0)

@@ -31,7 +31,7 @@ end
 
 -- load or build
 local ok
---ok, core = pcall(ffi.load, libname)
+ok, core = pcall(ffi.load, libname)
 if not ok then 
 	print("compile av_core")
 	
@@ -164,7 +164,7 @@ local mainloop = assert(core.av_loop_new(), "failed to create main loop")
 local timers = {}
 local readers = {}
 local writers = {}
-local t0 = av.now()
+local t0
 local maxtimercallbacks = 100
 local mintimeout = 0.001
 local ev = ffi.new("av_event_t[?]", C.AV_MAXEVENTS)
@@ -211,21 +211,19 @@ local function setTimeout(delay, callback)
 end
 --]]
 
-local function run_once(maxtimeout)
+local function run_once(timeout)
 	-- derive our timeout:
-	local timeout = maxtimeout or 0.01
 	local due = schedule.due()
 	if due then
-		timeout = max(min(due - now(), timeout), mintimeout)
+		timeout = max(min(due - now(), timeout or 1), mintimeout)
 	end
 
 	-- grab system events:
 	local n = core.av_loop_run_once(mainloop, timeout)
 	
 	-- run scheduled coroutines:
-	local t = core.av_now() - t0
+	t = core.av_now() - t0
 	schedule.update(t, maxtimercallbacks)
-	
 	--[[
 	local calls = 0
 	while timer and timer.t < t do
@@ -310,12 +308,21 @@ local function run_once(maxtimeout)
 	end
 end	
 
+
 local window = require "window"
+
+
 
 function av.run()
 	while window.running do
+		window.swap()
+		-- in order to get maximum possible frame rate?
 		run_once(0.01)
 	end
 end
+
+t0 = core.av_now()
+t = 0
+schedule.t = t
 
 return av

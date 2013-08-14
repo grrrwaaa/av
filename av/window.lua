@@ -12,17 +12,19 @@ local window = {
 	fps = 60,
 	running = true,
 }
-window.__index = window
+setmetatable(window, window)
 
 function window:__tostring()
 	return string.format("Window(%p)", self)
 end
 
-t = lib.av_now()
 frame = 0
 local firstdraw = false
+local tprev = 0
 
-local function swap()
+function window.swap()
+	dt = t - tprev
+	tprev = t
 	glfw.SwapBuffers()	-- implicly calls glfw.PollEvents()
 	
 	if glfw.GetWindowParam(glfw.OPENED) == 0 then
@@ -64,10 +66,6 @@ local function swap()
 	gl.Disable(lib.GL_DEPTH_TEST)
 	gl.Color(1, 1, 1)
 	
-	local t1 = lib.av_now()
-	dt = t1 - t
-	t = t1
-	
 	if updating and update and type(update) == "function" then
 		local ok, err = xpcall(function() update(dt) end, debug_traceback)
 		if not ok then 
@@ -107,13 +105,6 @@ local mouse_events = {
 	"drag",
 	"move",
 }
-
-local wincoro = go(function()
-	while window.running do
-		swap()
-		wait(1/window.fps)
-	end
-end)
 
 -- was getting segfaults until I made sure to pollevents (or swapbuffers) before anything else:
 glfw.PollEvents()	
