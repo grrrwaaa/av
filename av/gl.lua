@@ -10,19 +10,24 @@ local C = ffi.C
 
 print("loading OpenGL")
 
+local linux_libs = {
+	"/usr/lib/nvidia-current-updates/libGL.so",
+	"/usr/lib/nvidia-current/libGL.so",
+	"/usr/lib/nvidia-304/libGL.so",
+	"GL",
+}
 
 local ok, lib
 if ffi.os == "Linux" then
-print("linux")
-	-- hack for Ubuntu, which loads mesa rather than nvidia by default:
-	-- if Nvidia is not installed, then it will fall back to system default GL.
-	ok, lib = pcall(ffi.load, "/usr/lib/nvidia-current-updates/libGL.so")
-	if not ok then
-		ok, lib = pcall(ffi.load, "/usr/lib/nvidia-current/libGL.so")
+	
+	for i, v in ipairs(linux_libs) do
+		ok, lib = pcall(ffi.load, v)
+		if ok then
+			print("using ", v)
+			break
+		end
 	end
-	if not ok then
-		ok, lib = pcall(ffi.load, "GL")
-	end
+	assert(ok, "failed to load libGL.so")
 	
 elseif ffi.os == "OSX" then
 	ok, lib = pcall(ffi.load, "OpenGL.framework/OpenGL")
