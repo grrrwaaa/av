@@ -28,7 +28,7 @@ local allo = {
 	current = nil,
 }
 -- temporary override:
-allo.hostname = "gr04"
+--allo.hostname = "gr04"
 
 print("I am", allo.hostname)
 

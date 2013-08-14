@@ -341,7 +341,7 @@ glfw.OpenWindowHint(glfw.WINDOW_NO_RESIZE, 0)
 
 local w, h = windowedWidth, windowedHeight
 local depthbits = 24
-local fullscreen = false
+local fullscreen = true
 
 -- open stereo if possible:
 --glfw.OpenWindowHint(glfw.STEREO, 1)
