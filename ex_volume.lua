@@ -308,7 +308,10 @@ f:set(function()
 	return math.random()
 end)
 
+local once = true
+
 function draw()
+	if once then gl.extensions() end
 	gl.Clear()
 	gl.Enable(gl.CULL_FACE)
 	gl.CullFace(gl.BACK)

@@ -4377,7 +4377,7 @@ function gl.GetString(p)
 	else return ffi.string(s) end
 end
 
-print("using OpenGL", gl.GetString(gl.VERSION))
+--print("using OpenGL", gl.GetString(gl.VERSION))
 
 local glClear = gl.Clear
 function gl.Clear(...)
