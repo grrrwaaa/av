@@ -278,7 +278,7 @@ function draw()
 		
 		local s = vshader
 		s:bind()
-		s:uniform("now", now())
+		--s:uniform("now", now())
 		s:uniform("map3D", 0)
 		p.map3Dtex:bind(0)
 		gl.Begin(gl.QUADS)
