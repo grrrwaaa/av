@@ -19,7 +19,7 @@ int read(int fd, void * dst, size_t sz);
 ]]
 
 local allo = {
-	hostname = io.popen("echo $HOSTNAME"):read("*l"),
+	hostname = io.popen("hostname"):read("*l"),
 	
 	-- all the machines loaded so far:
 	-- (each machine is a list of projections)
