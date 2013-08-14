@@ -332,8 +332,8 @@ local windowedWidth = 800
 local windowedHeight = 600
 
 glfw.OpenWindowHint(glfw.STEREO, 0)
-glfw.OpenWindowHint(glfw.WINDOW_NO_RESIZE, 1)
-glfw.OpenWindowHint(glfw.FSAA_SAMPLES, 4)
+glfw.OpenWindowHint(glfw.WINDOW_NO_RESIZE, 0)
+--glfw.OpenWindowHint(glfw.FSAA_SAMPLES, 2)
 --glfw.OpenWindowHint(glfw.OPENGL_VERSION_MAJOR, 3)
 --glfw.OpenWindowHint(glfw.OPENGL_VERSION_MINOR, 1)
 --glfw.OpenWindowHint(glfw.OPENGL_FORWARD_COMPAT, 1)
