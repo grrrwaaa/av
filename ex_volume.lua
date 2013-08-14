@@ -311,7 +311,6 @@ end)
 local once = true
 
 function draw()
-	if once then gl.extensions() end
 	gl.Clear()
 	gl.Enable(gl.CULL_FACE)
 	gl.CullFace(gl.BACK)
@@ -340,6 +339,9 @@ function draw()
 	draw3D.cube()
 	s:unbind()
 	f:unbind(0)
+	
+	if once then gl.extensions() once = nil end
+	
 end
 
 av.run()
