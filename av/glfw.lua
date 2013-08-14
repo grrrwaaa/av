@@ -339,7 +339,7 @@ glfw.OpenWindowHint(glfw.WINDOW_NO_RESIZE, 0)
 --glfw.OpenWindowHint(glfw.OPENGL_FORWARD_COMPAT, 1)
 --glfw.OpenWindowHint(glfw.OPENGL_DEBUG_CONTEXT, 1)
 
-local w, h = windowedWidth, windowedHeight
+local w, h = desktopWidth, desktopHeight
 local depthbits = 24
 local fullscreen = true
 
