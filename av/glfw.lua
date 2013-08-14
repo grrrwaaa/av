@@ -355,6 +355,8 @@ if glfw.OpenWindow(w, h, 0,0,0,0, depthbits,0, fullscreen and glfw.FULLSCREEN or
 	assert(glfw.OpenWindow(w, h, 0,0,0,0, depthbits,0, fullscreen and glfw.FULLSCREEN or glfw.WINDOW) == 1, "failed to open GLFW window")
 end
 
+print("window opened")
+
 local gl = require "gl"
 
 
