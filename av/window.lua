@@ -2,7 +2,6 @@ local ffi = require "ffi"
 local lib = core
 
 local glfw = require "glfw"
-local gl = require "gl"
 
 local debug_traceback = debug.traceback
 
@@ -80,6 +79,11 @@ function window_init()
 	-- stop SwapBuffers from calling PollEvents():
 	--glfw.Disable(glfw.AUTO_POLL_EVENTS)
 end
+
+window_init()
+
+-- load gl after initializing window:
+local gl = require "gl"
 
 function window:__newindex(k, v)
 	if k == "fullscreen" then
