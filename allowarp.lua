@@ -25,7 +25,7 @@ voxels:set(function(x, y, z)
 	local snx = nx*2-1
 	local sny = ny*2-1
 	local snz = nz*2-1
-	return math.sqrt(nx*nx + ny*ny + nz*nz)
+	return 0.5/dim * math.sqrt(nx*nx + ny*ny + nz*nz)
 	--return math.sqrt(snx*snx + sny*sny + snz*snz)
 end)
 
@@ -367,7 +367,7 @@ function draw()
 	local fovy, aspect = 80, 1.2
 	local a = t * 0.1
 	local at = vec3(0, 0, 2)
-	local eye = at + vec3(cos(a), 0, sin(a)) * 10
+	local eye = at + vec3(cos(a), 0, sin(a)) * dim
 	local up = vec3(0, 1, 0)
 	
 	gl.MatrixMode(gl.PROJECTION)
