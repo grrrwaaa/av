@@ -161,6 +161,50 @@ local function onreshape(w, h)
 	glut.glutPostRedisplay()
 end
 
+local windowed_width, windowed_height, windowed_id
+function enter_fullscreen()
+	windowed_width = win.width
+	windowed_height = win.height
+	if ffi.os == "OSX" then
+		glut.glutFullScreen()
+	else
+		-- go game mode
+		local sw, sh = glut.glutGet(glut.GLUT_SCREEN_WIDTH), glut.glutGet(glut.GLUT_SCREEN_HEIGHT)
+		print("full res", sw, sh)
+		if sw == 0 or sh == 0 then sw, sh = 1024, 768 end
+		glut.glutGameModeString(string.format("%dx%d:24", sw, sh))
+		print("refresh", glut.glutGameModeGet(glut.GLUT_GAME_MODE_REFRESH_RATE))
+		
+		-- dimensionsGLUT
+		windowed_id = win.id
+		win.id = glut.glutEnterGameMode()
+		glut.glutSetWindow(win.id)
+		
+		if win.oncreate then win:oncreate() end
+		--onreshape(w, h)?
+		-- hide/show to get focus for key callbacks:
+		glut.glutSetWindow(win.id)
+		glut.glutHideWindow()
+		glut.glutShowWindow()
+	end
+	glut.glutSetCursor(glut.GLUT_CURSOR_NONE)
+end
+
+function exit_fullscreen()
+	if ffi.os == "OSX" then
+		glut.glutReshapeWindow(windowed_width, windowed_height)
+	else
+		glut.glutLeaveGameMode()
+		win.id = windowed_id
+		glut.glutSetWindow(win.id)
+		-- refresh:
+		if win.oncreate then win:oncreate() end
+		-- get new dimensions & call reshape?
+		--onreshape(w, h)?
+	end
+	glut.glutSetCursor(glut.GLUT_CURSOR_NONE)
+end
+
 local firstdraw = true
 function win:redisplay()
 	
@@ -214,8 +258,7 @@ function win:startloop(ontimer)
 	glut.glutSetWindow(win.id)
 	
 	if win.fullscreen then
-		glut.glutFullScreen()
-		glut.glutSetCursor(glut.GLUT_CURSOR_NONE)
+		enter_fullscreen()
 	end
 	
 	--[[
