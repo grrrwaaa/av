@@ -19,7 +19,13 @@ local pi, twopi = math.pi, math.pi * 2
 local dim = 32
 local voxels = field3D(dim, dim, dim)
 voxels:set(function(x, y, z)
-	return (x > z and 0 or 1) + 0.1 * (math.random() - 0.5)
+	local nx = x/dim
+	local ny = y/dim
+	local nz = z/dim
+	local snx = nx*2-1
+	local sny = ny*2-1
+	local snz = nz*2-1
+	return math.sqrt(snx*snx + sny*sny + snz*snz)
 end)
 
 ffi.cdef[[
