@@ -186,6 +186,7 @@ function enter_fullscreen()
 	if ffi.os == "OSX" then
 		glut.glutFullScreen()
 	else
+		print("entering game mode")
 		-- go game mode
 		local sw, sh = glut.glutGet(glut.GLUT_SCREEN_WIDTH), glut.glutGet(glut.GLUT_SCREEN_HEIGHT)
 		--print("full res", sw, sh)
@@ -196,8 +197,10 @@ function enter_fullscreen()
 		-- dimensionsGLUT
 		windowed_id = win.id
 		win.id = glut.glutEnterGameMode()
+		print("new id", win.id, "old id", windowed_id)
 		glut.glutSetWindow(win.id)
 		registerCallbacks()
+		print("registered callbacks")
 		
 		if win.oncreate then win:oncreate() end
 		--onreshape(w, h)?
