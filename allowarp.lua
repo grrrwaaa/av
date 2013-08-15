@@ -272,7 +272,7 @@ function draw()
 	gl.LoadMatrix(mat4.perspective(fovy, aspect, near, far))
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadMatrix(mat4.lookat(eye, at, up))
-	
+	gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
 	
 
 	---[[
