@@ -187,7 +187,8 @@ function enter_fullscreen()
 	if ffi.os == "OSX" then
 		glut.glutFullScreen()
 	else
-		print("entering game mode")
+		-- destroy current context:
+		if ondestroy then ondestroy() end
 		-- go game mode
 		local sw, sh = glut.glutGet(glut.GLUT_SCREEN_WIDTH), glut.glutGet(glut.GLUT_SCREEN_HEIGHT)
 		--print("full res", sw, sh)
@@ -217,6 +218,9 @@ function exit_fullscreen()
 	if ffi.os == "OSX" then
 		glut.glutReshapeWindow(windowed_width, windowed_height)
 	else
+		-- destroy current context:
+		if ondestroy then ondestroy() end
+		
 		glut.glutLeaveGameMode()
 		win.id = windowed_id
 		glut.glutSetWindow(win.id)

@@ -248,8 +248,14 @@ void main() {
 ]]
 local vshader = shader(vs, fs)
 
-function oncreate()
+function ondestroy()
 	vshader:destroy()
+	
+	for k, m in pairs(allo.machines) do
+		for i, p in pairs(m) do
+			p.map3Dtex:destroy()
+		end
+	end
 end
 
 function draw()
