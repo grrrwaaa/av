@@ -235,9 +235,6 @@ function exit_fullscreen()
 end
 
 function win:redisplay()
-	
-	print("redisplay")
-	
 	if firstdraw then
 		gl.Enable(gl.MULTISAMPLE)	
 		gl.Enable(gl.POLYGON_SMOOTH)
@@ -270,6 +267,8 @@ function win:redisplay()
 	glut.glutSwapBuffers()
 	glut.glutPostRedisplay()
 	collectgarbage()
+	
+	print("done")
 end
 
 
