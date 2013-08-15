@@ -380,7 +380,7 @@ function draw()
 	local fovy, aspect = 80, 1.2
 	local a = t * 0.1
 	local at = vec3(0, 0, 2)
-	local eye = at + vec3(cos(a), 0, sin(a)) * dim
+	local eye = at + vec3(cos(a), 0, sin(a)) * 3
 	local up = vec3(0, 1, 0)
 	
 	gl.MatrixMode(gl.PROJECTION)
