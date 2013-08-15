@@ -12,6 +12,8 @@ local win = {
 	fps = 60,
 }
 
+local firstdraw = true
+
 --[[
 
 void av_window_settitle(av_Window * self, const char * name) {
@@ -201,6 +203,7 @@ function enter_fullscreen()
 		glut.glutSetWindow(win.id)
 		registerCallbacks()
 		print("registered callbacks")
+		firstdraw = true
 		
 		if win.oncreate then win:oncreate() end
 		--onreshape(w, h)?
@@ -208,7 +211,6 @@ function enter_fullscreen()
 		glut.glutSetWindow(win.id)
 		glut.glutHideWindow()
 		glut.glutShowWindow()
-		print("shown")
 	end
 	glut.glutSetCursor(glut.GLUT_CURSOR_NONE)
 end
@@ -221,6 +223,7 @@ function exit_fullscreen()
 		win.id = windowed_id
 		glut.glutSetWindow(win.id)
 		registerCallbacks()
+		firstdraw = true
 		
 		-- refresh:
 		if win.oncreate then win:oncreate() end
@@ -231,8 +234,9 @@ function exit_fullscreen()
 	glut.glutSetCursor(glut.GLUT_CURSOR_NONE)
 end
 
-local firstdraw = true
 function win:redisplay()
+	
+	print("redisplay")
 	
 	if firstdraw then
 		gl.Enable(gl.MULTISAMPLE)	
