@@ -11,6 +11,7 @@ function test_window()
 	
 		gl.Begin(gl.LINES)
 		for i = 1, 100 do
+			gl.Vertex(0, 0, 0)
 			gl.Vertex(math.random()*2-1, math.random()*2-1, 0)
 		end
 		gl.End()
