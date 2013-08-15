@@ -262,8 +262,8 @@ end
 local window = require "window"
 
 function mainloop:ontimer()
-	run_once()
 	window:redisplay()
+	run_once()
 end
 
 function av.run()

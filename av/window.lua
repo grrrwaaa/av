@@ -196,7 +196,6 @@ function enter_fullscreen()
 		--print("refresh", glut.glutGameModeGet(glut.GLUT_GAME_MODE_REFRESH_RATE))
 		
 		-- dimensionsGLUT
-		windowed_id = win.id
 		win.id = glut.glutEnterGameMode()
 		print("new id", win.id, "old id", windowed_id)
 		glut.glutSetWindow(win.id)
@@ -282,6 +281,8 @@ function win:startloop(ontimer)
 	glut.glutInitWindowPosition(0, 0);
 	
 	win.id = glut.glutCreateWindow("")
+	windowed_id = win.id
+	
 	glut.glutSetWindow(win.id)
 	registerCallbacks()
 	
