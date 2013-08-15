@@ -337,7 +337,7 @@ void main() {
 	vec3 color = vec3(c);
 	*/
 
-	gl_FragColor = vec4(texture3D(voxels, rd).r, 1.);
+	gl_FragColor = vec4(texture3D(voxels, rd).rgb, 1.);
 }
 ]]
 local vshader = shader(vs, fs)
