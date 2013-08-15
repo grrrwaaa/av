@@ -308,4 +308,8 @@ function win:startloop(ontimer)
 	glut.glutMainLoop()
 end
 
+function win.enter_fullscreen()
+	enter_fullscreen()
+end
+
 return win
