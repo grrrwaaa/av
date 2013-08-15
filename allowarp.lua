@@ -39,7 +39,10 @@ voxels:set(function(x, y, z)
 	local p1 = (pr1 - box):max(0)
 	return p1:length()
 	--]]
-	return 0.1*(math.random()-0.5) + 1.5-math.sqrt(snx*snx + sny*sny + snz*snz)
+	
+	local s = sin(nx * twopi)*0.5+0.5
+	
+	return 0.1*(math.random()-0.5) + s --1.5-math.sqrt(snx*snx + sny*sny + snz*snz)
 end)
 
 ffi.cdef[[
