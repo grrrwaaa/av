@@ -25,7 +25,8 @@ voxels:set(function(x, y, z)
 	local snx = nx*2-1
 	local sny = ny*2-1
 	local snz = nz*2-1
-	return 1/dim * math.sqrt(snx*snx + sny*sny + snz*snz)
+	return math.sqrt(nx*nx + ny*ny + nz*nz)
+	--return math.sqrt(snx*snx + sny*sny + snz*snz)
 end)
 
 ffi.cdef[[
