@@ -1,6 +1,8 @@
 local ffi = require "ffi"
 local lib = core
 
+local debug_traceback = debug.traceback
+
 local gl = require "gl"
 local glut = require "glut"
 
@@ -161,11 +163,22 @@ local function onreshape(w, h)
 	glut.glutPostRedisplay()
 end
 
+local firstdraw = true
 local function timerfunc(id) 
+	
+	if firstdraw then
+		gl.Enable(gl.MULTISAMPLE)	
+		gl.Enable(gl.POLYGON_SMOOTH)
+		gl.Hint(gl.POLYGON_SMOOTH_HINT, gl.NICEST)
+		gl.Enable(gl.LINE_SMOOTH)
+		gl.Hint(gl.LINE_SMOOTH_HINT, gl.NICEST)
+		gl.Enable(gl.POINT_SMOOTH)
+		gl.Hint(gl.POINT_SMOOTH_HINT, gl.NICEST)
+		firstdraw = false
+	end
 
-	print("timer!")
-
-	win.ontimer()
+	local ok, err = pcall(win.ontimer)
+	if not ok then print(err) end
 	
 	-- update window:
 	if win.reload and win.oncreate then
@@ -174,10 +187,17 @@ local function timerfunc(id)
 	end
 	
 	gl.Clear()
-	if win.ondraw then win.ondraw(win) end
+	if draw then 
+		local ok, err = xpcall(draw, debug_traceback)
+		if not ok then
+			print(err)
+			draw = nil
+		end
+	end
 	
 	glut.glutSwapBuffers()
 	glut.glutPostRedisplay()
+	collectgarbage()
 	
 	glut.glutTimerFunc(1000/win.fps, timerfunc, 0)
 end
