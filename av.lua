@@ -262,6 +262,7 @@ end
 local window = require "window"
 
 function mainloop:ontimer()
+	print("ontimer")
 	run_once()
 	window:redisplay()
 end
