@@ -7,11 +7,43 @@ local glut = require "glut"
 local win = {
 	width = 800,
 	height = 600,
+	fps = 60,
 }
 
-function ondisplay()
+local function ondisplay() end
 
+local function onreshape(w, h)
+	win.width = w
+	win.height = h
+	--[[
+	if (!win.is_fullscreen) {
+		win.non_fullscreen_width = win.width;
+		win.non_fullscreen_height = win.height;
+	}
+	if (win.onresize) {
+		(win.onresize)(&win, w, h);
+	}
+	--]]
+	glut.glutPostRedisplay()
 end
+
+local function timerfunc(id) 
+	
+	-- update window:
+	if win.reload and win.oncreate then
+		win.oncreate(win)
+		win.reload = false
+	end
+	
+	gl.Clear()
+	if win.ondraw then win.ondraw(win) end
+	
+	glut.glutSwapBuffers()
+	glut.glutPostRedisplay()
+	
+	glut.glutTimerFunc(1000/win.fps, timerfunc, 0)
+end
+
 
 function win:startloop()
 	if (win.stereo) then
@@ -47,14 +79,14 @@ function win:startloop()
 	glut.glutSpecialFunc(onspecialkeydown);
 	glut.glutSpecialUpFunc(onspecialkeyup);
 	glut.glutVisibilityFunc(onvisibility);
-	glut.glutReshapeFunc(onreshape);
 	glut.glutDisplayFunc(ondisplay);
 	
-	// start it up:
-	glut.glutTimerFunc((unsigned int)(1000.0/win.fps), timerfunc, 0);
 	--]]
 	
+	glut.glutReshapeFunc(onreshape)
 	glut.glutDisplayFunc(ondisplay)
+	
+	glut.glutTimerFunc(1000/win.fps, timerfunc, 0)
 	
 	glut.glutMainLoop()
 end

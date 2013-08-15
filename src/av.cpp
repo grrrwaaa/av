@@ -518,19 +518,8 @@ void onvisibility(int state) {
 	if (win.onvisible) (win.onvisible)(&win, state);
 }
 
-void ondisplay() {}
-void onreshape(int w, int h) {
-	win.width = w;
-	win.height = h;
-	if (!win.is_fullscreen) {
-		win.non_fullscreen_width = win.width;
-		win.non_fullscreen_height = win.height;
-	}
-	if (win.onresize) {
-		(win.onresize)(&win, w, h);
-	}
-	glutPostRedisplay();
-}
+
+
 
 void gluterr( const char *fmt, va_list ap) {
 
