@@ -15,8 +15,9 @@ local gl = require "gl"
 local texture = require "texture"
 local sin, cos = math.sin, math.cos
 local pi, twopi = math.pi, math.pi * 2
+local abs = math.abs
 
-local dim = 32
+local dim = 128
 local voxels = field3D(dim, dim, dim)
 voxels:set(function(x, y, z)
 	local nx = x/dim
@@ -27,13 +28,18 @@ voxels:set(function(x, y, z)
 	local snz = nz*2-1
 	--return 0.5/dim * math.sqrt(nx*nx + ny*ny + nz*nz)
 	--return math.sqrt(snx*snx + sny*sny + snz*snz)
-	
-	local p = vec3(x, y, z)
+	--[[
+	local p = vec3(nx, ny, nz)
 	local c = vec3(5., 4., 3.)
 	local pr1 = (p % c) -0.5*c
+	pr1.x = abs(pr1.x)
+	pr1.y = abs(pr1.y)
+	pr1.z = abs(pr1.z)
 	local box = vec3(0.4, 0.1, 0.8)
-	return (pr1:abs() - box):max(0):length()
-	
+	local p1 = (pr1 - box):max(0)
+	return p1:length()
+	--]]
+	return math.random()
 end)
 
 ffi.cdef[[
@@ -296,6 +302,7 @@ void main() {
 	
 	vec3 p = ro + rd * t;
 	
+	/*
 	float d = scene(p);
 	
 	#define MAX_STEPS 50
@@ -324,8 +331,8 @@ void main() {
 		float tnorm = t/far;
 		color *= 1. - tnorm*tnorm;
 	}
+	*/
 	
-	/*
 	for (;t < far;) {
 		// get density at current point
 		float v = texture3D(voxels, p).r * amp;
@@ -349,7 +356,6 @@ void main() {
 		t = t1;
 	}
 	vec3 color = vec3(c);
-	*/
 
 	gl_FragColor = vec4(color, 1.);
 }
