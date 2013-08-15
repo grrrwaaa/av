@@ -273,7 +273,6 @@ function draw()
 	gl.LoadMatrix(mat4.perspective(fovy, aspect, near, far))
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadMatrix(mat4.lookat(eye, at, up))
-	gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
 	
 
 	---[[
@@ -325,6 +324,7 @@ function draw()
 		gl.Color(1,1,1,0.25)
 		gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
 		--allosphere:drawframe()
+		gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
 		
 		--[=[
 		-- data:
