@@ -78,6 +78,7 @@ end
 
 function shader:bind()
 	if not self.id then	
+		print("creating shader")
 		local shaders = {}
 		for i, s in ipairs(self.vertex_shaders) do
 			local sh = gl.Shader(gl.VERTEX_SHADER, s)
