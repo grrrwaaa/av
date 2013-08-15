@@ -66,7 +66,9 @@ typedef struct av_event_t {
 typedef struct av_loop_t {
 	int queue;					// OSX: kqueue, Linux: epoll
 	int numevents;				// how many events were populated by the last poll
-	av_event_t * events;		
+	av_event_t * events;	
+	double fps;	
+	void (*ontimer)(struct av_loop_t * self);	
 } av_loop_t;
 
 av_loop_t * av_loop_new();
@@ -76,6 +78,8 @@ int av_loop_add_fd_out(av_loop_t * loop, int fd);
 int av_loop_remove_fd_in(av_loop_t * loop, int fd);
 int av_loop_remove_fd_out(av_loop_t * loop, int fd);
 int av_loop_run_once(av_loop_t * loop, double seconds);
+
+void av_glut_timerfunc(int id);
 
 void av_sleep(double seconds);
 double av_now();
@@ -257,6 +261,10 @@ end
 
 local window = require "window"
 
+function mainloop:ontimer()
+	run_once()
+	window:redisplay()
+end
 
 function av.run()
 	--[[
@@ -266,7 +274,6 @@ function av.run()
 		run_once(0.01)
 	end
 	--]]
-	window.ontimer = run_once
 	window:startloop()
 end
 

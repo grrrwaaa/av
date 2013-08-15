@@ -10,8 +10,6 @@ local win = {
 	width = 800,
 	height = 600,
 	fps = 60,
-	
-	ontimer = function() end,
 }
 
 --[[
@@ -164,7 +162,7 @@ local function onreshape(w, h)
 end
 
 local firstdraw = true
-local function timerfunc(id) 
+function win:redisplay()
 	
 	if firstdraw then
 		gl.Enable(gl.MULTISAMPLE)	
@@ -177,15 +175,15 @@ local function timerfunc(id)
 		firstdraw = false
 	end
 
-	local ok, err = pcall(win.ontimer)
-	if not ok then print(err) end
-	
 	-- update window:
 	if win.reload and win.oncreate then
 		win.oncreate(win)
 		win.reload = false
 	end
 	
+	-- set up 2D mode by default
+	-- (should we use 0..1 instead?)
+	gl.Viewport(0, 0, win.width, win.height)
 	gl.Clear()
 	if draw then 
 		local ok, err = xpcall(draw, debug_traceback)
@@ -198,8 +196,6 @@ local function timerfunc(id)
 	glut.glutSwapBuffers()
 	glut.glutPostRedisplay()
 	collectgarbage()
-	
-	glut.glutTimerFunc(1000/win.fps, timerfunc, 0)
 end
 
 
@@ -249,7 +245,7 @@ function win:startloop(ontimer)
 	glut.glutReshapeFunc(onreshape)
 	glut.glutDisplayFunc(ondisplay)
 	
-	glut.glutTimerFunc(1000/win.fps, timerfunc, 0)
+	core.av_glut_timerfunc(0)
 	
 	glut.glutMainLoop()
 end

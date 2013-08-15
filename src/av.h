@@ -33,7 +33,11 @@ typedef struct av_event_t {
 typedef struct av_loop_t {
 	int queue;					// OSX: kqueue, Linux: epoll
 	int numevents;				// how many events were populated by the last poll
-	av_event_t * events;		
+	av_event_t * events;	
+	
+	double fps;	
+	void (*ontimer)(struct av_loop_t * self);
+	
 } av_loop_t;
 
 AV_EXPORT av_loop_t * av_loop_new();
@@ -47,6 +51,8 @@ AV_EXPORT int av_loop_run_once(av_loop_t * loop, double seconds);
 AV_EXPORT void av_sleep(double seconds);
 AV_EXPORT double av_now();
 AV_EXPORT double av_filetime(const char * filename);
+
+AV_EXPORT void av_glut_timerfunc(int id);
 
 /*
 const char * hostname();

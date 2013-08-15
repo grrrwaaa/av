@@ -169,6 +169,8 @@ void setnonblocking(int fd) {
 	}	
 }
 
+av_loop_t * mainloop = 0;
+
 av_loop_t * av_loop_new() {
 	av_loop_t * loop;
 	int q;
@@ -184,6 +186,11 @@ av_loop_t * av_loop_new() {
 	loop->queue = q;
 	loop->numevents = 0;
 	loop->events = (av_event_t *)calloc(AV_MAXEVENTS, sizeof(av_event_t));
+	loop->fps = 60.;
+	loop->ontimer = 0;
+	
+	if (!mainloop) mainloop = loop;
+	
 	return loop;
 }
 
@@ -278,6 +285,14 @@ int av_loop_remove_fd_out(av_loop_t * loop, int fd) {
 
 AV_POLL_EVENT change[64];
 
+void av_glut_timerfunc(int id) {
+	
+	// call back into mainloop
+	if (mainloop->ontimer) mainloop->ontimer(mainloop);
+	
+	glutTimerFunc(1000/mainloop->fps, av_glut_timerfunc, 0);
+}
+
 int av_loop_run_once(av_loop_t * loop, double seconds) {
 	int nev, fd;
 	av_event_t * events = loop->events;
@@ -326,6 +341,7 @@ int av_loop_run_once(av_loop_t * loop, double seconds) {
 		}
 		#endif
 	}
+	
 	return nev;
 }
 
