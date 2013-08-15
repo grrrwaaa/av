@@ -30,7 +30,7 @@ function load(name)
 	local hdr = freeimage.GetInfoHeader(img)
 	--print(hdr.biBitCount)
 	local pixels = freeimage.GetBits(img)
-	--print(w, h, pixels)
+	print(w, h, pixels)
 	
 	local tex = texture(w, h)
 	tex.data = pixels
