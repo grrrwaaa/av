@@ -286,11 +286,12 @@ int av_loop_remove_fd_out(av_loop_t * loop, int fd) {
 AV_POLL_EVENT change[64];
 
 void av_glut_timerfunc(int id) {
+	printf("win %d\n", id);
 	
 	// call back into mainloop
 	if (mainloop->ontimer) mainloop->ontimer(mainloop);
 	
-	glutTimerFunc(1000/mainloop->fps, av_glut_timerfunc, 0);
+	glutTimerFunc(1000/mainloop->fps, av_glut_timerfunc, id);
 }
 
 int av_loop_run_once(av_loop_t * loop, double seconds) {

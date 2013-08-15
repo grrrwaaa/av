@@ -178,7 +178,7 @@ local function registerCallbacks()
 	
 	glut.glutReshapeFunc(onreshape)
 	glut.glutDisplayFunc(ondisplay)
-	core.av_glut_timerfunc(0)
+	core.av_glut_timerfunc(win.id)
 end
 
 local windowed_width, windowed_height, windowed_id
@@ -284,6 +284,7 @@ function win:startloop(ontimer)
 	
 	win.id = glut.glutCreateWindow("")
 	glut.glutSetWindow(win.id)
+	registerCallbacks()
 	
 	if win.fullscreen then
 		enter_fullscreen()
@@ -303,7 +304,6 @@ function win:startloop(ontimer)
 //	glut.glutSetCursor(GLUT_CURSOR_NONE);
 
 	--]]
-	registerCallbacks()
 	
 	glut.glutMainLoop()
 end
