@@ -484,7 +484,7 @@ end
 
 if ffi.os == "Linux" then
 	window.fullscreen = true
-	--window.stereo = true
+	window.stereo = true
 end
 av.run()
 --return allo
