@@ -102,6 +102,11 @@ function field3D:send(unit)
 		gl.FLOAT, self.data)
 end
 
+function field3D:destroy()
+	gl.DeleteTextures(self.texID)
+	self.texID = nil
+end
+
 function field3D:create()
 	-- turn this one even if we already created it.
 	gl.Enable(gl.TEXTURE_3D)
