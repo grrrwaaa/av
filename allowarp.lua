@@ -12,6 +12,7 @@ local image = require "image"
 local field3D = require "field3D"
 
 local gl = require "gl"
+local glu = require "glu"
 local texture = require "texture"
 local sin, cos = math.sin, math.cos
 local pi, twopi = math.pi, math.pi * 2
@@ -386,7 +387,7 @@ function ondestroy()
 end
 
 function draw()
-	
+	glu.assert("draw")
 	-- go 3D:
 	local near, far = 0.1, 100
 	local fovy, aspect = 80, 1.2
@@ -401,8 +402,6 @@ function draw()
 	local mv = mat4.lookat(eye, at, up)
 	gl.LoadMatrix(mv)
 	
-
-	---[[
 	gl.Enable(gl.SCISSOR_TEST)
 	for i, p in ipairs(allo.current) do
 		
@@ -415,14 +414,7 @@ function draw()
 		gl.Enable(gl.DEPTH_TEST)
 		gl.Clear()
 		
-		--[[
-		gl.Begin(gl.LINES)
-		for i = 1, 100 do
-			gl.Vertex(0, 0, 0)
-			gl.Vertex(math.random()*2-1, math.random()*2-1, 0)
-		end
-		gl.End()
-		--]]
+		glu.assert(i)
 		
 		local s = vshader
 		s:bind()
@@ -458,6 +450,7 @@ function draw()
 		s:unbind()
 		
 		-- axes:
+		--[=[
 		gl.Begin(gl.LINES)
 			gl.Normal(1, 1, 1) gl.Color(0,1,1) gl.Vertex(-0.1, 0, 0)
 			gl.Normal(1, 1, 1) gl.Color(1,0,0) gl.Vertex(1, 0, 0)
@@ -471,7 +464,7 @@ function draw()
 		gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
 		--allosphere:drawframe()
 		gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
-		
+		--]=]
 		--[=[
 		-- data:
 		gl.Begin(gl.POINTS)
@@ -485,12 +478,13 @@ function draw()
 		--]=]
 	end
 	gl.Disable(gl.SCISSOR_TEST)
-	--]]
+	
+	glu.assert("end draw")
 end
 
+	window.fullscreen = true
 if ffi.os == "Linux" then
 	--window.stereo = true
-	window.fullscreen = true
 end
 av.run()
 --return allo

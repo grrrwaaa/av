@@ -68,7 +68,7 @@ typedef struct av_loop_t {
 	int numevents;				// how many events were populated by the last poll
 	av_event_t * events;	
 	double fps;	
-	void (*ontimer)(struct av_loop_t * self);	
+	int (*ontimer)(struct av_loop_t * self);	
 } av_loop_t;
 
 av_loop_t * av_loop_new();
@@ -263,7 +263,8 @@ local window = require "window"
 
 function mainloop:ontimer()
 	run_once()
-	window:redisplay()
+	collectgarbage()
+	return window:redisplay()
 end
 
 function av.run()

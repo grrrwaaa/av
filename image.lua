@@ -13,14 +13,14 @@ function load(name)
 	local img = freeimage.Load(filetype, name, flags)
 	if img == nil then error("failed to load "..name) end
 	local res = freeimage.ConvertTo32Bits(img)
-	freeimage.Unload(img)
+	--freeimage.Unload(img)
 	img = res
 	
 	local colortype = freeimage.GetColorType(img)
 	if colortype == C.FIC_MINISWHITE or colortype == C.FIC_MINISBLACK then
 		print("greyscale")
 		local res = freeimage.ConvertToGreyscale(img)
-		freeimage.Unload(img)
+		--freeimage.Unload(img)
 		img = res
 	end
 	
@@ -35,6 +35,8 @@ function load(name)
 	
 	local tex = texture(w, h)
 	tex.data = pixels
+	
+	tex.img = img
 	
 	-- format depends on the file... 
 	--tex.format = gl.BGRA

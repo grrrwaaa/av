@@ -36,7 +36,7 @@ typedef struct av_loop_t {
 	av_event_t * events;	
 	
 	double fps;	
-	void (*ontimer)(struct av_loop_t * self);
+	int (*ontimer)(struct av_loop_t * self);
 	
 } av_loop_t;
 

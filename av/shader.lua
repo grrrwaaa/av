@@ -91,6 +91,7 @@ function shader:bind()
 			shaders[#shaders+1] = sh
 		end		
 		self.id = gl.Program(unpack(shaders))
+		print("created program", self.id)
 		glu.assert("creating shader program")
 		
 		-- query attrs:
@@ -112,6 +113,7 @@ function shader:bind()
 		
 		self.id = checkStatus(self.id)
 		glu.assert("checking status")
+		print("verified program", self.id)
 		
 		-- cleanup:
 		for i, s in ipairs(shaders) do
@@ -120,6 +122,7 @@ function shader:bind()
 		end
 		
 	end
+	glu.assert("before binding shader")
 	gl.UseProgram(self.id)
 	glu.assert("binding shader")
 	self.bound = true

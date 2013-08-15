@@ -287,7 +287,9 @@ AV_POLL_EVENT change[64];
 
 void av_glut_timerfunc(int id) {
 	// call back into mainloop
-	if (mainloop->ontimer) mainloop->ontimer(mainloop);
+	if (mainloop->ontimer) {
+		mainloop->ontimer(mainloop);
+	}
 	glutTimerFunc(1000/mainloop->fps, av_glut_timerfunc, id);
 }
 

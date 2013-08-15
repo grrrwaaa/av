@@ -4,6 +4,7 @@ local lib = core
 local debug_traceback = debug.traceback
 
 local gl = require "gl"
+local glu = require "glu"
 local glut = require "glut"
 
 local win = {
@@ -185,19 +186,18 @@ function enter_fullscreen()
 	print("enter fullscreen")
 	windowed_width = win.width
 	windowed_height = win.height
-	if ffi.os == "OSX" then
+	if ffi.os == "OSX1" then
 		glut.glutFullScreen()
 	else
 		-- destroy current context:
-		if ondestroy then ondestroy() end
+		if win.id and ondestroy then ondestroy() end
 		-- go game mode
 		local sw, sh = glut.glutGet(glut.GLUT_SCREEN_WIDTH), glut.glutGet(glut.GLUT_SCREEN_HEIGHT)
-		--print("full res", sw, sh)
+		print("full res", sw, sh)
 		if sw == 0 or sh == 0 then sw, sh = 1024, 768 end
 		glut.glutGameModeString(string.format("%dx%d:24", sw, sh))
 		--print("refresh", glut.glutGameModeGet(glut.GLUT_GAME_MODE_REFRESH_RATE))
 		
-		-- dimensionsGLUT
 		win.id = glut.glutEnterGameMode()
 		print("new id", win.id, "old id", windowed_id)
 		glut.glutSetWindow(win.id)
@@ -208,23 +208,23 @@ function enter_fullscreen()
 		if win.oncreate then win:oncreate() end
 		--onreshape(w, h)?
 		-- hide/show to get focus for key callbacks:
-		glut.glutSetWindow(win.id)
 		glut.glutHideWindow()
 		glut.glutShowWindow()
 	end
 	glut.glutSetCursor(glut.GLUT_CURSOR_NONE)
+	print("entered fullscreen")
 end
 
 function exit_fullscreen()
 	print("exit fullscreen")
-	if ffi.os == "OSX" then
+	if ffi.os == "OSX1" then
 		glut.glutReshapeWindow(windowed_width, windowed_height)
 	else
 		-- destroy current context:
-		if ondestroy then ondestroy() end
+		if win.id and ondestroy then ondestroy() end
 		
 		glut.glutLeaveGameMode()
-		win.id = windowed_id
+		win.id = glut.glutCreateWindow("")
 		glut.glutSetWindow(win.id)
 		registerCallbacks()
 		firstdraw = true
@@ -239,7 +239,11 @@ function exit_fullscreen()
 end
 
 function win:redisplay()
+	
+	print("current window:", glut.glutGetWindow())
+	
 	if firstdraw then
+		print("firstdraw", glut.glutGetWindow())
 		gl.Enable(gl.MULTISAMPLE)	
 		gl.Enable(gl.POLYGON_SMOOTH)
 		gl.Hint(gl.POLYGON_SMOOTH_HINT, gl.NICEST)
@@ -247,18 +251,14 @@ function win:redisplay()
 		gl.Hint(gl.LINE_SMOOTH_HINT, gl.NICEST)
 		gl.Enable(gl.POINT_SMOOTH)
 		gl.Hint(gl.POINT_SMOOTH_HINT, gl.NICEST)
+		glu.assert("hints")
 		firstdraw = false
-	end
-
-	-- update window:
-	if win.reload and win.oncreate then
-		win.oncreate(win)
-		win.reload = false
 	end
 	
 	-- set up 2D mode by default
 	-- (should we use 0..1 instead?)
 	gl.Viewport(0, 0, win.width, win.height)
+		glu.assert("viewport")
 	
 	if win.stereo then
 		win.eye = "right"
@@ -284,7 +284,10 @@ function win:redisplay()
 		win.eye = nil
 		gl.DrawBuffer(gl.BACK)
 	else
+		
+		glu.assert("preclear")
 		gl.Clear()
+		glu.assert("postclear")
 		if draw then 
 			local ok, err = xpcall(draw, debug_traceback)
 			if not ok then
@@ -296,7 +299,8 @@ function win:redisplay()
 	
 	glut.glutSwapBuffers()
 	glut.glutPostRedisplay()
-	collectgarbage()
+	
+	return 1
 end
 
 
@@ -312,16 +316,15 @@ function win:startloop(ontimer)
 	glut.glutInitWindowSize(win.width, win.height);
 	glut.glutInitWindowPosition(0, 0);
 	
-	win.id = glut.glutCreateWindow("")
-	windowed_id = win.id
-	
+	if win.fullscreen then
+		enter_fullscreen()
+	else
+		win.id = glut.glutCreateWindow("")
+		windowed_id = win.id
+	end
 	glut.glutSetWindow(win.id)
 	registerCallbacks()
 	
-	if win.fullscreen then
-		-- yes this is a total hack.
-		go(0.5, enter_fullscreen)
-	end
 	
 	--[[
 	// Force VSYNC on.
