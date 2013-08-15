@@ -177,6 +177,8 @@ function load_calibration(hostname)
 			
 			-- TODO
 			-- p.blend.file
+			local filename = datapath .. p.blend.file
+			print("reading", filename)
 			-- p.params.file
 		end
 		allo.current = projections
