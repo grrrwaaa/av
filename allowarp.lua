@@ -276,7 +276,7 @@ function draw()
 	-- go 3D:
 	local near, far = 0.1, 100
 	local fovy, aspect = 80, 1.2
-	local a = t * 0.
+	local a = t * 0.1
 	local eye = vec3(cos(a), 0, sin(a)) * 4
 	local at = vec3(0, 0, 0)
 	local up = vec3(0, 1, 0)
