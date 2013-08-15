@@ -210,12 +210,12 @@ void main() {
 	float eyesep = 0.1 * sin(now);
 	
 	// the ray origin:
-	vec3 ro = -eye;
+	vec3 ro = mv * vec4(0., 0., 0, 1.);
 	// todo: translate by view
 	
 	vec3 rd = (texture2D(map3D, T).xyz);
 	// rotate by view:
-	rd = normalize((gl_ModelViewMatrix * vec4(rd, 1.)).xyz);
+	rd = normalize((mv * vec4(rd, 1.)).xyz);
 	// stereo shift:
 	vec3 rdx = cross(normalize(rd), up);
 	ro += rdx * eyesep;
