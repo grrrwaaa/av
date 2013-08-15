@@ -211,13 +211,14 @@ void main() {
 	
 	// the ray origin:
 	vec3 ro = (mv * vec4(0., 0., 0, 1.)).xyz;
-	// stereo shift:
-	vec3 rdx = cross(normalize(rd), up);
-	ro += rdx * eyesep;
 	
 	vec3 rd = (texture2D(map3D, T).xyz);
 	// rotate by view:
 	rd = normalize((mv * vec4(rd, 1.)).xyz - ro);
+	
+	// stereo shift:
+	vec3 rdx = cross(normalize(rd), up);
+	ro += rdx * eyesep;
 	
 	float near = 0.01;
 	float far = 50.;
