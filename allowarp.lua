@@ -168,8 +168,9 @@ void main() {
 }
 ]]
 local fs = glsl_math .. [[
-uniform float now;
 uniform sampler2D map3D;
+uniform vec3 eye;
+uniform float now;
 varying vec2 T;
 varying mat4 mv;
 varying vec3 up;
@@ -209,7 +210,7 @@ void main() {
 	float eyesep = 0.1 * sin(now);
 	
 	// the ray origin:
-	vec3 ro = vec3(0.);
+	vec3 ro = eye;
 	// todo: translate by view
 	
 	vec3 rd = (texture2D(map3D, T).xyz);
@@ -217,8 +218,7 @@ void main() {
 	rd = normalize((gl_ModelViewMatrix * vec4(rd, 1.)).xyz);
 	// stereo shift:
 	vec3 rdx = cross(normalize(rd), up);
-	vec3 eye = rdx * eyesep;
-	ro += eye;
+	ro += rdx * eyesep;
 	
 	float near = 0.01;
 	float far = 50.;
@@ -313,6 +313,7 @@ function draw()
 		s:bind()
 		s:uniform("now", now())
 		s:uniform("map3D", 0)
+		s:uniform("eye", eye.x, eye.y, eye.z)
 		p.map3Dtex:bind(0)
 		gl.Begin(gl.QUADS)
 			gl.TexCoord2f(0, 0) 	gl.Vertex3f(0, 0, 0)
