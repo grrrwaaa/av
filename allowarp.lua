@@ -225,14 +225,12 @@ varying vec2 T;
 varying mat4 mv;
 
 float scene(vec3 p) {
-	/*
 	vec3 c = vec3(5., 4., 3. + 0.1*cos(p.y));
 	vec3 pr1 = mod(p,c)-0.5*c;
 	//pr1 = quat_rotate(quat_fromeuler(sin(now + 3.*p.x), cos(now * 2.), sin(p.z)), pr1);
 	vec3 box = vec3(0.4, 0.1, 0.8);
 	return length(max(abs(pr1)-box, 0.0));
-	*/
-	return texture3D(voxels, p).x;
+	//return texture3D(voxels, p).x;
 }
 
 vec3 spherical(float az, float el) {
@@ -284,7 +282,6 @@ void main() {
 	
 	float d = scene(p);
 	
-	/*
 	#define MAX_STEPS 50
 	for (int i=0; i<MAX_STEPS; i++) {
 		t += d;
@@ -311,9 +308,8 @@ void main() {
 		float tnorm = t/far;
 		color *= 1. - tnorm*tnorm;
 	}
-	*/
 	
-	
+	/*
 	for (;t < far;) {
 		// get density at current point
 		float v = texture3D(voxels, p).r * amp;
@@ -336,9 +332,8 @@ void main() {
 		p = p1;
 		t = t1;
 	}
-	
 	vec3 color = vec3(c);
-
+	*/
 
 	gl_FragColor = vec4(color, 1.);
 }
@@ -457,7 +452,7 @@ end
 
 if ffi.os == "Linux" then
 	--window.stereo = true
-	--window.fullscreen = true
+	window.fullscreen = true
 end
 av.run()
 --return allo
