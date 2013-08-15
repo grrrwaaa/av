@@ -365,7 +365,7 @@ void main() {
 		p = p1;
 		t = t1;
 	}
-	vec3 color = vec3(c) * (rd * 2. - 1.);
+	vec3 color = vec3(c) * (rd + 0.5);
 
 	gl_FragColor = vec4(color, 1.) * texture2D(blend, vec2(T.x, 1.-T.y)).x;
 }
