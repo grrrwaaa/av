@@ -207,7 +207,7 @@ vec3 color2 = vec3(0.6, 0.2, 0.8);
 vec3 ambient = vec3(0.1, 0.1, 0.1);
 
 void main() {
-	float eyesep = 0.1 * sin(now);
+	float eyesep = 0.1 * sin(now * 10.);
 	
 	// the ray origin:
 	vec3 ro = (mv * vec4(0., 0., 0, 1.)).xyz;
