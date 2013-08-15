@@ -310,6 +310,7 @@ function draw()
 		gl.End()
 		p.map3Dtex:unbind(0)
 		s:unbind()
+		--]=]
 		
 		-- axes:
 		gl.Begin(gl.LINES)
@@ -325,6 +326,7 @@ function draw()
 		gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
 		--allosphere:drawframe()
 		
+		--[=[
 		-- data:
 		gl.Begin(gl.POINTS)
 		for i = 0, p.elems do
