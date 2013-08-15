@@ -212,9 +212,9 @@ void main() {
 	// the ray origin:
 	vec3 ro = (mv * vec4(0., 0., 0, 1.)).xyz;
 	
-	vec3 rd = (texture2D(map3D, T).xyz);
+	vec3 raw_rd = (texture2D(map3D, T).xyz);
 	// rotate by view:
-	rd = normalize((mv * vec4(rd, 1.)).xyz - ro);
+	vec3 rd = normalize((mv * vec4(raw_rd, 1.)).xyz - ro);
 	
 	// stereo shift:
 	vec3 rdx = cross(normalize(rd), up);
@@ -256,7 +256,7 @@ void main() {
 		color *= 1. - tnorm*tnorm;
 	}
 
-	gl_FragColor = vec4(color + rd, 1.);
+	gl_FragColor = vec4(color + raw_rd, 1.);
 }
 ]]
 local vshader = shader(vs, fs)
