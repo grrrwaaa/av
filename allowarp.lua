@@ -252,7 +252,7 @@ function ondestroy()
 	vshader:destroy()
 	
 	for k, m in pairs(allo.machines) do
-		for i, p in pairs(m) do
+		for i, p in ipairs(m) do
 			if p.map3Dtex then p.map3Dtex:destroy() end
 		end
 	end
