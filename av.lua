@@ -312,7 +312,6 @@ end
 local window = require "window"
 
 
-
 function av.run()
 	while window.running do
 		window.swap()

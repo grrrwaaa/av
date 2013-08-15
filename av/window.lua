@@ -23,16 +23,9 @@ local window = {
 	isopen = false,
 	title = "av",
 }
-setmetatable(window, window)
 
 function window:__tostring()
 	return string.format("Window(%p)", self)
-end
-
-function window:__index(k, v)
-	if k == "fullscreen" then
-		return window.isfullscreen
-	end
 end
 
 local
@@ -57,7 +50,7 @@ function window_init()
 	end
 	window.isopen = true
 
-	print("opened", glfw.GetWindowParam(glfw.OPENED)) -- ACTIVE, ICONIFIED, ACCELERATED
+	print("opened window", glfw.GetWindowParam(glfw.OPENED)) -- ACTIVE, ICONIFIED, ACCELERATED
 	print("depth bits", glfw.GetWindowParam(glfw.DEPTH_BITS))
 	print("refresh rate", glfw.GetWindowParam(glfw.REFRESH_RATE))
 	print("stereo", glfw.GetWindowParam(glfw.STEREO))
@@ -85,25 +78,12 @@ window_init()
 -- load gl after initializing window:
 local gl = require "gl"
 
-function window:__newindex(k, v)
-	if k == "fullscreen" then
-		if window.isfullscreen and (not v) then
-			-- leave fullscreen
-			
-			window_init()
-		elseif (not window.isfullscreen) and v then
-			-- enter fullscreen
-			
-			window_init()
-		end
-	end
-end
 
 frame = 0
 local firstdraw = false
 local tprev = 0
 
-function window.swap()
+window.swap = function()
 	dt = t - tprev
 	tprev = t
 	glfw.SwapBuffers()	-- implicly calls glfw.PollEvents()
@@ -175,6 +155,35 @@ function window.swap()
 	frame = frame + 1
 end
 
+
+setmetatable(window, {
+	__index = function(k, v)
+		if k == "fullscreen" then
+			return window.isfullscreen
+		else
+			return self[k]
+		end
+	end,
+	__newindex = function(k, v)
+		if k == "fullscreen" then
+			if window.isfullscreen and (not v) then
+				-- leave fullscreen
+			
+				window_init()
+			elseif (not window.isfullscreen) and v then
+				-- enter fullscreen
+			
+				window_init()
+			end
+		else
+			self[k] = v
+		end
+	end
+})
+
+
+print("swap", window.swap)
+
 local key_events = {
 	"down",
 	"up"
@@ -188,6 +197,6 @@ local mouse_events = {
 }
 
 -- was getting segfaults until I made sure to pollevents (or swapbuffers) before anything else:
-glfw.PollEvents()	
+--glfw.PollEvents()	
 
 return window
