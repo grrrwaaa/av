@@ -225,12 +225,14 @@ varying vec2 T;
 varying mat4 mv;
 
 float scene(vec3 p) {
+	/*
 	vec3 c = vec3(5., 4., 3. + 0.1*cos(p.y));
 	vec3 pr1 = mod(p,c)-0.5*c;
 	//pr1 = quat_rotate(quat_fromeuler(sin(now + 3.*p.x), cos(now * 2.), sin(p.z)), pr1);
 	vec3 box = vec3(0.4, 0.1, 0.8);
 	return length(max(abs(pr1)-box, 0.0));
-	//return texture3D(voxels, p).x;
+	*/
+	return texture3D(voxels, p).x;
 }
 
 vec3 spherical(float az, float el) {
@@ -400,7 +402,7 @@ function draw()
 		else
 			s:uniform("parallax", 0)
 		end
-		--s:uniform("voxels", 1)
+		s:uniform("voxels", 1)
 		
 		voxels:send(1)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.REPEAT)
