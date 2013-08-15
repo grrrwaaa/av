@@ -46,7 +46,7 @@ function window_init()
 	--glfw.OpenWindowHint(glfw.OPENGL_FORWARD_COMPAT, 1)
 	--glfw.OpenWindowHint(glfw.OPENGL_DEBUG_CONTEXT, 1)
 	
-	local mode = glfw.WINDOW --window.isfullscreen and glfw.FULLSCREEN or glfw.WINDOW
+	local mode = window.isfullscreen and glfw.FULLSCREEN or glfw.WINDOW
 	
 	-- open stereo if possible:
 	--glfw.OpenWindowHint(glfw.STEREO, 1)
