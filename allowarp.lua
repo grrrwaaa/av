@@ -25,8 +25,15 @@ voxels:set(function(x, y, z)
 	local snx = nx*2-1
 	local sny = ny*2-1
 	local snz = nz*2-1
-	return 0.5/dim * math.sqrt(nx*nx + ny*ny + nz*nz)
+	--return 0.5/dim * math.sqrt(nx*nx + ny*ny + nz*nz)
 	--return math.sqrt(snx*snx + sny*sny + snz*snz)
+	
+	local p = vec3(x, y, z)
+	local c = vec3(5., 4., 3.)
+	local pr1 = (p % c) -0.5*c
+	local box = vec3(0.4, 0.1, 0.8)
+	return (pr1:abs() - box):max(0):length()
+	
 end)
 
 ffi.cdef[[
