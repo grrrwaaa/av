@@ -287,6 +287,7 @@ function win:startloop(ontimer)
 	registerCallbacks()
 	
 	if win.fullscreen then
+		-- yes this is a total hack.
 		go(0.5, enter_fullscreen)
 	end
 	

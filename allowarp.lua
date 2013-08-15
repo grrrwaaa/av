@@ -250,6 +250,10 @@ void main() {
 ]]
 local vshader = shader(vs, fs)
 
+function oncreate()
+	vshader:destroy()
+end
+
 function draw()
 	
 	-- go 3D:
