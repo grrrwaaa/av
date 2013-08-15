@@ -17,6 +17,29 @@ local sin, cos = math.sin, math.cos
 local pi, twopi = math.pi, math.pi * 2
 local abs = math.abs
 
+local datapath, blobpath
+if ffi.os == "OSX" then
+	datapath = "/Users/grahamwakefield/calibration-current/"
+	blobpath = "/Users/grahamwakefield/calibration-data/"
+else
+	datapath = "/home/sphere/calibration-current/"
+	blobpath = "/alloshare/calibration/data/"
+end
+
+local allo = {
+	hostname = io.popen("hostname"):read("*l"),
+	
+	-- all the machines loaded so far:
+	-- (each machine is a list of projections)
+	machines = {},
+	-- the current machine:
+	current = {
+		fullscreen = false,
+		active = false,
+		resolution = 1024,
+	},
+}
+
 local dim = 128
 local voxels = field3D(dim, dim, dim)
 voxels:set(function(x, y, z)
@@ -85,37 +108,17 @@ local function standard_warp()
 	p.map3Dtex.type = gl.FLOAT
 	p.map3Dtex.format = gl.RGBA
 	p.map3Dtex.data = ffi.cast("float *", p.map3D)
+	
+	p.blendtex = image(datapath .. "alpha1.png")
 	return p
 end
 
-local allo = {
-	hostname = io.popen("hostname"):read("*l"),
-	
-	-- all the machines loaded so far:
-	-- (each machine is a list of projections)
-	machines = {},
-	-- the current machine:
-	current = {
-		fullscreen = false,
-		active = false,
-		resolution = 1024,
-		
-		standard_warp(),
-	},
-}
+allo.current[1] = standard_warp()
 -- temporary override:
 --allo.hostname = "gr04"
 
 print("I am", allo.hostname)
 
-local datapath, blobpath
-if ffi.os == "OSX" then
-	datapath = "/Users/grahamwakefield/calibration-current/"
-	blobpath = "/Users/grahamwakefield/calibration-data/"
-else
-	datapath = "/home/sphere/calibration-current/"
-	blobpath = "/alloshare/calibration/data/"
-end
 
 function load_calibration(hostname)
 	local filename = string.format("%s%s.lua", datapath, hostname)
@@ -242,7 +245,7 @@ void main() {
 }
 ]]
 local fs = glsl_math .. [[
-uniform sampler2D map3D;
+uniform sampler2D map3D, blend;
 uniform sampler3D voxels;
 uniform vec3 eye;
 uniform float parallax;
@@ -363,7 +366,7 @@ void main() {
 	}
 	vec3 color = vec3(c);
 
-	gl_FragColor = vec4(color, 1.);
+	gl_FragColor = vec4(color, 1.) * texture2D(blend, T).x;
 }
 ]]
 local vshader = shader(vs, fs)
@@ -430,6 +433,7 @@ function draw()
 			s:uniform("parallax", 0)
 		end
 		s:uniform("voxels", 1)
+		s:uniform("blend", 2)
 		
 		voxels:bind(1)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.REPEAT)
@@ -437,12 +441,14 @@ function draw()
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.REPEAT)
 		
 		p.map3Dtex:bind(0)
+		p.blendtex:bind(2)
 		gl.Begin(gl.QUADS)
 			gl.TexCoord2f(0, 0) 	gl.Vertex3f(0, 0, 0)
 			gl.TexCoord2f(1, 0)		gl.Vertex3f(1, 0, 0)
 			gl.TexCoord2f(1, 1)		gl.Vertex3f(1, 1, 0)
 			gl.TexCoord2f(0, 1)		gl.Vertex3f(0, 1, 0)
 		gl.End()
+		p.blendtex:unbind(2)
 		voxels:unbind(1)
 		p.map3Dtex:unbind(0)
 		
