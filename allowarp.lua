@@ -64,7 +64,7 @@ voxels:set(function(x, y, z)
 	return p1:length()
 	--]]
 	
-	local s = sin(nx * twopi + ny * twopi * 5 + nz * twopi * 4)*0.5+0.5
+	local s = sin(nx * twopi * ny * twopi * 5 * nz * twopi * 4)*0.5+0.5
 	
 	return 0.1*(math.random()) + s --1.5-math.sqrt(snx*snx + sny*sny + snz*snz)
 end)
