@@ -101,7 +101,7 @@ test_window()
 --test_audioscript()
 
 local window = require "window"
-window.fullscreen = true
---go(1, function() window.enter_fullscreen() end)
+--window.fullscreen = true
+go(0, function() window.enter_fullscreen() end)
 
 av.run()
