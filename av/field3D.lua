@@ -114,8 +114,13 @@ function field3D:create()
 	if not self.texID then
 		self.texID = gl.GenTextures(1)
 		gl.BindTexture(gl.TEXTURE_3D, self.texID)
-		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
-		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+		if self.drawsmooth then
+			gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+			gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+		else
+			gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+			gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+		end		
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP)
@@ -159,6 +164,7 @@ function field3D.new(dimx, dimy, dimz)
 		depth = dimz,
 		
 		border = 0,
+		drawsmooth = true,
 		-- size in bytes:
 		size = ffi.sizeof(data),
 	}, field3D)

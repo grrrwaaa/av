@@ -68,6 +68,7 @@ voxels:set(function(x, y, z)
 	
 	return 0.1*(math.random()) + s --1.5-math.sqrt(snx*snx + sny*sny + snz*snz)
 end)
+voxels.drawsmooth = false
 
 ffi.cdef[[
 int open(const char * path, int code);
