@@ -178,7 +178,6 @@ local function registerCallbacks()
 	
 	glut.glutReshapeFunc(onreshape)
 	glut.glutDisplayFunc(ondisplay)
-	core.av_glut_timerfunc(win.id)
 end
 
 local windowed_width, windowed_height, windowed_id
@@ -305,6 +304,7 @@ function win:startloop(ontimer)
 
 	--]]
 	
+	core.av_glut_timerfunc(0)
 	glut.glutMainLoop()
 end
 
