@@ -4,6 +4,7 @@ local C = ffi.C
 
 local freeimage = require "freeimage"
 local texture = require "texture"
+local glu = require "glu"
 
 function load(name)
 	local filetype = freeimage.GetFileType(name,0)
@@ -40,6 +41,8 @@ function load(name)
 	
 	-- segfault.. probably need to copy the pixels... 
 	--freeimage.Unload(img)
+	
+	glu.assert("image loaded")
 	
 	return tex
 end
