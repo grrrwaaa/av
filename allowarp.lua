@@ -211,7 +211,7 @@ void main() {
 	//vec3 rd = spherical(T.x, T.y);
 	
 	// shouldn't need to normalize!
-	vec3 rd = normalize(texture2D(map3D, T).xyz);
+	vec3 rd = (texture2D(map3D, T).xyz);
 	
 	rd = normalize((gl_ModelViewMatrix * vec4(rd, 1.)).xyz);
 	
