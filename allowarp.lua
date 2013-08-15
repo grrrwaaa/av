@@ -210,7 +210,7 @@ void main() {
 	float eyesep = 0.1 * sin(now);
 	
 	// the ray origin:
-	vec3 ro = eye;
+	vec3 ro = -eye;
 	// todo: translate by view
 	
 	vec3 rd = (texture2D(map3D, T).xyz);
