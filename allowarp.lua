@@ -157,12 +157,14 @@ local vs = glsl_math .. [[
 
 varying vec2 T;
 varying mat4 mv;
+varying vec3 up;
 void main() {
 	T = gl_MultiTexCoord0.xy;
 	gl_Position = vec4(T.x*2.-1., 1.-T.y*2., 0., 1.);
 	//gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 	
 	mv = gl_ModelViewMatrix;
+	up = normalize((gl_ModelViewMatrix * vec4(0., 1., 0., 1.)).xyz);
 }
 ]]
 local fs = glsl_math .. [[
@@ -170,6 +172,7 @@ uniform float now;
 uniform sampler2D map3D;
 varying vec2 T;
 varying mat4 mv;
+varying vec3 up;
 
 float scene(vec3 p) {
 	vec3 c = vec3(5., 4., 3. + 0.1*cos(p.y));
@@ -203,17 +206,19 @@ vec3 color2 = vec3(0.6, 0.2, 0.8);
 vec3 ambient = vec3(0.1, 0.1, 0.1);
 
 void main() {
-	float eyesep = 0.01;
+	float eyesep = 0.01 * sin(now);
 	
 	// the ray origin:
 	vec3 ro = vec3(0.);
-	// the ray direction:
-	//vec3 rd = spherical(T.x, T.y);
+	// todo: translate by view
 	
-	// shouldn't need to normalize!
 	vec3 rd = (texture2D(map3D, T).xyz);
-	
+	// rotate by view:
 	rd = normalize((gl_ModelViewMatrix * vec4(rd, 1.)).xyz);
+	// stereo shift:
+	vec3 rdx = cross(normalize(rd), up);
+	vec3 eye = rdx * eyesep;
+	ro += eye;
 	
 	float near = 0.01;
 	float far = 50.;
@@ -306,7 +311,7 @@ function draw()
 		
 		local s = vshader
 		s:bind()
-		--s:uniform("now", now())
+		s:uniform("now", now())
 		s:uniform("map3D", 0)
 		p.map3Dtex:bind(0)
 		gl.Begin(gl.QUADS)
