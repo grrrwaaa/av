@@ -41,7 +41,7 @@ local allo = {
 	},
 }
 
-local dim = 32
+local dim = 256
 local voxels = field3D(dim, dim, dim)
 voxels:set(function(x, y, z)
 	local nx = x/dim
