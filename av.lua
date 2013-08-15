@@ -82,50 +82,6 @@ double av_now();
 double av_filetime(const char * filename);
 
 enum {
-	// Standard ASCII non-printable characters 
-	AV_KEY_ENTER		=3,		
-	AV_KEY_BACKSPACE	=8,		
-	AV_KEY_TAB			=9,
-	AV_KEY_RETURN		=13,
-	AV_KEY_ESCAPE		=27,
-	AV_KEY_DELETE		=127,
-		
-	// Non-standard, but common keys
-	AV_KEY_F1=256, 
-	AV_KEY_F2, AV_KEY_F3, AV_KEY_F4, AV_KEY_F5, AV_KEY_F6, AV_KEY_F7, AV_KEY_F8, AV_KEY_F9, AV_KEY_F10, AV_KEY_F11, AV_KEY_F12,
-	 
-	AV_KEY_INSERT, 
-	AV_KEY_LEFT, AV_KEY_UP, AV_KEY_RIGHT, AV_KEY_DOWN, 
-	AV_KEY_PAGE_DOWN, AV_KEY_PAGE_UP, 
-	AV_KEY_END, AV_KEY_HOME
-};
-
-typedef struct av_Window {
-	int width, height;
-	int is_fullscreen;
-	int button;
-	int shift, alt, ctrl;
-	int is_stereo;
-	double fps;
-	
-	void (*oncreate)(struct av_Window * self);
-	void (*onresize)(struct av_Window * self, int w, int h);
-	void (*onvisible)(struct av_Window * self, int state);
-	void (*ondraw)(struct av_Window * self);
-	void (*onkey)(struct av_Window * self, int event, int key);
-	void (*onmouse)(struct av_Window * self, int event, int button, int x, int y);
-	
-} av_Window;
-
-av_Window * av_window_create();
-void av_window_setfullscreen(av_Window * self, int b);
-void av_window_settitle(av_Window * self, const char * name);
-void av_window_setdim(av_Window * self, int x, int y);
-
-// called to reset state before a script closes, e.g. removing callbacks:
-void av_state_reset(void * state);
-
-enum {
 	AV_AUDIO_CMD_EMPTY,
 	AV_AUDIO_CMD_GENERIC = 128,
 	AV_AUDIO_CMD_CLEAR,
@@ -257,71 +213,16 @@ local function setTimeout(delay, callback)
 end
 --]]
 
-local function run_once(timeout)
-	-- derive our timeout:
-	local due = schedule.due()
-	if due then
-		timeout = max(min(due - now(), timeout or 1), mintimeout)
-	end
-
-	-- grab system events:
-	local n = core.av_loop_run_once(mainloop, timeout)
-	
-	-- run scheduled coroutines:
+local tprev = 0
+local function run_once()
 	t = core.av_now() - t0
+	dt = t - tprev
+	tprev = t
+	
 	schedule.update(t, maxtimercallbacks)
-	--[[
-	local calls = 0
-	while timer and timer.t < t do
-		-- advance head before callback
-		timers.head = timer.next
-		-- change current time before callback:
-		now = timer.t
-		local rpt = timer.callback()
-		if rpt and rpt > 0 then
-			-- re-insert:
-			addtimer(now + rpt, timer)
-		end
-		-- repeat
-		timer = timers.head
-		-- TODO: break at maxtimers?
-		calls = calls + 1
-		if calls > maxtimercallbacks then
-			print("warning: aborting timers (suspected feedback loop)")
-			break
-		end
-	end
-	-- now update to real time
-	now = t
-		
-	-- now handle IO:
-	for i = 0, n-1 do
-		local ty = ev[i].type
-		local id = ev[i].fd
-		--print("event", ty, id)
-		if ty == C.AV_EVENT_TYPE_READ then
-			--print("read", id)
-			local f = readers[id]
-			if f then
-				f(id)
-			else
-				local data = readbytes(fd)
-				print("no reader", id, data)
-			end
-		elseif ty == C.AV_EVENT_TYPE_TIMER then
-			local f = timers[id]
-			if f then
-				f(id)
-			else
-				print("no timer", id)
-			end
-		elseif ty == C.AV_EVENT_TYPE_CLOSE then
-			--print("closed", id)
-		else
-			print("unhandled event type")
-		end
-	end
-	--]]
+	
+	-- grab system events:
+	local n = core.av_loop_run_once(mainloop, 0.001)
 	-- handle system events:
 	for i = 0, n-1 do
 		local ev = mainloop.events[i]
@@ -351,9 +252,8 @@ local function run_once(timeout)
 		else
 			print("unhandled event type")
 		end
-	end
+	end	
 end	
-
 
 local window = require "window"
 
@@ -366,7 +266,8 @@ function av.run()
 		run_once(0.01)
 	end
 	--]]
-	window.startloop()
+	window.ontimer = run_once
+	window:startloop()
 end
 
 t0 = core.av_now()

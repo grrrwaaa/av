@@ -99,4 +99,7 @@ test_window()
 --test_timer()
 --test_audioscript()
 
+local window = require "window"
+window.fullscreen = true
+
 av.run()
