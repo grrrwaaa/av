@@ -304,7 +304,7 @@ void main() {
 	ro += rdx * parallax;
 	
 	float near = 1.; //0.1;
-	float step = 0.1;
+	float step = 0.03;
 	float far = 50.;
 	float t = near;
 	float c = 0.;
