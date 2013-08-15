@@ -115,8 +115,6 @@ load_calibration(allo.hostname)
 local shader = require "shader"
 local window = require "window"
 
---window.fullscreen = true
-
 local glsl_math = [[
 vec4 quat_fromeuler(float az, float el, float ba) {
 	float c1 = cos(az * 0.5);
