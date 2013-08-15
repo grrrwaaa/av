@@ -9,15 +9,18 @@ local debug_traceback = debug.traceback
 local desktopMode = ffi.new("GLFWvidmode[1]")
 glfw.GetDesktopMode(desktopMode)
 
+local fullscreen_width = desktopMode[0].Width
+local fullscreen_height = desktopMode[0].Height
+local windowed_width = 800
+local windowed_height = 600
+
 local window = {
 	fps = 60,
 	running = true,
 	stereo = 0,
 	fsaa = 2,
-	width = 800,
-	height = 600,
-	fullscreen_width = desktopMode[0].Width,
-	fullscreen_height = desktopMode[0].Height,
+	width = windowed_width,
+	height = windowed_height,
 	depthbits = 24,
 	isfullscreen = false,
 	isopen = false,
@@ -157,22 +160,31 @@ end
 
 
 setmetatable(window, {
-	__index = function(k, v)
+	__index = function(self, k, v)
 		if k == "fullscreen" then
 			return window.isfullscreen
 		else
 			return self[k]
 		end
 	end,
-	__newindex = function(k, v)
+	__newindex = function(self, k, v)
 		if k == "fullscreen" then
+			print("set fullscreen", v, window.isfullscreen)
 			if window.isfullscreen and (not v) then
 				-- leave fullscreen
-			
+				
+				window.width = windowed_width
+				window.height = windowed_height
+				
+				window.isfullscreen = false
 				window_init()
 			elseif (not window.isfullscreen) and v then
 				-- enter fullscreen
-			
+				
+				window.width = fullscreen_width
+				window.height = fullscreen_height
+				
+				window.isfullscreen = true
 				window_init()
 			end
 		else

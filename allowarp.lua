@@ -1,3 +1,4 @@
+#!/usr/bin/env luajit
 local av = require "av"
 local ffi = require "ffi"
 local C = ffi.C
@@ -25,7 +26,9 @@ local allo = {
 	-- (each machine is a list of projections)
 	machines = {},
 	-- the current machine:
-	current = nil,
+	current = {
+		viewport = { l=0, b=0, w=1, h=1 },
+	},
 }
 -- temporary override:
 --allo.hostname = "gr04"
@@ -111,6 +114,8 @@ load_calibration(allo.hostname)
 
 local shader = require "shader"
 local window = require "window"
+
+window.fullscreen = true
 
 local glsl_math = [[
 vec4 quat_fromeuler(float az, float el, float ba) {
