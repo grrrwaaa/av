@@ -344,6 +344,7 @@ local vshader = shader(vs, fs)
 
 function ondestroy()
 	vshader:destroy()
+	voxels:destroy()
 	
 	for k, m in pairs(allo.machines) do
 		for i, p in ipairs(m) do
@@ -404,7 +405,7 @@ function draw()
 		end
 		s:uniform("voxels", 1)
 		
-		voxels:send(1)
+		voxels:bind(1)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.REPEAT)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.REPEAT)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.REPEAT)
