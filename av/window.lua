@@ -185,8 +185,10 @@ setmetatable(window, {
 				
 				glfw.GetDesktopMode(desktopMode)
 				
-				window.width = desktopMode.Width
-				window.height = desktopMode.Height
+				window.width = desktopMode[0].Width
+				window.height = desktopMode[0].Height
+				
+				print(window.width, window.height)
 				
 				window.isfullscreen = true
 				window_init()
