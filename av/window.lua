@@ -64,7 +64,7 @@ function window_init()
 
 	local dim = ffi.new("int[2]")
 	glfw.GetWindowSize(dim, dim+1)
-	print("dim", dim[0], dim[1])
+	print("window dim", dim[0], dim[1])
 
 	glfw.SetWindowTitle(window.title)
 	--glfw.SetWindowSize(w, h)
