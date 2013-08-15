@@ -482,8 +482,8 @@ function draw()
 	glu.assert("end draw")
 end
 
-	window.fullscreen = true
 if ffi.os == "Linux" then
+	window.fullscreen = true
 	--window.stereo = true
 end
 av.run()
