@@ -82,34 +82,41 @@ function shader:bind()
 		local shaders = {}
 		for i, s in ipairs(self.vertex_shaders) do
 			local sh = gl.Shader(gl.VERTEX_SHADER, s)
+			glu.assert("creating shader")
 			shaders[#shaders+1] = sh
 		end
 		for i, s in ipairs(self.fragment_shaders) do
 			local sh = gl.Shader(gl.FRAGMENT_SHADER, s)
+			glu.assert("creating shader")
 			shaders[#shaders+1] = sh
 		end		
 		self.id = gl.Program(unpack(shaders))
+		glu.assert("creating shader program")
 		
 		-- query attrs:
 		local params = ffi.new("GLint[1]")
 		
 		gl.GetProgramiv(self.id, gl.ACTIVE_UNIFORMS, params)
+		glu.assert("getting shader program uniforms")
 		--print("uniforms:", params[0])
 		for i = 0, params[0]-1 do
 			self:addUniform(i)
 		end
 		
 		gl.GetProgramiv(self.id, gl.ACTIVE_ATTRIBUTES, params)
+		glu.assert("getting shader program attributes")
 		--print("attributes:", params[0])
 		for i = 0, params[0]-1 do
 			self:addAttribute(i)
 		end
 		
 		self.id = checkStatus(self.id)
+		glu.assert("checking status")
 		
 		-- cleanup:
 		for i, s in ipairs(shaders) do
 			gl.DeleteShader(s)
+			glu.assert("deleting shaders")
 		end
 		
 	end
