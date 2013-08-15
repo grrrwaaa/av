@@ -161,6 +161,24 @@ local function onreshape(w, h)
 	glut.glutPostRedisplay()
 end
 
+local function registerCallbacks()
+	--[[
+	glut.glutKeyboardFunc(onkeydown);
+	glut.glutKeyboardUpFunc(onkeyup);
+	glut.glutMouseFunc(onmouse);
+	glut.glutMotionFunc(onmotion);
+	glut.glutPassiveMotionFunc(onpassivemotion);
+	glut.glutSpecialFunc(onspecialkeydown);
+	glut.glutSpecialUpFunc(onspecialkeyup);
+	glut.glutVisibilityFunc(onvisibility)
+	
+	--]]
+	
+	glut.glutReshapeFunc(onreshape)
+	glut.glutDisplayFunc(ondisplay)
+	core.av_glut_timerfunc(0)
+end
+
 local windowed_width, windowed_height, windowed_id
 function enter_fullscreen()
 	windowed_width = win.width
@@ -170,15 +188,16 @@ function enter_fullscreen()
 	else
 		-- go game mode
 		local sw, sh = glut.glutGet(glut.GLUT_SCREEN_WIDTH), glut.glutGet(glut.GLUT_SCREEN_HEIGHT)
-		print("full res", sw, sh)
+		--print("full res", sw, sh)
 		if sw == 0 or sh == 0 then sw, sh = 1024, 768 end
 		glut.glutGameModeString(string.format("%dx%d:24", sw, sh))
-		print("refresh", glut.glutGameModeGet(glut.GLUT_GAME_MODE_REFRESH_RATE))
+		--print("refresh", glut.glutGameModeGet(glut.GLUT_GAME_MODE_REFRESH_RATE))
 		
 		-- dimensionsGLUT
 		windowed_id = win.id
 		win.id = glut.glutEnterGameMode()
 		glut.glutSetWindow(win.id)
+		registerCallbacks()
 		
 		if win.oncreate then win:oncreate() end
 		--onreshape(w, h)?
@@ -197,10 +216,13 @@ function exit_fullscreen()
 		glut.glutLeaveGameMode()
 		win.id = windowed_id
 		glut.glutSetWindow(win.id)
+		registerCallbacks()
+		
 		-- refresh:
 		if win.oncreate then win:oncreate() end
 		-- get new dimensions & call reshape?
 		--onreshape(w, h)?
+		
 	end
 	glut.glutSetCursor(glut.GLUT_CURSOR_NONE)
 end
@@ -243,6 +265,7 @@ function win:redisplay()
 end
 
 
+
 function win:startloop(ontimer)
 	if (win.stereo) then
 		glut.glutInitDisplayString("rgb double depth>=16 alpha samples<=4 stereo")
@@ -274,21 +297,8 @@ function win:startloop(ontimer)
 	//	glut.glutIgnoreKeyRepeat(1);
 //	glut.glutSetCursor(GLUT_CURSOR_NONE);
 
-	glut.glutKeyboardFunc(onkeydown);
-	glut.glutKeyboardUpFunc(onkeyup);
-	glut.glutMouseFunc(onmouse);
-	glut.glutMotionFunc(onmotion);
-	glut.glutPassiveMotionFunc(onpassivemotion);
-	glut.glutSpecialFunc(onspecialkeydown);
-	glut.glutSpecialUpFunc(onspecialkeyup);
-	glut.glutVisibilityFunc(onvisibility)
-	
 	--]]
-	
-	glut.glutReshapeFunc(onreshape)
-	glut.glutDisplayFunc(ondisplay)
-	
-	core.av_glut_timerfunc(0)
+	registerCallbacks()
 	
 	glut.glutMainLoop()
 end
