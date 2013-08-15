@@ -96,7 +96,7 @@ end
 
 
 test_window()
-test_timer()
+--test_timer()
 --test_audioscript()
 
 av.run()

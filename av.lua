@@ -31,16 +31,18 @@ end
 
 -- load or build
 local ok
-ok, core = pcall(ffi.load, libname)
+--ok, core = pcall(ffi.load, libname)
 if not ok then 
 	print("compile av_core")
 	
 	local res
 	if ffi.os == "OSX" then
-		print(cmd("g++ -O3 -fPIC -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__MACOSX_CORE__ -I/usr/local/include/luajit-2.0 src/av.cpp src/RtAudio.cpp /usr/local/lib/libglfw.a -framework Cocoa -framework CoreFoundation -framework IOKit -framework OpenGL -framework CoreAudio -shared -o %s", libname))
+		--print(cmd("g++ -O3 -fPIC -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__MACOSX_CORE__ -I/usr/local/include/luajit-2.0 src/av.cpp src/RtAudio.cpp /usr/local/lib/libglfw.a -framework Cocoa -framework CoreFoundation -framework IOKit -framework OpenGL -framework CoreAudio -shared -o %s", libname))
+		print(cmd("g++ -O3 -fPIC -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__MACOSX_CORE__ -I/usr/local/include/luajit-2.0 src/av.cpp src/RtAudio.cpp -framework Cocoa -framework CoreFoundation -framework IOKit -framework OpenGL -framework GLUT -framework CoreAudio -shared -o %s", libname))
 		core = ffi.load(libname)
 	else
-		print(cmd("g++ -O3 -fPIC -ffast-math -MMD -D_GNU_SOURCE -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__ -I/usr/include/luajit-2.0/ src/av.cpp src/RtAudio.cpp -lglfw -lasound -lrt -lpthread -shared -o %s", libname))
+		--print(cmd("g++ -O3 -fPIC -ffast-math -MMD -D_GNU_SOURCE -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__ -I/usr/include/luajit-2.0/ src/av.cpp src/RtAudio.cpp -lglfw -lasound -lrt -lpthread -shared -o %s", libname))
+		print(cmd("g++ -O3 -fPIC -ffast-math -MMD -D_GNU_SOURCE -DEV_MULTIPLICITY=1 -DHAVE_GETTIMEOFDAY -D__LINUX_ALSA__ -I/usr/include/luajit-2.0/ src/av.cpp src/RtAudio.cpp -lglut -lasound -lrt -lpthread -shared -o %s", libname))
 		core = ffi.load(libname)
 	end	
 end
@@ -78,6 +80,50 @@ int av_loop_run_once(av_loop_t * loop, double seconds);
 void av_sleep(double seconds);
 double av_now();
 double av_filetime(const char * filename);
+
+enum {
+	// Standard ASCII non-printable characters 
+	AV_KEY_ENTER		=3,		
+	AV_KEY_BACKSPACE	=8,		
+	AV_KEY_TAB			=9,
+	AV_KEY_RETURN		=13,
+	AV_KEY_ESCAPE		=27,
+	AV_KEY_DELETE		=127,
+		
+	// Non-standard, but common keys
+	AV_KEY_F1=256, 
+	AV_KEY_F2, AV_KEY_F3, AV_KEY_F4, AV_KEY_F5, AV_KEY_F6, AV_KEY_F7, AV_KEY_F8, AV_KEY_F9, AV_KEY_F10, AV_KEY_F11, AV_KEY_F12,
+	 
+	AV_KEY_INSERT, 
+	AV_KEY_LEFT, AV_KEY_UP, AV_KEY_RIGHT, AV_KEY_DOWN, 
+	AV_KEY_PAGE_DOWN, AV_KEY_PAGE_UP, 
+	AV_KEY_END, AV_KEY_HOME
+};
+
+typedef struct av_Window {
+	int width, height;
+	int is_fullscreen;
+	int button;
+	int shift, alt, ctrl;
+	int is_stereo;
+	double fps;
+	
+	void (*oncreate)(struct av_Window * self);
+	void (*onresize)(struct av_Window * self, int w, int h);
+	void (*onvisible)(struct av_Window * self, int state);
+	void (*ondraw)(struct av_Window * self);
+	void (*onkey)(struct av_Window * self, int event, int key);
+	void (*onmouse)(struct av_Window * self, int event, int button, int x, int y);
+	
+} av_Window;
+
+av_Window * av_window_create();
+void av_window_setfullscreen(av_Window * self, int b);
+void av_window_settitle(av_Window * self, const char * name);
+void av_window_setdim(av_Window * self, int x, int y);
+
+// called to reset state before a script closes, e.g. removing callbacks:
+void av_state_reset(void * state);
 
 enum {
 	AV_AUDIO_CMD_EMPTY,
@@ -313,11 +359,14 @@ local window = require "window"
 
 
 function av.run()
+	--[[
 	while window.running do
 		window.swap()
 		-- in order to get maximum possible frame rate?
 		run_once(0.01)
 	end
+	--]]
+	window.startloop()
 end
 
 t0 = core.av_now()
