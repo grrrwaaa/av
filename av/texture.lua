@@ -29,7 +29,10 @@ local function new(width, height, numtextures)
 end
 
 function texture:destroy()
-	gl.DeleteTextures(unpack(self.tex))
+	if self.tex then
+		gl.DeleteTextures(unpack(self.tex))
+		self.tex = nil
+	end
 end
 
 function texture:send()
