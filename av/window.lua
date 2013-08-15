@@ -208,6 +208,7 @@ function enter_fullscreen()
 		glut.glutSetWindow(win.id)
 		glut.glutHideWindow()
 		glut.glutShowWindow()
+		print("shown")
 	end
 	glut.glutSetCursor(glut.GLUT_CURSOR_NONE)
 end
