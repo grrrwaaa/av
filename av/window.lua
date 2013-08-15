@@ -258,7 +258,7 @@ function win:redisplay()
 	-- (should we use 0..1 instead?)
 	gl.Viewport(0, 0, win.width, win.height)
 	
-	if win.stereo then
+	if false and win.stereo then
 		win.eye = "right"
 		gl.DrawBuffer(gl.BACK_RIGHT)
 		gl.Clear()

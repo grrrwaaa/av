@@ -405,7 +405,7 @@ function draw()
 		else
 			s:uniform("parallax", 0)
 		end
-		s:uniform("voxels", 1)
+		--s:uniform("voxels", 1)
 		
 		voxels:send(1)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.REPEAT)
