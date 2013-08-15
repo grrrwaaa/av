@@ -158,7 +158,7 @@ local vs = glsl_math .. [[
 varying vec2 T;
 void main() {
 	T = gl_MultiTexCoord0.xy;
-	gl_Position = vec4(T * 2. - 1., 0., 1.);
+	gl_Position = vec4(T.x*2.-1., 1.-T.y*2., 0., 1.);
 	//gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }
 ]]
