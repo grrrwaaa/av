@@ -332,5 +332,6 @@ function draw()
 	gl.Disable(gl.SCISSOR_TEST)
 end
 
+window.fullscreen = true
 av.run()
 --return allo
