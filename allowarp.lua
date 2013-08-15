@@ -157,14 +157,12 @@ local vs = glsl_math .. [[
 
 varying vec2 T;
 varying mat4 mv;
-varying vec3 up;
 void main() {
 	T = gl_MultiTexCoord0.xy;
 	gl_Position = vec4(T.x*2.-1., 1.-T.y*2., 0., 1.);
 	//gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 	
 	mv = gl_ModelViewMatrix;
-	up = normalize((gl_ModelViewMatrix * vec4(0., 1., 0., 1.)).xyz);
 }
 ]]
 local fs = glsl_math .. [[
@@ -173,7 +171,6 @@ uniform vec3 eye;
 uniform float now;
 varying vec2 T;
 varying mat4 mv;
-varying vec3 up;
 
 float scene(vec3 p) {
 	vec3 c = vec3(5., 4., 3. + 0.1*cos(p.y));
@@ -205,6 +202,9 @@ vec3 light2 = vec3(2, -3, 1);
 vec3 color1 = vec3(0.3, 0.7, 0.6);
 vec3 color2 = vec3(0.6, 0.2, 0.8);
 vec3 ambient = vec3(0.1, 0.1, 0.1);
+
+// in eye space, never changes!
+vec3 up = vec3(0., 1., 0.);
 
 void main() {
 	float eyesep = 0.1 * sin(now * 10.);
