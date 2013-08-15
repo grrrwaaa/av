@@ -8,7 +8,7 @@ local vec3 = require "vec3"
 local vec4 = require "vec4"
 local mat4 = require "mat4"
 local quat = require "quat"
-
+local image = require "image"
 local field3D = require "field3D"
 
 local gl = require "gl"
@@ -179,6 +179,7 @@ function load_calibration(hostname)
 			-- p.blend.file
 			local filename = datapath .. p.blend.file
 			print("reading", filename)
+			p.blendtex = image(filename)
 			-- p.params.file
 		end
 		allo.current = projections
