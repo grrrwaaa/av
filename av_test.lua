@@ -102,6 +102,6 @@ test_window()
 
 local window = require "window"
 --window.fullscreen = true
-go(0, function() window.enter_fullscreen() end)
+go(1, function() window.enter_fullscreen() end)
 
 av.run()
