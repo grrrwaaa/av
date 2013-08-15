@@ -40,7 +40,7 @@ function load(name)
 	--tex.format = gl.BGRA
 	
 	-- segfault.. probably need to copy the pixels... 
-	--freeimage.Unload(img)
+	freeimage.Unload(img)
 	
 	glu.assert("image loaded")
 	
