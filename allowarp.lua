@@ -293,7 +293,7 @@ void main() {
 	vec3 rdx = cross(normalize(rd), up);
 	ro += rdx * parallax;
 	
-	float near = 0.1;
+	float near = 1.; //0.1;
 	float step = 0.1;
 	float far = 50.;
 	float t = near;
