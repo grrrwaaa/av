@@ -163,6 +163,8 @@ end
 
 local function timerfunc(id) 
 
+	print("timer!")
+
 	win.ontimer()
 	
 	-- update window:
