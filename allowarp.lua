@@ -253,7 +253,7 @@ function ondestroy()
 	
 	for k, m in pairs(allo.machines) do
 		for i, p in pairs(m) do
-			p.map3Dtex:destroy()
+			if p.map3Dtex then p.map3Dtex:destroy() end
 		end
 	end
 end
