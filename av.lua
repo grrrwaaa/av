@@ -256,14 +256,14 @@ local function run_once()
 		else
 			print("unhandled event type")
 		end
-	end	
+	end
 end	
 
 local window = require "window"
 
 function mainloop:ontimer()
-	window:redisplay()
 	run_once()
+	window:redisplay()
 end
 
 function av.run()

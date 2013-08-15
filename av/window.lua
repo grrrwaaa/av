@@ -287,7 +287,7 @@ function win:startloop(ontimer)
 	registerCallbacks()
 	
 	if win.fullscreen then
-		go(0, enter_fullscreen)
+		go(0.5, enter_fullscreen)
 	end
 	
 	--[[
