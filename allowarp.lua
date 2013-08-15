@@ -213,7 +213,7 @@ void main() {
 	// shouldn't need to normalize!
 	vec3 rd = normalize(texture2D(map3D, T).xyz);
 	
-	rd = (gl_ModelViewMatrix * vec4(rd, 1.)).xyz;
+	rd = normalize((gl_ModelViewMatrix * vec4(rd, 1.)).xyz);
 	
 	float near = 0.01;
 	float far = 50.;
