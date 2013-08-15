@@ -9,15 +9,61 @@ local vec4 = require "vec4"
 local mat4 = require "mat4"
 local quat = require "quat"
 
+local field3D = require "field3D"
+
 local gl = require "gl"
 local texture = require "texture"
 local sin, cos = math.sin, math.cos
+local pi, twopi = math.pi, math.pi * 2
+
+local dim = 32
+local voxels = field3D(dim, dim, dim)
+voxels:set(function(x, y, z)
+	return (x > z and 0 or 1) + 0.1 * (math.random() - 0.5)
+end)
 
 ffi.cdef[[
 int open(const char * path, int code);
 int close(int fd);
 int read(int fd, void * dst, size_t sz);
 ]]
+
+local function standard_warp()
+	local p = {
+		viewport = { l=0, b=0, w=1, h=1 },
+		blend = nil,
+		params = nil,
+	}
+	local w, h = 512, 512
+	local elems = w*h
+	local data = ffi.new("vec4f[?]", elems)
+	for y = 0, h-1 do
+		for x = 0, w-1 do
+			local nx, ny = x/(w-1), y/(h-1)
+			local idx = x + y*w
+			local cy = cos(pi * ny)
+			data[idx]:set(
+				cy * sin(twopi * nx),
+				sin(pi * ny),
+				cy * cos(twopi * nx),
+				0
+			)
+		end
+	end
+	p.width = w
+	p.height = h
+	p.aspect = w/h
+	p.elems = elems
+	p.map3D = data
+	
+	-- wrap map3D as a texture:			
+	p.map3Dtex = texture(p.width, p.height)
+	p.map3Dtex.internalformat = gl.RGB32F_ARB
+	p.map3Dtex.type = gl.FLOAT
+	p.map3Dtex.format = gl.RGBA
+	p.map3Dtex.data = ffi.cast("float *", p.map3D)
+	return p
+end
 
 local allo = {
 	hostname = io.popen("hostname"):read("*l"),
@@ -27,7 +73,11 @@ local allo = {
 	machines = {},
 	-- the current machine:
 	current = {
-		viewport = { l=0, b=0, w=1, h=1 },
+		fullscreen = false,
+		active = false,
+		resolution = 1024,
+		
+		standard_warp(),
 	},
 }
 -- temporary override:
@@ -167,17 +217,22 @@ void main() {
 ]]
 local fs = glsl_math .. [[
 uniform sampler2D map3D;
+uniform sampler3D voxels;
 uniform vec3 eye;
+uniform float parallax;
 uniform float now;
 varying vec2 T;
 varying mat4 mv;
 
 float scene(vec3 p) {
+	/*
 	vec3 c = vec3(5., 4., 3. + 0.1*cos(p.y));
 	vec3 pr1 = mod(p,c)-0.5*c;
 	//pr1 = quat_rotate(quat_fromeuler(sin(now + 3.*p.x), cos(now * 2.), sin(p.z)), pr1);
 	vec3 box = vec3(0.4, 0.1, 0.8);
 	return length(max(abs(pr1)-box, 0.0));
+	*/
+	return texture3D(voxels, p).x;
 }
 
 vec3 spherical(float az, float el) {
@@ -207,8 +262,6 @@ vec3 ambient = vec3(0.1, 0.1, 0.1);
 vec3 up = vec3(0., 1., 0.);
 
 void main() {
-	float eyesep = 0.1 * sin(now * 10.);
-	
 	// the ray origin:
 	vec3 ro = (mv * vec4(0., 0., 0, 1.)).xyz;
 	
@@ -218,11 +271,15 @@ void main() {
 	
 	// stereo shift:
 	vec3 rdx = cross(normalize(rd), up);
-	ro += rdx * eyesep;
+	ro += rdx * parallax;
 	
-	float near = 0.01;
+	float near = 0.1;
+	float step = 0.1;
 	float far = 50.;
 	float t = near;
+	float c = 0.;
+	float amp = step * 10.;
+	
 	vec3 p = ro + rd * t;
 	
 	float d = scene(p);
@@ -235,7 +292,7 @@ void main() {
 		if (d < near || t > far) { break; }
 	}
 	
-	vec3 color = vec3(0, 0, 0) * now;
+	vec3 color = vec3(0, 0, 0);
 
 	if (t<far) {
 		vec3 gradient = vec3( 
@@ -255,6 +312,35 @@ void main() {
 		float tnorm = t/far;
 		color *= 1. - tnorm*tnorm;
 	}
+	
+	
+	/*
+	for (;t < far;) {
+		// get density at current point
+		float v = texture3D(voxels, p).r * amp;
+		
+		// is next point out of range?
+		float t1 = t + step;
+		vec3 p1 = ro + t1 * rd;
+		
+		if (p1.x < 0. || p1.x > 1. || p1.y < 0. || p1.y > 1. || p1.z < 0. || p1.z > 1.) {
+			// accumulate only a portion of it
+			float a = 0.5;
+			
+			c += v*0.5;
+			break;
+		} 
+		
+		// accumulate color
+		c += v;
+		// move to next point
+		p = p1;
+		t = t1;
+	}
+	
+	vec3 color = vec3(c);
+	*/	
+
 
 	gl_FragColor = vec4(color, 1.);
 }
@@ -277,14 +363,15 @@ function draw()
 	local near, far = 0.1, 100
 	local fovy, aspect = 80, 1.2
 	local a = t * 0.1
-	local eye = vec3(cos(a), 0, sin(a)) * 4
-	local at = vec3(0, 0, 0)
+	local at = vec3(0, 0, 2)
+	local eye = at + vec3(cos(a), 0, sin(a)) * 4
 	local up = vec3(0, 1, 0)
 	
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadMatrix(mat4.perspective(fovy, aspect, near, far))
 	gl.MatrixMode(gl.MODELVIEW)
-	gl.LoadMatrix(mat4.lookat(eye, at, up))
+	local mv = mat4.lookat(eye, at, up)
+	gl.LoadMatrix(mv)
 	
 
 	---[[
@@ -311,9 +398,22 @@ function draw()
 		
 		local s = vshader
 		s:bind()
-		s:uniform("now", now())
+		--s:uniform("now", now())
 		s:uniform("map3D", 0)
-		--s:uniform("eye", eye.x, eye.y, eye.z)
+		if window.eye == "right" then
+			s:uniform("parallax", 0.1)
+		elseif window.eye == "left" then
+			s:uniform("parallax", -0.1)
+		else
+			s:uniform("parallax", 0)
+		end
+		s:uniform("voxels", 1)
+		
+		voxels:send(1)
+		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.REPEAT)
+		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.REPEAT)
+		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.REPEAT)
+		
 		p.map3Dtex:bind(0)
 		gl.Begin(gl.QUADS)
 			gl.TexCoord2f(0, 0) 	gl.Vertex3f(0, 0, 0)
@@ -321,7 +421,9 @@ function draw()
 			gl.TexCoord2f(1, 1)		gl.Vertex3f(1, 1, 0)
 			gl.TexCoord2f(0, 1)		gl.Vertex3f(0, 1, 0)
 		gl.End()
+		voxels:unbind(1)
 		p.map3Dtex:unbind(0)
+		
 		s:unbind()
 		
 		-- axes:
@@ -355,6 +457,9 @@ function draw()
 	--]]
 end
 
-window.fullscreen = true
+if ffi.os == "Linux" then
+	window.stereo = true
+	window.fullscreen = true
+end
 av.run()
 --return allo

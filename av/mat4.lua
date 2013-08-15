@@ -484,9 +484,9 @@ end
 
 function mat4:__tostring()
 	-- simple version:
-	return string.format("mat4(%s)", table.concat(self, ", "))
+	--return string.format("mat4(%s)", table.concat(self, ", "))
 	-- fancy version:
-	--[[
+	---[[
 	local rows = {
 		string.format("%f, %f, %f, %f", self[1], self[2], self[3], self[4]),
 		string.format("%f, %f, %f, %f", self[5], self[6], self[7], self[8]),

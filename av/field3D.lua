@@ -120,14 +120,14 @@ function field3D:create()
 end
 
 function field3D:bind(unit)
-	--gl.ActiveTexture(gl.TEXTURE0 + (unit or 0))
+	gl.ActiveTexture(gl.TEXTURE0 + (unit or 0))
 	self:create()
 	
 	gl.BindTexture(gl.TEXTURE_3D, self.texID)
 end
 
 function field3D:unbind(unit)
-	--gl.ActiveTexture(gl.TEXTURE0 + (unit or 0))
+	gl.ActiveTexture(gl.TEXTURE0 + (unit or 0))
 	gl.BindTexture(gl.TEXTURE_3D, 0)
 end
 

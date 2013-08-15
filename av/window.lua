@@ -257,12 +257,38 @@ function win:redisplay()
 	-- set up 2D mode by default
 	-- (should we use 0..1 instead?)
 	gl.Viewport(0, 0, win.width, win.height)
-	gl.Clear()
-	if draw then 
-		local ok, err = xpcall(draw, debug_traceback)
-		if not ok then
-			print(err)
-			draw = nil
+	
+	if win.stereo then
+		win.eye = "right"
+		gl.DrawBuffer(gl.BACK_RIGHT)
+		gl.Clear()
+		if draw then 
+			local ok, err = xpcall(draw, debug_traceback)
+			if not ok then
+				print(err)
+				draw = nil
+			end
+		end
+		win.eye = "left"
+		gl.DrawBuffer(gl.BACK_LEFT)
+		gl.Clear()
+		if draw then 
+			local ok, err = xpcall(draw, debug_traceback)
+			if not ok then
+				print(err)
+				draw = nil
+			end
+		end
+		win.eye = nil
+		gl.DrawBuffer(gl.BACK)
+	else
+		gl.Clear()
+		if draw then 
+			local ok, err = xpcall(draw, debug_traceback)
+			if not ok then
+				print(err)
+				draw = nil
+			end
 		end
 	end
 	
