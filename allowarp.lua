@@ -302,15 +302,17 @@ function draw()
 		--s:uniform("now", now())
 		s:uniform("map3D", 0)
 		p.map3Dtex:bind(0)
-		gl.Begin(gl.QUADS)
-		gl.TexCoord2f(0, 0) 	gl.Vertex3f(0, 0, 0)
-		gl.TexCoord2f(1, 0)		gl.Vertex3f(1, 0, 0)
-		gl.TexCoord2f(1, 1)		gl.Vertex3f(1, 1, 0)
-		gl.TexCoord2f(0, 1)		gl.Vertex3f(0, 1, 0)
-		gl.End()
+		
 		p.map3Dtex:unbind(0)
 		s:unbind()
 		--]=]
+		
+		gl.Begin(gl.QUADS)
+			gl.TexCoord2f(0, 0) 	gl.Vertex3f(0, 0, 0)
+			gl.TexCoord2f(1, 0)		gl.Vertex3f(1, 0, 0)
+			gl.TexCoord2f(1, 1)		gl.Vertex3f(1, 1, 0)
+			gl.TexCoord2f(0, 1)		gl.Vertex3f(0, 1, 0)
+		gl.End()
 		
 		-- axes:
 		gl.Begin(gl.LINES)
