@@ -273,9 +273,14 @@ function draw()
 	gl.MatrixMode(gl.MODELVIEW)
 	gl.LoadMatrix(mat4.lookat(eye, at, up))
 	
+	gl.Begin(gl.LINES)
+		for i = 1, 100 do
+			gl.Vertex(0, 0, 0)
+			gl.Vertex(math.random()*2-1, math.random()*2-1, 0)
+		end
+		gl.End()
 	
-	
-	
+	--[[
 	gl.Enable(gl.SCISSOR_TEST)
 	for i, p in ipairs(allo.current) do
 		
@@ -303,7 +308,7 @@ function draw()
 		p.map3Dtex:unbind(0)
 		s:unbind()
 		
-		--[[
+		--[=[
 		-- axes:
 		gl.Begin(gl.LINES)
 			gl.Normal(1, 1, 1) gl.Color(0,1,1) gl.Vertex(-0.1, 0, 0)
@@ -327,9 +332,10 @@ function draw()
 			gl.Vertex(pt.x, pt.y, pt.z)
 		end
 		gl.End()
-		--]]
+		--]=]
 	end
 	gl.Disable(gl.SCISSOR_TEST)
+	--]]
 end
 
 window.fullscreen = true
