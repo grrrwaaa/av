@@ -31,7 +31,7 @@ function load(name)
 	local hdr = freeimage.GetInfoHeader(img)
 	--print(hdr.biBitCount)
 	local pixels = freeimage.GetBits(img)
-	print(w, h, pixels)
+	--print(w, h, pixels)
 	
 	local tex = texture(w, h)
 	tex.data = pixels
@@ -40,9 +40,9 @@ function load(name)
 	--tex.format = gl.BGRA
 	
 	-- segfault.. probably need to copy the pixels... 
-	freeimage.Unload(img)
+	--freeimage.Unload(img)
 	
-	glu.assert("image loaded")
+	--glu.assert("image loaded")
 	
 	return tex
 end
