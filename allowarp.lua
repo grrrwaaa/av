@@ -156,16 +156,20 @@ vec3 quat_rotate(vec4 q, vec3 v) {
 local vs = glsl_math .. [[
 
 varying vec2 T;
+varying mat4 mv;
 void main() {
 	T = gl_MultiTexCoord0.xy;
 	gl_Position = vec4(T.x*2.-1., 1.-T.y*2., 0., 1.);
 	//gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	
+	mv = gl_ModelViewMatrix;
 }
 ]]
 local fs = glsl_math .. [[
 uniform float now;
 uniform sampler2D map3D;
 varying vec2 T;
+varying mat4 mv;
 
 float scene(vec3 p) {
 	vec3 c = vec3(5., 4., 3. + 0.1*cos(p.y));
@@ -199,7 +203,8 @@ vec3 color2 = vec3(0.6, 0.2, 0.8);
 vec3 ambient = vec3(0.1, 0.1, 0.1);
 
 void main() {
-
+	float eyesep = 0.01;
+	
 	// the ray origin:
 	vec3 ro = vec3(0.);
 	// the ray direction:
@@ -207,6 +212,8 @@ void main() {
 	
 	// shouldn't need to normalize!
 	vec3 rd = normalize(texture2D(map3D, T).xyz);
+	
+	rd = (gl_ModelViewMatrix * vec4(rd, 1.)).xyz;
 	
 	float near = 0.01;
 	float far = 50.;
@@ -226,23 +233,23 @@ void main() {
 	vec3 color = vec3(0, 0, 0) * now;
 
 	if (t<far) {
-			vec3 gradient = vec3( 
-				scene(p+epsx) - scene(p-epsx),
-				scene(p+epsy) - scene(p-epsy),
-				scene(p+epsz) - scene(p-epsz)  
-			);
-			vec3 normal = normalize(gradient);
-			vec3 ldir1 = normalize(light1 - p);
-			vec3 ldir2 = normalize(light2 - p);
-			color = ambient
-					//+ color1 * max(0.,dot(ldir1, normal))  
-					//+ color2 * max(0.,dot(ldir2, normal)) 
-					+ color1 * abs(dot(ldir1, normal))  
-					+ color2 * abs(dot(ldir2, normal)) 
-					;
-			float tnorm = t/far;
-			color *= 1. - tnorm*tnorm;
-		}
+		vec3 gradient = vec3( 
+			scene(p+epsx) - scene(p-epsx),
+			scene(p+epsy) - scene(p-epsy),
+			scene(p+epsz) - scene(p-epsz)  
+		);
+		vec3 normal = normalize(gradient);
+		vec3 ldir1 = normalize(light1 - p);
+		vec3 ldir2 = normalize(light2 - p);
+		color = ambient
+				//+ color1 * max(0.,dot(ldir1, normal))  
+				//+ color2 * max(0.,dot(ldir2, normal)) 
+				+ color1 * abs(dot(ldir1, normal))  
+				+ color2 * abs(dot(ldir2, normal)) 
+				;
+		float tnorm = t/far;
+		color *= 1. - tnorm*tnorm;
+	}
 
 	gl_FragColor = vec4(color, 1.);
 }
