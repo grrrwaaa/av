@@ -182,6 +182,7 @@ end
 
 local windowed_width, windowed_height, windowed_id
 function enter_fullscreen()
+	print("enter fullscreen")
 	windowed_width = win.width
 	windowed_height = win.height
 	if ffi.os == "OSX" then
@@ -215,6 +216,7 @@ function enter_fullscreen()
 end
 
 function exit_fullscreen()
+	print("exit fullscreen")
 	if ffi.os == "OSX" then
 		glut.glutReshapeWindow(windowed_width, windowed_height)
 	else
