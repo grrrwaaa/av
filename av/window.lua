@@ -240,8 +240,6 @@ end
 
 function win:redisplay()
 	
-	print("current window:", glut.glutGetWindow())
-	
 	if firstdraw then
 		print("firstdraw", glut.glutGetWindow())
 		gl.Enable(gl.MULTISAMPLE)	
