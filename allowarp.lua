@@ -372,7 +372,7 @@ void main() {
 local vshader = shader(vs, fs)
 
 function ondestroy()
-	
+	print("DESTROYING")
 	
 	vshader:destroy()
 	voxels:destroy()
