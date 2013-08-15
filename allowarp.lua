@@ -284,6 +284,7 @@ void main() {
 	
 	float d = scene(p);
 	
+	/*
 	#define MAX_STEPS 50
 	for (int i=0; i<MAX_STEPS; i++) {
 		t += d;
@@ -291,9 +292,7 @@ void main() {
 		d = scene(p);
 		if (d < near || t > far) { break; }
 	}
-	
 	vec3 color = vec3(0, 0, 0);
-
 	if (t<far) {
 		vec3 gradient = vec3( 
 			scene(p+epsx) - scene(p-epsx),
@@ -312,9 +311,9 @@ void main() {
 		float tnorm = t/far;
 		color *= 1. - tnorm*tnorm;
 	}
+	*/
 	
 	
-	/*
 	for (;t < far;) {
 		// get density at current point
 		float v = texture3D(voxels, p).r * amp;
@@ -339,7 +338,6 @@ void main() {
 	}
 	
 	vec3 color = vec3(c);
-	*/	
 
 
 	gl_FragColor = vec4(color, 1.);
