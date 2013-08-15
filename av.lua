@@ -31,7 +31,7 @@ end
 
 -- load or build
 local ok
---ok, core = pcall(ffi.load, libname)
+ok, core = pcall(ffi.load, libname)
 if not ok then 
 	print("compile av_core")
 	
