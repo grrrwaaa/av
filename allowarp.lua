@@ -39,7 +39,7 @@ voxels:set(function(x, y, z)
 	local p1 = (pr1 - box):max(0)
 	return p1:length()
 	--]]
-	return 0.1*(math.random()-0.5) + 1.-math.sqrt(snx*snx + sny*sny + snz*snz)
+	return 0.1*(math.random()-0.5) + 1.5-math.sqrt(snx*snx + sny*sny + snz*snz)
 end)
 
 ffi.cdef[[
@@ -378,7 +378,7 @@ function draw()
 	-- go 3D:
 	local near, far = 0.1, 100
 	local fovy, aspect = 80, 1.2
-	local a = t * 0.1
+	local a = t * 0.01
 	local at = vec3(0, 0, 2)
 	local eye = at + vec3(cos(a), 0, sin(a)) * 3
 	local up = vec3(0, 1, 0)
