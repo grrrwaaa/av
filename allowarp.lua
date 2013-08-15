@@ -456,7 +456,7 @@ function draw()
 end
 
 if ffi.os == "Linux" then
-	window.stereo = true
+	--window.stereo = true
 	window.fullscreen = true
 end
 av.run()
