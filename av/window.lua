@@ -46,9 +46,11 @@ function window_init()
 	--glfw.OpenWindowHint(glfw.OPENGL_FORWARD_COMPAT, 1)
 	--glfw.OpenWindowHint(glfw.OPENGL_DEBUG_CONTEXT, 1)
 	
+	local mode = glfw.WINDOW --window.isfullscreen and glfw.FULLSCREEN or glfw.WINDOW
+	
 	-- open stereo if possible:
 	--glfw.OpenWindowHint(glfw.STEREO, 1)
-	if glfw.OpenWindow(window.width, window.height, 0,0,0,0, window.depthbits,0, window.isfullscreen and glfw.FULLSCREEN or glfw.WINDOW) == 0 then
+	if glfw.OpenWindow(window.width, window.height, 0,0,0,0, window.depthbits,0, mode) == 0 then
 		error("failed to open GLFW window")
 	end
 	window.isopen = true
@@ -181,8 +183,10 @@ setmetatable(window, {
 			elseif (not window.isfullscreen) and v then
 				-- enter fullscreen
 				
-				window.width = fullscreen_width
-				window.height = fullscreen_height
+				glfw.GetDesktopMode(desktopMode)
+				
+				window.width = desktopMode.Width
+				window.height = desktopMode.Height
 				
 				window.isfullscreen = true
 				window_init()
