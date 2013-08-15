@@ -254,6 +254,7 @@ function win:redisplay()
 	
 	-- set up 2D mode by default
 	-- (should we use 0..1 instead?)
+	print(win.width, win.height)
 	gl.Viewport(0, 0, win.width, win.height)
 	gl.Clear()
 	if draw then 
@@ -267,8 +268,6 @@ function win:redisplay()
 	glut.glutSwapBuffers()
 	glut.glutPostRedisplay()
 	collectgarbage()
-	
-	print("done")
 end
 
 
