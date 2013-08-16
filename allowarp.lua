@@ -34,7 +34,7 @@ typedef struct shared {
 ]]
 
 local shared = ffi.new("shared")
-shared.hdr = "shrd|"
+shared.hdr = "ping|"
 local shared_size = ffi.sizeof(shared)
 
 local datapath, blobpath
