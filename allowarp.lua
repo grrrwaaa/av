@@ -85,6 +85,7 @@ else
 	
 	go(function()
 		for i = 1, 100 do
+			print("waiting for msg")
 			local msg, err = sub:recv_zc()
 			if msg then
 				print( msg:tostring() )
