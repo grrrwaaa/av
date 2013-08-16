@@ -705,7 +705,7 @@ function draw()
 		local a = t * 0.1
 		local dir = vec3(cos(a), 0, sin(a))
 		
-		shared.at = vec3(0, 0, now())
+		--shared.at = vec3(0, 0, now())
 		shared.eye = shared.at + dir * 0.1
 		--shared.up = up
 		--local msg = string.format("nav|ping from photon %f", now())
