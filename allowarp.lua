@@ -607,7 +607,7 @@ function draw()
 			ffi.copy(shared, ptr, sz)
 			
 			print(shared.eye)
-		elseif err == 35 then
+		elseif err == 35 or err == 11 then
 			-- ignore temporarily unavailable error
 		elseif err then
 			print(string.format("err code:%d err:%s\n",
