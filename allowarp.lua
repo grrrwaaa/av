@@ -65,6 +65,7 @@ if allo.hostname == "photon" then
 	ismaster = true
 end
 
+local network
 if ismaster then
 	local pub, err = nn.socket( nn.PUB )
 	assert( pub, nn.strerror(err) )
@@ -74,6 +75,7 @@ if ismaster then
 	assert( pid and pid >= 0 , nn.strerror(err) )
 	
 	print("publisher started")
+	network = pub
 else
 	local sub, err = nn.socket( nn.SUB )
 	assert( sub, nn.strerror(err) )
@@ -85,6 +87,7 @@ else
 	assert( rc >= 0, nn.strerror(err) )
 	
 	print("subscriber started")
+	network = sub
 end
 --]]
 
@@ -586,10 +589,10 @@ function draw()
 	
 	if ismaster then	
 		local msg = string.format("nav|ping from photon %f", now())
-		local rc, err = pub:send( msg, #msg )
+		local rc, err = network:send( msg, #msg )
    		assert( rc > 0, 'send failed' )    
 	else
-		local msg, err = sub:recv_zc(nn.DONTWAIT)
+		local msg, err = network:recv_zc(nn.DONTWAIT)
 		if msg then
 			-- split msg on |
 			local bar = 124
