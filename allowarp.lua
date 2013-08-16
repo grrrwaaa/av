@@ -51,6 +51,7 @@ local allo = {
 	},
 }
 
+--[[
 local ADDRESS = "tcp://192.168.0.15:5557"
 if allo.hostname == "photon" then
 	local pub, err = nn.socket( nn.PUB )
@@ -94,6 +95,7 @@ else
 		end
 	end)
 end
+--]]
 
 local dim = 32
 local step = 1/dim
