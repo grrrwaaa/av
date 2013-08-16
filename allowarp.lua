@@ -17,6 +17,8 @@ local texture = require "texture"
 local image = require "image"
 local distance = require "distance"
 
+local nn = require "nanomsg-ffi"
+
 local sin, cos = math.sin, math.cos
 local pi, twopi = math.pi, math.pi * 2
 local abs = math.abs
@@ -48,6 +50,13 @@ local allo = {
 		resolution = 1024,
 	},
 }
+
+if allo.hostname == "photon" then
+	local pub, err = nn.socket( nn.PUB )
+	assert( pub, nn.strerror(err) )
+else
+	
+end
 
 local dim = 32
 local step = 1/dim
