@@ -432,7 +432,7 @@ function draw()
 		else
 			s:uniform("parallax", 0)
 		end
-		s:uniform("voxels", 1)
+		--s:uniform("voxels", 1)
 		s:uniform("blend", 2)
 		
 		voxels:bind(1)
