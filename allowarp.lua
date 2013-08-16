@@ -588,6 +588,9 @@ vec3 ambient = vec3(0.1, 0.1, 0.1);
 // in eye space, never changes!
 vec3 up = vec3(0., 1., 0.);
 
+vec3 lo = vec3(1, 0, 0);
+vec3 hi = vec3(0, 1, 1);
+
 void main() {
 	vec3 color = vec3(0, 0, 0);
 	
@@ -604,7 +607,7 @@ void main() {
 	
 	float t = near;
 	float c = 0.;
-	float amp = step * 100.;
+	float amp = 0.1;
 	
 	vec3 p = ro + rd * t;
 	
@@ -627,13 +630,11 @@ void main() {
 		*/
 		
 		// accumulate color
-		c += v;
+		color += mix(lo, hi, v) * v;
 		// move to next point
 		p = p1;
 		t = t1;
 	}
-	color = vec3(c) * (rd + 0.5);
-	//color = ro;
 	gl_FragColor = vec4(color, 1.) * texture2D(blend, vec2(T.x, 1.-T.y)).x;
 }
 ]]
@@ -811,7 +812,7 @@ function loadpollocks()
 	
 	local vol = field3D(100, 100, 100)
 	for i = 0, 1000000-1 do
-		vol.data[i] = volumeData[i] / 256
+		vol.data[i] = volumeData[i]
 	end
 	voxels = vol
 end
