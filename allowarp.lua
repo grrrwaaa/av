@@ -57,6 +57,7 @@ if allo.hostname == "photon" then
 	assert( pub, nn.strerror(err) )
 	
 	local pid, err = pub:bind( ADDRESS )
+	print(pid, err)
 	assert( pid >= 0 , nn.strerror(err) )
 	
 	print("publisher started")
