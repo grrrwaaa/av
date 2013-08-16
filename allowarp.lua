@@ -592,7 +592,7 @@ function draw()
 		
 		shared.at = vec3(0, 0, now())
 		shared.eye = shared.at + dir * 0.1
-		shared.up = up
+		--shared.up = up
 		--local msg = string.format("nav|ping from photon %f", now())
 		local ptr = ffi.cast("void *", shared)
 		local rc, err = network:send( ptr, shared_size )
