@@ -600,7 +600,6 @@ function draw()
 		local ptr = ffi.cast("void *", shared)
 		local rc, err = network:send( ptr, shared_size )
    		assert( rc > 0, 'send failed' )    
-   		print("sent", ptr)
 	else
 		local msg, err = network:recv_zc(nn.DONTWAIT)
 		print(msg, err)
@@ -610,7 +609,6 @@ function draw()
 			assert(sz == shared_size, "shared size mismatch")
 			ffi.copy(shared, ptr, sz)
 			
-			print(shared.eye)
 		elseif err == 35 or err == 11 then
 			-- ignore temporarily unavailable error
 		elseif err then
@@ -624,7 +622,7 @@ function draw()
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadMatrix(mat4.perspective(fovy, aspect, near, far))
 	gl.MatrixMode(gl.MODELVIEW)
-	local mv = mat4.lookat(eye, at, up)
+	local mv = mat4.lookat(shared.eye, shared.at, shared.up)
 	gl.LoadMatrix(mv)
 	
 	gl.Enable(gl.SCISSOR_TEST)
