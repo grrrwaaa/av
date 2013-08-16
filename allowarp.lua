@@ -85,8 +85,8 @@ else
 	
 	go(function()
 		for i = 1, 100 do
-			print("waiting for msg")
-			local msg, err = sub:recv_zc()
+			print("waiting for msg", nn.DONTWAIT)
+			local msg, err = sub:recv_zc(nn.DONTWAIT)
 			if msg then
 				print( msg:tostring() )
 			elseif err then
