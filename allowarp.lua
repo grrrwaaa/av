@@ -424,7 +424,7 @@ function draw()
 		local s = vshader
 		s:bind()
 		--s:uniform("now", now())
-		local eyesep = 0.05
+		local eyesep = 0.01
 		s:uniform("map3D", 0)
 		if window.eye == "right" then
 			s:uniform("parallax", eyesep)
