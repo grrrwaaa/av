@@ -672,6 +672,7 @@ void main() {
 		t = t1;
 	}
 	color = vec3(c) * (rd + 0.5);
+	color = vec3(0.5);
 	
 	gl_FragColor = vec4(color, 1.) * texture2D(blend, vec2(T.x, 1.-T.y)).x;
 }
