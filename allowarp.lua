@@ -597,10 +597,11 @@ function draw()
 			-- split msg on |
 			local bar = 124
 			local sz = tonumber(msg.size)
-			print(msg, sz, msg.ptr)
+			local ptr = ffi.cast("char *", msg.ptr)
+			print(msg, sz, ptr)
 			for i = 0, sz-1 do
-				if msg.ptr[i] == bar then
-					local name = ffi.string(msg.ptr, i)
+				if ptr[i] == bar then
+					local name = ffi.string(ptr, i)
 					print( "received", name, msg:tostring() )
 					break
 				end
