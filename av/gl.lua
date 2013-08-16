@@ -17,7 +17,7 @@ if ffi.os == "Linux" then
 	
 	-- prefer to use nvidia drivers if available:	
 	local linux_libs = {
-		"/usr/lib/nvidia-current-updates/libGL.so",
+		--"/usr/lib/nvidia-current-updates/libGL.so",
 		"/usr/lib/nvidia-current/libGL.so",
 		"/usr/lib/nvidia-304/libGL.so",
 		"GL",
