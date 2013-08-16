@@ -611,24 +611,6 @@ vec3 ambient = vec3(0.1, 0.1, 0.1);
 // in eye space, never changes!
 vec3 up = vec3(0., 1., 0.);
 
-
-float scene(vec3 p) {
-	/*
-	vec3 c = vec3(10., 8., 6. + 0.1*cos(p.y));
-	vec3 pr1 = mod(p,c)-0.5*c;
-	pr1 = quat_rotate(quat_fromeuler(sin(now + 3.*p.x), cos(now * 2.), sin(p.z)), pr1);
-	vec3 box = vec3(0.2, 0.1, 0.3);
-	return length(max(abs(pr1)-box, 0.0));
-	*/
-	
-	//return length(p) - 0.1;
-	
-	// convert p to a unit texcoord:
-	p /= far;
-	
-	return texture3D(voxels, p).x * far;
-}
-
 void main() {
 	vec3 color = vec3(0, 0, 0);
 	
@@ -651,7 +633,7 @@ void main() {
 	
 	for (;t < far;) {
 		// get density at current point
-		float v = texture3D(voxels, p).r * amp;
+		float v = texture3D(voxels, p / far).r * amp;
 		
 		// is next point out of range?
 		float t1 = t + step;
@@ -842,7 +824,7 @@ function loadpollocks()
 	
 	local vol = field3D(100, 100, 100)
 	for i = 0, 1000000-1 do
-		vol.data[i] = volumeData[i]
+		vol.data[i] = volumeData[i] * 0.1
 	end
 	voxels = vol
 end
