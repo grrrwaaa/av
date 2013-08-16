@@ -614,12 +614,14 @@ void main() {
 	for (;t < far;) {
 		// get density at current point
 		float vraw = texture3D(voxels, p / far).r;
-		float v = * 0.1 * amp;
+		float v = vraw * 0.1 * amp;
 		
 		// is next point out of range?
 		float t1 = t + step;
 		step = step * 1.2;
 		vec3 p1 = ro + t1 * rd;
+		// accumulate color
+		color += mix(lo, hi, v * 2.) * v;
 		
 		/*
 		if (p1.x < 0. || p1.x > 1. || p1.y < 0. || p1.y > 1. || p1.z < 0. || p1.z > 1.) {
@@ -631,12 +633,10 @@ void main() {
 		} 
 		*/
 		
-		if (vraw > 0. && vraw < 2.) {
+		if (vraw > 1. && vraw < 2.) {
 			break;
 		}
 		
-		// accumulate color
-		color += mix(lo, hi, v * 2.) * v;
 		// move to next point
 		p = p1;
 		t = t1;
