@@ -664,7 +664,7 @@ function draw()
 	
 	if ismaster then	
 		
-		local a = t * 0.1
+		local a = t * 0.03
 		
 		--shared.at = vec3(0, 0, now())
 		shared.view = quat.fromEuler(a, 0, 0) 
