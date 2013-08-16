@@ -596,6 +596,7 @@ function draw()
 		if msg then
 			-- split msg on |
 			local bar = 124
+			print(msg, msg.size, msg.ptr)
 			for i = 0, msg.size-1 do
 				if msg.ptr[i] == bar then
 					local name = ffi.string(msg.ptr, i)
