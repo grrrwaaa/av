@@ -391,9 +391,9 @@ vec3 spherical(float az, float el) {
 }
 
 
-float near = 1.; //0.1;
-float far = 10.;
-float step = (far - near) * 0.03;
+float near = 2.; //0.1;
+float far = 20.;
+float step = (far - near) * 0.05;
 float eps = step * 0.1;
 vec3 epsx = vec3(eps,0,0);
 vec3 epsy = vec3(0,eps,0);
@@ -450,7 +450,7 @@ void main() {
 	float d = scene(p);
 	
 	
-	#define MAX_STEPS 100
+	#define MAX_STEPS 50
 	for (int i=0; i<MAX_STEPS; i++) {
 		t += d;
 		p = ro + rd * t;
