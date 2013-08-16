@@ -662,11 +662,11 @@ function draw()
 	
 	if ismaster then	
 		
-		local a = t * 0.05
+		local a = t * 0.01
 		local dir = vec3(cos(a), 0, sin(a))
 		
 		--shared.at = vec3(0, 0, now())
-		shared.eye = shared.at + vec3(sin(now()), 0.5, cos(now()))
+		shared.eye = shared.at + dir
 		--print(shared.eye)
 		--shared.at = shared.eye + dir * 0.1
 		--shared.up = up
