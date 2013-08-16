@@ -24,6 +24,13 @@ local pi, twopi = math.pi, math.pi * 2
 local abs = math.abs
 local min, max = math.min, math.max
 
+local blob_transform = mat4(
+ -2.2672384e-01,   5.1928297e+00,  -9.0727532e-02,   2.1989945e+00,
+  3.9574793e-03,  -9.0641179e-02,  -5.1977768e+00,  -5.1985686e-02,
+ -5.1936207e+00,  -2.2675838e-01,   3.0413260e-16,  -5.1985686e-02,
+  0.0000000e+00,   0.0000000e+00,   0.0000000e+00,   1.0000000e+00
+)
+
 local pollockpath
 
 ffi.cdef [[
@@ -562,12 +569,119 @@ void main() {
 	gl_FragColor = vec4(color, 1.) * texture2D(blend, vec2(T.x, 1.-T.y)).x;
 }
 ]]
-local vshader = shader(vs, fs)
+local distance_shader = shader(vs, fs)
+
+local fs = glsl_math .. [[
+uniform sampler2D map3D, blend;
+uniform sampler3D voxels;
+uniform vec3 eye;
+uniform float parallax;
+uniform float now;
+varying vec2 T;
+varying mat4 mv;
+
+
+vec3 spherical(float az, float el) {
+	float sy = sin(az);
+	float cy = cos(az);
+	float sx = sin(el);
+	float cx = cos(el);
+	return vec3(
+		cy * cx,
+		sy,
+		cy * sx
+	);
+}
+
+
+float near = 2.; //0.1;
+float far = 20.;
+float step = (far - near) * 0.05;
+float eps = step * 0.1;
+vec3 epsx = vec3(eps,0,0);
+vec3 epsy = vec3(0,eps,0);
+vec3 epsz = vec3(0,0,eps);
+
+vec3 light1 = vec3(0.1, 0.2, 0.3) * far;
+vec3 light2 = vec3(0.2, -0.3, 0.1) * far;
+vec3 color1 = vec3(0.3, 0.7, 0.6);
+vec3 color2 = vec3(0.6, 0.2, 0.8);
+vec3 ambient = vec3(0.1, 0.1, 0.1);
+
+// in eye space, never changes!
+vec3 up = vec3(0., 1., 0.);
+
+
+float scene(vec3 p) {
+	/*
+	vec3 c = vec3(10., 8., 6. + 0.1*cos(p.y));
+	vec3 pr1 = mod(p,c)-0.5*c;
+	pr1 = quat_rotate(quat_fromeuler(sin(now + 3.*p.x), cos(now * 2.), sin(p.z)), pr1);
+	vec3 box = vec3(0.2, 0.1, 0.3);
+	return length(max(abs(pr1)-box, 0.0));
+	*/
+	
+	//return length(p) - 0.1;
+	
+	// convert p to a unit texcoord:
+	p /= far;
+	
+	return texture3D(voxels, p).x * far;
+}
+
+void main() {
+	vec3 color = vec3(0, 0, 0);
+	
+	// the ray origin:
+	vec3 ro = (mv * vec4(0., 0., 0, 1.)).xyz;
+	
+	vec3 raw_rd = (texture2D(map3D, T).xyz);
+	// rotate by view:
+	vec3 rd = normalize((mv * vec4(raw_rd, 1.)).xyz - ro);
+	
+	// stereo shift:
+	vec3 rdx = cross(normalize(rd), up);
+	ro += rdx * parallax;
+	
+	float t = near;
+	float c = 0.;
+	float amp = step * 10.;
+	
+	vec3 p = ro + rd * t;
+	
+	for (;t < far;) {
+		// get density at current point
+		float v = texture3D(voxels, p).r * amp;
+		
+		// is next point out of range?
+		float t1 = t + step;
+		vec3 p1 = ro + t1 * rd;
+		
+		if (p1.x < 0. || p1.x > 1. || p1.y < 0. || p1.y > 1. || p1.z < 0. || p1.z > 1.) {
+			// accumulate only a portion of it
+			float a = 0.5;
+			
+			c += v*0.5;
+			break;
+		} 
+		
+		// accumulate color
+		c += v;
+		// move to next point
+		p = p1;
+		t = t1;
+	}
+	color = vec3(c) * (rd + 0.5);
+	
+	gl_FragColor = vec4(color, 1.) * texture2D(blend, vec2(T.x, 1.-T.y)).x;
+}
+]]
+local volume_shader = shader(vs, fs)
 
 function ondestroy()
 	print("DESTROYING")
 	
-	vshader:destroy()
+	distance_shader:destroy()
 	voxels:destroy()
 	
 	for k, m in pairs(allo.machines) do
@@ -635,7 +749,7 @@ function draw()
 		
 		glu.assert(i)
 		
-		local s = vshader
+		local s = volume_shader --distance_shader
 		s:bind()
 		--s:uniform("now", now())
 		local eyesep = 0.05
