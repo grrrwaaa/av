@@ -42,8 +42,8 @@ typedef struct shared {
 
 local shared = ffi.new("shared")
 shared.hdr = "ping|"
-shared.eye = vec3(0, 0, 1)
-shared.at = vec3(0, 0, 0)
+shared.eye = vec3(0.5, 0.5, 0.5)
+shared.at = vec3(0.5, 0.5, 0.5)
 shared.up = vec3(0, 1, 0)
 local shared_size = ffi.sizeof(shared)
 
@@ -542,33 +542,6 @@ void main() {
 		float tnorm = t/far;
 		color *= 1. - tnorm*tnorm;
 	}
-	
-	/*
-	for (;t < far;) {
-		// get density at current point
-		float v = texture3D(voxels, p).r * amp;
-		
-		// is next point out of range?
-		float t1 = t + step;
-		vec3 p1 = ro + t1 * rd;
-		
-		if (p1.x < 0. || p1.x > 1. || p1.y < 0. || p1.y > 1. || p1.z < 0. || p1.z > 1.) {
-			// accumulate only a portion of it
-			float a = 0.5;
-			
-			c += v*0.5;
-			break;
-		} 
-		
-		// accumulate color
-		c += v;
-		// move to next point
-		p = p1;
-		t = t1;
-	}
-	vec3 color = vec3(c) * (rd + 0.5);
-	*/
-	
 	gl_FragColor = vec4(color, 1.) * texture2D(blend, vec2(T.x, 1.-T.y)).x;
 }
 ]]
@@ -597,7 +570,7 @@ vec3 spherical(float az, float el) {
 }
 
 
-float near = 2.; //0.1;
+float near = 1.; //0.1;
 float far = 20.;
 float step = (far - near) * 0.05;
 float eps = step * 0.1;
@@ -618,11 +591,12 @@ void main() {
 	vec3 color = vec3(0, 0, 0);
 	
 	// the ray origin:
-	vec3 ro = (mv * vec4(0., 0., 0, 1.)).xyz;
+	//vec3 ro = eye;
+	vec3 ro = -mv[3].xyz; // (mv * -vec4(0., 0., 0, 1.)).xyz;
 	
 	vec3 raw_rd = (texture2D(map3D, T).xyz);
 	// rotate by view:
-	vec3 rd = normalize((mv * vec4(raw_rd, 1.)).xyz - ro);
+	vec3 rd = normalize((mv * -vec4(raw_rd, 1.)).xyz + ro);
 	
 	// stereo shift:
 	vec3 rdx = cross(normalize(rd), up);
@@ -649,7 +623,8 @@ void main() {
 			
 			//color += v*0.5;
 			break;
-		} */
+		} 
+		*/
 		
 		// accumulate color
 		c += v;
@@ -658,7 +633,7 @@ void main() {
 		t = t1;
 	}
 	color = vec3(c) * (rd + 0.5);
-	
+	//color = rd;
 	gl_FragColor = vec4(color, 1.) * texture2D(blend, vec2(T.x, 1.-T.y)).x;
 }
 ]]
@@ -687,11 +662,13 @@ function draw()
 	
 	if ismaster then	
 		
-		local a = t * 0.1
+		local a = t * 0.5
 		local dir = vec3(cos(a), 0, sin(a))
 		
 		--shared.at = vec3(0, 0, now())
-		shared.eye = shared.at + dir * 0.1
+		shared.eye = shared.at + vec3(sin(now()), 0.5, cos(now()))
+		print(shared.eye)
+		--shared.at = shared.eye + dir * 0.1
 		--shared.up = up
 		--local msg = string.format("nav|ping from photon %f", now())
 		local ptr = ffi.cast("void *", shared)
@@ -720,6 +697,7 @@ function draw()
 	gl.LoadMatrix(mat4.perspective(fovy, aspect, near, far))
 	gl.MatrixMode(gl.MODELVIEW)
 	local mv = mat4.lookat(shared.eye, shared.at, shared.up)
+	print(mv)
 	gl.LoadMatrix(mv)
 	
 	gl.Enable(gl.SCISSOR_TEST)
@@ -751,18 +729,21 @@ function draw()
 		end
 		s:uniform("voxels", 1)
 		s:uniform("blend", 2)
-		
+		--s:uniform("eye", shared.eye.x, shared.eye.y, shared.eye.z)
 		--
 		voxels:send(1)
-		---[[
+		--[[
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.REPEAT)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.REPEAT)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.REPEAT)
 		--]]
-		--[[
+		---[[
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP)
+		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_BORDER)
+		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_BORDER)
+		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_BORDER)
 		--]]
 		p.map3Dtex:bind(0)
 		p.blendtex:bind(2)
