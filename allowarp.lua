@@ -37,6 +37,7 @@ local shared = ffi.new("shared")
 shared.hdr = "ping|"
 local shared_size = ffi.sizeof(shared)
 
+
 local datapath, blobpath
 if ffi.os == "OSX" then
 	datapath = "/Users/grahamwakefield/calibration-current/"
@@ -596,8 +597,10 @@ function draw()
 		shared.at = at
 		shared.up = up
 		--local msg = string.format("nav|ping from photon %f", now())
-		local rc, err = network:send( shared, shared_size )
+		local ptr = ffi.cast("void *", shared)
+		local rc, err = network:send( ptr, shared_size )
    		assert( rc > 0, 'send failed' )    
+   		print("sent", ptr)
 	else
 		local msg, err = network:recv_zc(nn.DONTWAIT)
 		print(msg, err)
