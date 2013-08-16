@@ -93,6 +93,7 @@ else
 				print(string.format("err code:%d err:%s\n",
 			    err, nn.strerror(err)))
 			end
+			wait(1)
 		end
 	end)
 end
