@@ -35,6 +35,9 @@ typedef struct shared {
 
 local shared = ffi.new("shared")
 shared.hdr = "ping|"
+shared.eye = vec3(0, 0, 1)
+shared.at = vec3(0, 0, 0)
+shared.up = vec3(0, 1, 0)
 local shared_size = ffi.sizeof(shared)
 
 
@@ -575,26 +578,20 @@ function ondestroy()
 	end
 end
 
-local at = vec3(0, 0, 0)
-
 function draw()
 	glu.assert("draw")
 	
 	-- go 3D:
 	local near, far = 0.1, 100
 	local fovy, aspect = 80, 1.2
-	local a = t * 0.1
-	local dir = vec3(cos(a), 0, sin(a))
-	local eye = at + dir * 0.1
-	--at:add(dir)
-	local up = vec3(0, 1, 0)
-	
-	
 	
 	if ismaster then	
 		
-		shared.eye = eye
-		shared.at = at
+		local a = t * 0.1
+		local dir = vec3(cos(a), 0, sin(a))
+		
+		shared.at = at + vec3(0, 0, now())
+		shared.eye = shared.at + dir * 0.1
 		shared.up = up
 		--local msg = string.format("nav|ping from photon %f", now())
 		local ptr = ffi.cast("void *", shared)
