@@ -51,9 +51,24 @@ local allo = {
 	},
 }
 
+local ADDRESS = "tcp://photon:5557"
 if allo.hostname == "photon" then
 	local pub, err = nn.socket( nn.PUB )
 	assert( pub, nn.strerror(err) )
+	
+	local pid, err = pub:bind( ADDRESS )
+	assert( pid >= 0 , nn.strerror(err) )
+	
+	print("publisher started")
+	
+	go(function()
+		for i = 1, 100 do
+			local msg = string.format("ping from photon %f", now())
+			local rc, err = pub:send( msg, #msg )
+   			assert( rc > 0, 'send failed' )    
+			wait(1)
+		end
+	end)
 else
 	
 end
