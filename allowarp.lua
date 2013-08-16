@@ -573,7 +573,7 @@ vec3 spherical(float az, float el) {
 
 float near = 0.1; //0.1;
 float far = 2.;
-float step = (far - near) * 0.05;
+float step = (far - near) * 0.02;
 float eps = step * 0.1;
 vec3 epsx = vec3(eps,0,0);
 vec3 epsy = vec3(0,eps,0);
@@ -588,8 +588,8 @@ vec3 ambient = vec3(0.1, 0.1, 0.1);
 // in eye space, never changes!
 vec3 up = vec3(0., 1., 0.);
 
-vec3 lo = vec3(1, 0, 0);
-vec3 hi = vec3(0, 1, 1);
+vec3 hi = vec3(4, 0, 0);
+vec3 lo = vec3(0, 1, 1);
 
 void main() {
 	vec3 color = vec3(0, 0, 0);
@@ -607,16 +607,17 @@ void main() {
 	
 	float t = near;
 	float c = 0.;
-	float amp = 0.1;
+	float amp = 0.5;
 	
 	vec3 p = ro + rd * t;
 	
 	for (;t < far;) {
 		// get density at current point
-		float v = texture3D(voxels, p / far).r * amp;
+		float v = texture3D(voxels, p / far).r * 0.1 * amp;
 		
 		// is next point out of range?
 		float t1 = t + step;
+		step = step * 1.2;
 		vec3 p1 = ro + t1 * rd;
 		
 		/*
@@ -630,7 +631,7 @@ void main() {
 		*/
 		
 		// accumulate color
-		color += mix(lo, hi, v) * v;
+		color += mix(lo, hi, v * 2.) * v;
 		// move to next point
 		p = p1;
 		t = t1;
