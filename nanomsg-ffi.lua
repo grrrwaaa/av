@@ -62,7 +62,7 @@ do
         nn[ name ] = symbol.value[0]
 
 		
-        print(name, nn[name])
+        --print(name, nn[name])
 
         -- store mapping of error value -> symbol in nn.E
         if name:match('^E([%w_]*)') then
@@ -76,7 +76,7 @@ end
 
 -- nanomsg ABI check
 -- we match the cdef's to the nanomsg library version
-if nn.VERSION == 0 then
+--if nn.VERSION == 0 then
     ffi.cdef([[
     int nn_errno (void);
     const char *nn_strerror (int errnum);
@@ -103,9 +103,9 @@ if nn.VERSION == 0 then
     // nn_msg_t doesn't exist in nanomsg; it is a metatype anchor for nn.msg
     struct nn_msg_t { void *ptr; size_t size; };
     ]])
-else
-    error( "unknown nanomsg version: " .. tostring(nn.VERSION) )
-end
+--else
+ --   error( "unknown nanomsg version: " .. tostring(nn.VERSION) )
+--end
 
 
 -- NN_MSG doesn't come through the symbol interface properly due to its use of size_t
