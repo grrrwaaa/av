@@ -26,6 +26,13 @@ local min, max = math.min, math.max
 
 local pollockpath
 
+ffi.cdef [[
+typedef struct shared {
+	
+} shared;
+
+]]
+
 local datapath, blobpath
 if ffi.os == "OSX" then
 	datapath = "/Users/grahamwakefield/calibration-current/"
@@ -74,7 +81,7 @@ else
 	local sid, err = sub:connect( ADDRESS )
 	assert( sid and sid >= 0, nn.strerror(err) )
 	
-	local rc, err = sub:setsockopt( nn.SUB, nn.SUB_SUBSCRIBE, "ping" )
+	local rc, err = sub:setsockopt( nn.SUB, nn.SUB_SUBSCRIBE, "nav" )
 	assert( rc >= 0, nn.strerror(err) )
 	
 	print("subscriber started")
@@ -565,19 +572,6 @@ local at = vec3(0, 0, 0)
 function draw()
 	glu.assert("draw")
 	
-	if ismaster then	
-		local msg = string.format("ping|ping from photon %f", now())
-		local rc, err = pub:send( msg, #msg )
-   		assert( rc > 0, 'send failed' )    
-	else
-		local msg, err = sub:recv_zc(nn.DONTWAIT)
-		if msg then
-			print( "received", msg:tostring() )
-		elseif err then
-			print(string.format("err code:%d err:%s\n",
-			err, nn.strerror(err)))
-		end
-	end
 	-- go 3D:
 	local near, far = 0.1, 100
 	local fovy, aspect = 80, 1.2
@@ -587,6 +581,30 @@ function draw()
 	--at:add(dir)
 	local up = vec3(0, 1, 0)
 	
+	
+	
+	
+	if ismaster then	
+		local msg = string.format("nav|ping from photon %f", now())
+		local rc, err = pub:send( msg, #msg )
+   		assert( rc > 0, 'send failed' )    
+	else
+		local msg, err = sub:recv_zc(nn.DONTWAIT)
+		if msg then
+			-- split msg on |
+			local bar = 124
+			for i = 0, msg.size-1 do
+				if msg.ptr[i] == bar then
+					local name = ffi.string(msg.ptr, i)
+					print( "received", name, msg:tostring() )
+					break
+				end
+			end
+		elseif err then
+			print(string.format("err code:%d err:%s\n",
+			err, nn.strerror(err)))
+		end
+	end
 	--run_gol() voxels = vd
 	update_voxels()
 	
