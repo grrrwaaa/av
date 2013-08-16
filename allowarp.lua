@@ -589,8 +589,7 @@ function draw()
 	--at:add(dir)
 	local up = vec3(0, 1, 0)
 	
-	run_gol()
-	voxels = vd
+	--run_gol() voxels = vd
 	
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadMatrix(mat4.perspective(fovy, aspect, near, far))
