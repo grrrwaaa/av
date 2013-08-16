@@ -727,8 +727,8 @@ function draw()
 			err, nn.strerror(err)))
 		end
 	end
-	--run_gol() voxels = vd
-	update_voxels()
+	run_gol() voxels = vd
+	--update_voxels()
 	
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadMatrix(mat4.perspective(fovy, aspect, near, far))
@@ -750,7 +750,7 @@ function draw()
 		
 		glu.assert(i)
 		
-		local s = volume_shader --distance_shader
+		local s = distance_shader
 		s:bind()
 		--s:uniform("now", now())
 		local eyesep = 0.05
