@@ -606,6 +606,8 @@ function draw()
 					break
 				end
 			end
+		elseif err == 11 then
+			-- ignore temporarily unavailable error
 		elseif err then
 			print(string.format("err code:%d err:%s\n",
 			err, nn.strerror(err)))
