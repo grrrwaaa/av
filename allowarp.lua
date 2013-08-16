@@ -590,6 +590,7 @@ function draw()
 	local up = vec3(0, 1, 0)
 	
 	--run_gol() voxels = vd
+	update_voxels()
 	
 	gl.MatrixMode(gl.PROJECTION)
 	gl.LoadMatrix(mat4.perspective(fovy, aspect, near, far))
@@ -626,7 +627,7 @@ function draw()
 		s:uniform("voxels", 1)
 		s:uniform("blend", 2)
 		
-		--update_voxels()
+		--
 		voxels:send(1)
 		---[[
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.REPEAT)
