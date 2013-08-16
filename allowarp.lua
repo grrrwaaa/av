@@ -88,7 +88,7 @@ else
 	local sid, err = sub:connect( ADDRESS )
 	assert( sid and sid >= 0, nn.strerror(err) )
 	
-	local rc, err = sub:setsockopt( nn.SUB, nn.SUB_SUBSCRIBE, "nav" )
+	local rc, err = sub:setsockopt( nn.SUB, nn.SUB_SUBSCRIBE, "ping" )
 	assert( rc >= 0, nn.strerror(err) )
 	
 	print("subscriber started")
