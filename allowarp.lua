@@ -662,12 +662,11 @@ function draw()
 	
 	if ismaster then	
 		
-		local a = t * 0.5
-		local dir = vec3(cos(a), 0, sin(a)) * 5
+		local a = t * 0.1
 		
 		--shared.at = vec3(0, 0, now())
 		shared.view = quat.fromEuler(a, 0, 0) 
-		shared.eye = vec3(0.5, 0.5, 0.5) + shared.view:ux()
+		shared.eye = vec3(0.5, 0.5, 0.5) + shared.view:uz() * 0.5
 		--print(shared.eye)
 		--print(shared.at, shared.eye)
 		--shared.at = shared.eye + dir * 0.1
