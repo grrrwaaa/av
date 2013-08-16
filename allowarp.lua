@@ -53,7 +53,12 @@ local allo = {
 
 ---[[
 local ADDRESS = "tcp://192.168.0.15:5557"
+local ismaster = false
 if allo.hostname == "photon" then
+	ismaster = true
+end
+
+if ismaster then
 	local pub, err = nn.socket( nn.PUB )
 	assert( pub, nn.strerror(err) )
 	
@@ -62,15 +67,6 @@ if allo.hostname == "photon" then
 	assert( pid and pid >= 0 , nn.strerror(err) )
 	
 	print("publisher started")
-	
-	go(function()
-		for i = 1, 100 do
-			local msg = string.format("ping|ping from photon %f", now())
-			local rc, err = pub:send( msg, #msg )
-   			assert( rc > 0, 'send failed' )    
-			wait(1)
-		end
-	end)
 else
 	local sub, err = nn.socket( nn.SUB )
 	assert( sub, nn.strerror(err) )
@@ -82,20 +78,6 @@ else
 	assert( rc >= 0, nn.strerror(err) )
 	
 	print("subscriber started")
-	
-	go(function()
-		for i = 1, 100 do
-			print("waiting for msg", nn.DONTWAIT)
-			local msg, err = sub:recv_zc(nn.DONTWAIT)
-			if msg then
-				print( msg:tostring() )
-			elseif err then
-				print(string.format("err code:%d err:%s\n",
-			    err, nn.strerror(err)))
-			end
-			wait(1)
-		end
-	end)
 end
 --]]
 
@@ -582,6 +564,20 @@ local at = vec3(0, 0, 0)
 
 function draw()
 	glu.assert("draw")
+	
+	if ismaster then	
+		local msg = string.format("ping|ping from photon %f", now())
+		local rc, err = pub:send( msg, #msg )
+   		assert( rc > 0, 'send failed' )    
+	else
+		local msg, err = sub:recv_zc(nn.DONTWAIT)
+		if msg then
+			print( "received", msg:tostring() )
+		elseif err then
+			print(string.format("err code:%d err:%s\n",
+			err, nn.strerror(err)))
+		end
+	end
 	-- go 3D:
 	local near, far = 0.1, 100
 	local fovy, aspect = 80, 1.2
