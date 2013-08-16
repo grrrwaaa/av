@@ -64,14 +64,35 @@ if allo.hostname == "photon" then
 	
 	go(function()
 		for i = 1, 100 do
-			local msg = string.format("ping from photon %f", now())
+			local msg = string.format("ping|ping from photon %f", now())
 			local rc, err = pub:send( msg, #msg )
    			assert( rc > 0, 'send failed' )    
 			wait(1)
 		end
 	end)
 else
+	local sub, err = nn.socket( nn.SUB )
+	assert( sub, nn.strerror(err) )
+
+	local sid, err = sub:connect( ADDRESS )
+	assert( sid and sid >= 0, nn.strerror(err) )
 	
+	local rc, err = sub:setsockopt( nn.SUB, nn.SUB_SUBSCRIBE, "ping" )
+	assert( rc >= 0, nn.strerror(err) )
+	
+	print("subscriber started")
+	
+	go(function()
+		for i = 1, 100 do
+			local msg, err = sub:recv_zc()
+			if msg then
+				print( msg:tostring() )
+			elseif err then
+				print(string.format("err code:%d err:%s\n",
+			    err, nn.strerror(err)))
+			end
+		end
+	end)
 end
 
 local dim = 32
