@@ -602,7 +602,6 @@ function draw()
    		assert( rc > 0, 'send failed' )    
 	else
 		local msg, err = network:recv_zc(nn.DONTWAIT)
-		print(msg, err)
 		if msg then
 			local sz = tonumber(msg.size)
 			local ptr = ffi.cast("char *", msg.ptr)
