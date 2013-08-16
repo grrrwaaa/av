@@ -18,13 +18,17 @@ local sin, cos = math.sin, math.cos
 local pi, twopi = math.pi, math.pi * 2
 local abs = math.abs
 
+local pollockpath
+
 local datapath, blobpath
 if ffi.os == "OSX" then
 	datapath = "/Users/grahamwakefield/calibration-current/"
 	blobpath = "/Users/grahamwakefield/calibration-data/"
+	pollockpath = "/Users/grahamwakefield/code/pollock-work/pollock-data/"
 else
 	datapath = "/home/sphere/calibration-current/"
 	blobpath = "/alloshare/calibration/data/"
+	pollockpath = "/home/sphere/matt/pollock-work/pollock-data/"
 end
 
 local allo = {
@@ -88,11 +92,12 @@ local function standard_warp()
 		for x = 0, w-1 do
 			local nx, ny = x/(w-1), y/(h-1)
 			local idx = x + y*w
+			local sy = sin(pi * ny)
 			local cy = cos(pi * ny)
 			data[idx]:set(
-				cy * sin(twopi * nx),
-				sin(pi * ny),
-				cy * cos(twopi * nx),
+				sy * sin(twopi * nx),
+				cy,
+				sy * cos(twopi * nx),
 				0
 			)
 		end
@@ -312,7 +317,6 @@ void main() {
 	
 	vec3 p = ro + rd * t;
 	
-	/*
 	float d = scene(p);
 	
 	#define MAX_STEPS 50
@@ -341,8 +345,8 @@ void main() {
 		float tnorm = t/far;
 		color *= 1. - tnorm*tnorm;
 	}
-	*/
 	
+	/*
 	for (;t < far;) {
 		// get density at current point
 		float v = texture3D(voxels, p).r * amp;
@@ -366,7 +370,8 @@ void main() {
 		t = t1;
 	}
 	vec3 color = vec3(c) * (rd + 0.5);
-
+	*/
+	
 	gl_FragColor = vec4(color, 1.) * texture2D(blend, vec2(T.x, 1.-T.y)).x;
 }
 ]]
@@ -482,6 +487,23 @@ function draw()
 	
 	glu.assert("end draw")
 end
+
+function loadpollocks()
+	local SIZE_X = 100 --862
+	local SIZE_Y = 100 --1062
+	local SIZE_Z = 100 --1027
+	local sizeToRead = SIZE_X * SIZE_Y * SIZE_Z
+	local volumeData = ffi.new("char[?]", sizeToRead)
+	local filename = pollockpath .. "DistanceData1"
+	local f = C.open(filename, 0)
+	assert(f ~= -1, filename)	
+	C.read(f, volumeData, ffi.sizeof(volumeData))
+	for i = 1, 10 do
+		print(i, volumeData[i])
+	end
+end
+
+loadpollocks()
 
 if ffi.os == "Linux" then
 	window.fullscreen = true
