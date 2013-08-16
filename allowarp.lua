@@ -224,8 +224,8 @@ function update_voxels()
 		--local p1 = vec3(sin(now()), cos(now()), 0.)
 		
 		
-		local d1 = distance.sphere(p, sin(now())*0.1 + 0.2)
-		local d2 = distance.box(p, vec3(0.1, 0.2, 0.3))
+		local d1 = distance.sphere(p, sin(now() * pi)*0.3 + 0.3)
+		local d2 = distance.box(p, vec3(0.4, 0.2, 0.3))
 		local d3 = distance.union(d2, d1)
 		
 		--[[
