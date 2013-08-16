@@ -51,7 +51,7 @@ local allo = {
 	},
 }
 
-local ADDRESS = "tcp://photon:5557"
+local ADDRESS = "tcp://192.168.0.15:5557"
 if allo.hostname == "photon" then
 	local pub, err = nn.socket( nn.PUB )
 	assert( pub, nn.strerror(err) )
