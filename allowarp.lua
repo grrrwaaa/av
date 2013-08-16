@@ -662,12 +662,12 @@ function draw()
 	
 	if ismaster then	
 		
-		local a = t * 0.5
+		local a = t * 0.05
 		local dir = vec3(cos(a), 0, sin(a))
 		
 		--shared.at = vec3(0, 0, now())
 		shared.eye = shared.at + vec3(sin(now()), 0.5, cos(now()))
-		print(shared.eye)
+		--print(shared.eye)
 		--shared.at = shared.eye + dir * 0.1
 		--shared.up = up
 		--local msg = string.format("nav|ping from photon %f", now())
@@ -697,7 +697,7 @@ function draw()
 	gl.LoadMatrix(mat4.perspective(fovy, aspect, near, far))
 	gl.MatrixMode(gl.MODELVIEW)
 	local mv = mat4.lookat(shared.eye, shared.at, shared.up)
-	print(mv)
+	--print(mv)
 	gl.LoadMatrix(mv)
 	
 	gl.Enable(gl.SCISSOR_TEST)
