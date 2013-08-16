@@ -28,10 +28,14 @@ local pollockpath
 
 ffi.cdef [[
 typedef struct shared {
-	
+	char hdr[5];
+	vec3 eye, at, up;
 } shared;
-
 ]]
+
+local shared = ffi.new("shared")
+shared.hdr = "shrd|"
+local shared_size = ffi.sizeof(shared)
 
 local datapath, blobpath
 if ffi.os == "OSX" then
@@ -586,27 +590,24 @@ function draw()
 	
 	
 	
-	
 	if ismaster then	
-		local msg = string.format("nav|ping from photon %f", now())
-		local rc, err = network:send( msg, #msg )
+		
+		shared.eye = eye
+		shared.at = at
+		shared.up = up
+		--local msg = string.format("nav|ping from photon %f", now())
+		local rc, err = network:send( shared, shared_size )
    		assert( rc > 0, 'send failed' )    
 	else
 		local msg, err = network:recv_zc(nn.DONTWAIT)
 		if msg then
-			-- split msg on |
-			local bar = 124
 			local sz = tonumber(msg.size)
 			local ptr = ffi.cast("char *", msg.ptr)
-			print(msg, sz, ptr)
-			for i = 0, sz-1 do
-				if ptr[i] == bar then
-					local name = ffi.string(ptr, i)
-					print( "received", name, msg:tostring() )
-					break
-				end
-			end
-		elseif err == 11 then
+			assert(sz == shared_size, "shared size mismatch")
+			ffi.copy(shared, ptr, sz)
+			
+			print(shared.eye)
+		elseif err == 35 then
 			-- ignore temporarily unavailable error
 		elseif err then
 			print(string.format("err code:%d err:%s\n",
