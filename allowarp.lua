@@ -727,7 +727,8 @@ function draw()
 			err, nn.strerror(err)))
 		end
 	end
-	run_gol() voxels = vd
+	
+	--run_gol() voxels = vd
 	--update_voxels()
 	
 	gl.MatrixMode(gl.PROJECTION)
@@ -830,13 +831,19 @@ function loadpollocks()
 	local SIZE_Z = 100 --1027
 	local sizeToRead = SIZE_X * SIZE_Y * SIZE_Z
 	local volumeData = ffi.new("char[?]", sizeToRead)
-	local filename = pollockpath .. "DistanceData1"
+	local filename = pollockpath .. "DistanceData-100x100x100"
 	local f = C.open(filename, 0)
 	assert(f ~= -1, filename)	
 	C.read(f, volumeData, ffi.sizeof(volumeData))
 	for i = 1, 10 do
 		print(i, volumeData[i])
 	end
+	
+	local vol = field3D(100, 100, 100)
+	for i = 0, 1000000-1 do
+		vol.data[i] = volumeData[i]
+	end
+	voxels = vol
 end
 
 loadpollocks()
