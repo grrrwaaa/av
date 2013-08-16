@@ -24,6 +24,7 @@ if ffi.os == "Linux" then
 	}
 	
 	for i, v in ipairs(linux_libs) do
+		print("trying", i, v)
 		ok, lib = pcall(ffi.load, v)
 		if ok then
 			print("using ", v)
