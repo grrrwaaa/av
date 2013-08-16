@@ -613,7 +613,7 @@ void main() {
 	
 	for (;t < far;) {
 		// get density at current point
-		float vraw = texture3D(voxels, p / far).r 
+		float vraw = texture3D(voxels, p / far).r;
 		float v = * 0.1 * amp;
 		
 		// is next point out of range?
