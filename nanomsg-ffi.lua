@@ -55,10 +55,14 @@ do
         symbol.name = libnn.nn_symbol( i, symbol.value )
         if symbol.name == nil then break end
         local name = ffi.string( symbol.name )
+        
 
         -- convert NN_FOO to just FOO, since nn.FOO is nicer than nn.NN_FOO
         name = name:match('NN_([%w_]*)') or name
         nn[ name ] = symbol.value[0]
+
+		
+        print(name, nn[name])
 
         -- store mapping of error value -> symbol in nn.E
         if name:match('^E([%w_]*)') then
