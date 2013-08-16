@@ -267,7 +267,7 @@ float scene(vec3 p) {
 	vec3 box = vec3(0.4, 0.1, 0.8);
 	return length(max(abs(pr1)-box, 0.0));
 	*/
-	return texture3D(voxels, p).x;
+	return 1. - texture3D(voxels, p).x;
 }
 
 vec3 spherical(float az, float el) {
