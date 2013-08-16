@@ -633,7 +633,7 @@ void main() {
 		} 
 		*/
 		
-		if (vraw > 1. && vraw < 2.) {
+		if (vraw > 4.) { // && vraw < 2.) {
 			break;
 		}
 		
