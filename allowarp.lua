@@ -642,13 +642,14 @@ void main() {
 		float t1 = t + step;
 		vec3 p1 = ro + t1 * rd;
 		
+		/*
 		if (p1.x < 0. || p1.x > 1. || p1.y < 0. || p1.y > 1. || p1.z < 0. || p1.z > 1.) {
 			// accumulate only a portion of it
 			float a = 0.5;
 			
-			c += v*0.5;
+			//color += v*0.5;
 			break;
-		} 
+		} */
 		
 		// accumulate color
 		c += v;
@@ -657,7 +658,6 @@ void main() {
 		t = t1;
 	}
 	color = vec3(c) * (rd + 0.5);
-	//color = vec3(0.5) + color * 0.01;
 	
 	gl_FragColor = vec4(color, 1.) * texture2D(blend, vec2(T.x, 1.-T.y)).x;
 }
@@ -827,7 +827,7 @@ function loadpollocks()
 	
 	local vol = field3D(100, 100, 100)
 	for i = 0, 1000000-1 do
-		vol.data[i] = volumeData[i] * 0.1
+		vol.data[i] = volumeData[i] / 256
 	end
 	voxels = vol
 end
