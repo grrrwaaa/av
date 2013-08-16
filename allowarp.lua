@@ -752,6 +752,7 @@ function draw()
 		glu.assert(i)
 		
 		local s = distance_shader
+		local s = volume_shader
 		s:bind()
 		--s:uniform("now", now())
 		local eyesep = 0.05
