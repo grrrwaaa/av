@@ -595,7 +595,7 @@ vec3 ambient = vec3(0.1, 0.1, 0.1);
 // in eye space, never changes!
 vec3 up = vec3(0., 1., 0.);
 
-vec3 hi = vec3(0.2, 0, 0.1);
+vec3 hi = vec3(0.1, 0, 0);
 vec3 lo = vec3(0, 1, 1);
 
 void main() {
@@ -638,6 +638,7 @@ void main() {
 			v = vraw * amp * step;
 			
 			color += mix(lo, hi, v) * v;
+			color.g += 0.5;
 			
 			break;
 		} 
