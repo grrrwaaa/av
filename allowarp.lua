@@ -559,7 +559,6 @@ uniform vec4 view;
 uniform vec3 eye;
 uniform float parallax;
 uniform float now;
-uniform float thresh;
 varying vec2 T;
 varying mat4 mv;
 
@@ -579,7 +578,7 @@ vec3 spherical(float az, float el) {
 
 float near = 0.3; //0.1;
 float far = 2.;
-float step = (far - near) * 0.002;
+float step = (far - near) * 0.005;
 float eps = step * 0.1;
 vec3 epsx = vec3(eps,0,0);
 vec3 epsy = vec3(0,eps,0);
@@ -617,6 +616,7 @@ void main() {
 	
 	vec3 p = ro + rd * t;
 	float vraw0 = 0.;
+	float thresh = 3.;
 	
 	for (;t < far;) {
 		
@@ -681,7 +681,7 @@ function draw()
 		
 		--shared.at = vec3(0, 0, now())
 		shared.view = quat.fromEuler(a, 0, 0) 
-		shared.eye = vec3(0.5, 0.5, 0.5) + shared.view:uz() * 0.5
+		shared.eye = vec3(0.5, 0.5, 0.5) --+ shared.view:uz() * 0.1
 		--print(shared.eye)
 		--print(shared.at, shared.eye)
 		--shared.at = shared.eye + dir * 0.1
@@ -706,7 +706,7 @@ function draw()
 		end
 	end
 	
-	run_gol() voxels = vd
+	--run_gol() voxels = vd
 	--update_voxels()
 	
 	gl.MatrixMode(gl.PROJECTION)
@@ -746,8 +746,7 @@ function draw()
 		s:uniform("blend", 2)
 		s:uniform("eye", shared.eye.x, shared.eye.y, shared.eye.z)
 		s:uniform("view", shared.view.x, shared.view.y, shared.view.z, shared.view.w)
-		s:uniform("data_scale", 1./data_scale.x, 1./data_scale.y, 1./data_scale.z)
-		s:uniform("thresh", 4.)
+		s:uniform("data_scale", data_scale.x, data_scale.y, data_scale.z)
 		--
 		voxels:send(1)
 		--[[
@@ -813,8 +812,8 @@ function draw()
 end
 
 function loadpollocks()
-	local SIZE_X = 100 --862
-	local SIZE_Y = 100 --1062
+	local SIZE_X = 400 --862
+	local SIZE_Y = 400 --1062
 	local SIZE_Z = 100 --1027
 	local sizeToRead = SIZE_X * SIZE_Y * SIZE_Z
 	local volumeData = ffi.new("char[?]", sizeToRead)
@@ -826,7 +825,7 @@ function loadpollocks()
 		print(i, volumeData[i])
 	end
 	
-	local vol = field3D(100, 100, 100)
+	local vol = field3D(SIZE_X, SIZE_Y, SIZE_Z)
 	for i = 0, 1000000-1 do
 		vol.data[i] = volumeData[i]
 	end
