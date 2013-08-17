@@ -826,7 +826,7 @@ function loadpollocks()
 	end
 	
 	local vol = field3D(SIZE_X, SIZE_Y, SIZE_Z)
-	for i = 0, 1000000-1 do
+	for i = 0, sizeToRead-1 do
 		vol.data[i] = volumeData[i]
 	end
 	voxels = vol
