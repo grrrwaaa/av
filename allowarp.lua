@@ -593,7 +593,7 @@ vec3 ambient = vec3(0.1, 0.1, 0.1);
 // in eye space, never changes!
 vec3 up = vec3(0., 1., 0.);
 
-vec3 hi = vec3(4, 0, 0);
+vec3 hi = vec3(2, 0, 0);
 vec3 lo = vec3(0, 1, 1);
 
 void main() {
@@ -634,13 +634,15 @@ void main() {
 			// find the intersection point:
 			step *= (thresh-vraw0)/(vraw - vraw0);
 			
-			color += vraw * amp * step;
+			v = vraw * amp * step;
+			
+			color += mix(lo, hi, v) * v;
 			
 			break;
 		} 
 		
 		// accumulate color
-		color += v; //mix(lo, hi, v * 2.) * v;
+		color += mix(lo, hi, v) * v;
 		
 		// move to next point
 		vraw0 = vraw;
