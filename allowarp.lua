@@ -595,8 +595,8 @@ vec3 ambient = vec3(0.1, 0.1, 0.1);
 // in eye space, never changes!
 vec3 up = vec3(0., 1., 0.);
 
-vec3 hi = vec3(0.1, 0, 0);
-vec3 lo = vec3(0, 0.4, 1);
+vec3 copper = vec3(0.2, 0.7, 0.1);
+vec3 cloud = vec3(0.1, 0.5, 1.);
 
 void main() {
 	vec3 color = vec3(0, 0, 0);
@@ -637,14 +637,14 @@ void main() {
 			
 			v = vraw * amp * step;
 			
-			color += mix(lo, hi, v) * v;
-			color.g += vec3(0.2, 0.7, 0.);
+			color += cloud * v;
+			color.g += copper
 			
 			break;
 		} 
 		
 		// accumulate color
-		color += mix(lo, hi, v) * v;
+		color += cloud * v;
 		
 		// move to next point
 		vraw0 = vraw;
