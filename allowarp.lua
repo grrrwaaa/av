@@ -638,6 +638,9 @@ void main() {
 		} 
 		*/
 		
+		if (vraw > 3.) {
+			step = step * 0.75;
+		}
 		if (vraw > 4.) { // && vraw < 2.) {
 			break;
 		}
