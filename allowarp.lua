@@ -578,7 +578,7 @@ vec3 spherical(float az, float el) {
 
 float near = 0.3; //0.1;
 float far = 2.;
-float step = (far - near) * 0.02;
+float step = (far - near) * 0.01;
 float eps = step * 0.1;
 vec3 epsx = vec3(eps,0,0);
 vec3 epsy = vec3(0,eps,0);
@@ -622,7 +622,7 @@ void main() {
 		
 		// is next point out of range?
 		float t1 = t + step;
-		//step = step * 1.25;
+		step = step * 1.25;
 		vec3 p1 = ro + t1 * rd;
 		
 		// get density at current point
@@ -635,18 +635,6 @@ void main() {
 			float tinterp = (thresh-vraw0)/(vraw - vraw0);
 			
 			color += v * tinterp;
-			
-			/*
-			for (int i=0; i<10; i++) {
-				t1 = t + float(i) * 0.1 * step;
-				p1 = ro + t1 * rd;
-				vraw = texture3D(voxels, p1 * data_scale / far).r;
-				if (vraw > thresh) {
-					color += v; //mix(lo, hi, v * 2.) * v;
-					break;
-				}
-			}
-			*/
 			
 			/*
 			float tnew = t + tinterp * (t1 - t);
