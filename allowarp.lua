@@ -599,7 +599,7 @@ vec3 copper = vec3(0.2, 0.7, 0.1);
 vec3 cloud = vec3(0.1, 0.5, 1.);
 
 float scene(vec3 p) {
-	return texture3D(voxels, p1 * data_scale / far).r;
+	return texture3D(voxels, p * data_scale / far).r;
 }
 
 void main() {
@@ -647,8 +647,10 @@ void main() {
 				scene(p1+epsy) - scene(p1-epsy),
 				scene(p1+epsz) - scene(p1-epsz)  
 			);
+			vec3 normal = normalize(gradient);
+		
 			
-			color += gradient;
+			color += normal;
 			
 			
 			break;
