@@ -31,6 +31,10 @@ local blob_transform = mat4(
   0.0000000e+00,   0.0000000e+00,   0.0000000e+00,   1.0000000e+00
 )
 
+
+-- scala
+local data_scale = vec3(0.595, 0.595, 0.25)
+
 local pollockpath
 
 ffi.cdef [[
@@ -550,6 +554,7 @@ local distance_shader = shader(vs, fs)
 local fs = glsl_math .. [[
 uniform sampler2D map3D, blend;
 uniform sampler3D voxels;
+uniform vec3 data_scale;
 uniform vec4 view;
 uniform vec3 eye;
 uniform float parallax;
@@ -613,7 +618,7 @@ void main() {
 	
 	for (;t < far;) {
 		// get density at current point
-		float vraw = texture3D(voxels, p / far).r;
+		float vraw = texture3D(voxels, p * data_scale / far).r;
 		float v = vraw * 0.1 * amp;
 		
 		// is next point out of range?
@@ -738,6 +743,7 @@ function draw()
 		s:uniform("blend", 2)
 		s:uniform("eye", shared.eye.x, shared.eye.y, shared.eye.z)
 		s:uniform("view", shared.view.x, shared.view.y, shared.view.z, shared.view.w)
+		s:uniform("data_scale", data_scale.x, data_scale.y, data_scale.z)
 		--
 		voxels:send(1)
 		--[[
