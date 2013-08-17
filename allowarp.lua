@@ -618,7 +618,7 @@ void main() {
 		
 		// is next point out of range?
 		float t1 = t + step;
-		step = step * 1.5;
+		step = step * 1.25;
 		vec3 p1 = ro + t1 * rd;
 		// accumulate color
 		color += mix(lo, hi, v * 2.) * v;
