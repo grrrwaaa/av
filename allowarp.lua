@@ -633,7 +633,7 @@ void main() {
 		// get density at current point
 		float vraw = scene(p1);
 		
-		if (vraw > thresh && vraw < thresh + 1.) {
+		if (vraw > thresh && vraw < thresh + 0.1) {
 			
 			// find the intersection point:
 			step *= (thresh-vraw0)/(vraw - vraw0);
