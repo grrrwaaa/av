@@ -578,7 +578,7 @@ vec3 spherical(float az, float el) {
 }
 
 
-float near = 0.1; //0.1;
+float near = 0.2; //0.1;
 float far = 2.;
 float step = (far - near) * 0.001;
 float eps = 1./400.;
