@@ -598,6 +598,10 @@ vec3 up = vec3(0., 1., 0.);
 vec3 copper = vec3(0.2, 0.7, 0.1);
 vec3 cloud = vec3(0.1, 0.5, 1.);
 
+float scene(vec3 p) {
+	return texture3D(voxels, p1 * data_scale / far).r;
+}
+
 void main() {
 	vec3 color = vec3(0, 0, 0);
 	
@@ -627,7 +631,7 @@ void main() {
 		vec3 p1 = ro + t1 * rd;
 		
 		// get density at current point
-		float vraw = texture3D(voxels, p1 * data_scale / far).r;
+		float vraw = scene(p1);
 		
 		if (vraw > thresh) {
 			
@@ -637,7 +641,15 @@ void main() {
 			float v = vraw * amp * step / t;
 			
 			color += cloud * v;
-			color += copper;
+			
+			vec3 gradient = vec3( 
+				scene(p1+epsx) - scene(p1-epsx),
+				scene(p1+epsy) - scene(p1-epsy),
+				scene(p1+epsz) - scene(p1-epsz)  
+			);
+			
+			color += gradient;
+			
 			
 			break;
 		} 
