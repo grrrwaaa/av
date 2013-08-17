@@ -631,13 +631,12 @@ void main() {
 		
 		if (vraw > thresh) {
 			
-			vraw = vraw0;
 			for (int i=0; i<10; i++) {
 				t1 = t + float(i) * 0.1 * step;
 				p1 = ro + t1 * rd;
 				vraw = texture3D(voxels, p1 * data_scale / far).r;
 				if (vraw > thresh) {
-					color += mix(lo, hi, v * 2.) * v;
+					color += v; //mix(lo, hi, v * 2.) * v;
 					break;
 				}
 			}
@@ -659,7 +658,7 @@ void main() {
 		} 
 		
 		// accumulate color
-		color += mix(lo, hi, v * 2.) * v;
+		color += v; //mix(lo, hi, v * 2.) * v;
 		
 		// move to next point
 		vraw0 = vraw;
