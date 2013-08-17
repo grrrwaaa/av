@@ -748,7 +748,7 @@ function draw()
 		s:uniform("view", shared.view.x, shared.view.y, shared.view.z, shared.view.w)
 		s:uniform("data_scale", data_scale.x, data_scale.y, data_scale.z)
 		--
-		voxels:send(1)
+		voxels:bind(1)
 		--[[
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.REPEAT)
 		gl.TexParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.REPEAT)
