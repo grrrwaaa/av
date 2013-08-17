@@ -630,6 +630,18 @@ void main() {
 		float v = vraw * amp;
 		
 		if (vraw > thresh) {
+			
+			vraw = vraw0;
+			for (int i=0; i<10; i++) {
+				t1 = t + float(i) * 0.1 * step;
+				p1 = ro + t1 * rd;
+				vraw = texture3D(voxels, p1 * data_scale / far).r;
+				if (vraw > thresh) {
+					color += mix(lo, hi, v * 2.) * v;
+				}
+			}
+			
+			/*
 			// find the intersection point:
 			float tinterp = (thresh-vraw0)/(vraw - vraw0);
 			float tnew = t + tinterp * (t1 - t);
@@ -641,12 +653,12 @@ void main() {
 			//color += v; //mix(lo, hi, v * 2.) * v;
 			
 			color = vec3(vraw / thresh); //vec3(tinterp);
-			
+			*/
 			break;
 		} 
 		
 		// accumulate color
-		//color += v; //mix(lo, hi, v * 2.) * v;
+		color += mix(lo, hi, v * 2.) * v;
 		
 		// move to next point
 		vraw0 = vraw;
