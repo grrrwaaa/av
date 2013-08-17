@@ -109,7 +109,7 @@ else
 end
 --]]
 
-local dim = 400
+local dim = 100
 local step = 1/dim
 local voxels = field3D(dim, dim, dim)
 local v = voxels:copy()
