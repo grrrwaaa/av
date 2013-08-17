@@ -640,7 +640,7 @@ void main() {
 			
 			//color += v; //mix(lo, hi, v * 2.) * v;
 			
-			color = vec3(tinterp); //vec3(tinterp);
+			color = vec3(vraw / thresh); //vec3(tinterp);
 			
 			break;
 		} 
