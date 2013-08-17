@@ -559,6 +559,7 @@ uniform vec4 view;
 uniform vec3 eye;
 uniform float parallax;
 uniform float now;
+uniform float thresh;
 varying vec2 T;
 varying mat4 mv;
 
@@ -616,7 +617,6 @@ void main() {
 	
 	vec3 p = ro + rd * t;
 	float vraw0 = 0.;
-	float thresh = 3.;
 	
 	for (;t < far;) {
 		
@@ -747,6 +747,7 @@ function draw()
 		s:uniform("eye", shared.eye.x, shared.eye.y, shared.eye.z)
 		s:uniform("view", shared.view.x, shared.view.y, shared.view.z, shared.view.w)
 		s:uniform("data_scale", data_scale.x, data_scale.y, data_scale.z)
+		s:uniform("thresh", sin(now()) * 4 + 6)
 		--
 		voxels:bind(1)
 		--[[
