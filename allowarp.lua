@@ -614,7 +614,7 @@ void main() {
 	
 	float t = near;
 	float c = 0.;
-	float amp = 1.;
+	float amp = 2.;
 	
 	vec3 p = ro + rd * t;
 	float vraw0 = 0.;
