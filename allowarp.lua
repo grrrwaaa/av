@@ -109,7 +109,7 @@ else
 end
 --]]
 
-local dim = 32
+local dim = 400
 local step = 1/dim
 local voxels = field3D(dim, dim, dim)
 local v = voxels:copy()
@@ -571,7 +571,7 @@ vec3 spherical(float az, float el) {
 }
 
 
-float near = 0.1; //0.1;
+float near = 0.3; //0.1;
 float far = 2.;
 float step = (far - near) * 0.002;
 float eps = step * 0.1;
@@ -808,7 +808,7 @@ function loadpollocks()
 	local SIZE_Z = 100 --1027
 	local sizeToRead = SIZE_X * SIZE_Y * SIZE_Z
 	local volumeData = ffi.new("char[?]", sizeToRead)
-	local filename = pollockpath .. "DistanceData-100x100x100"
+	local filename = pollockpath .. "DistanceData-400x400x400" --"DistanceData-100x100x100"
 	local f = C.open(filename, 0)
 	assert(f ~= -1, filename)	
 	C.read(f, volumeData, ffi.sizeof(volumeData))
