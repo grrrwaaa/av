@@ -628,14 +628,13 @@ void main() {
 		
 		// get density at current point
 		float vraw = texture3D(voxels, p1 * data_scale / far).r;
-		float v = vraw * amp * step;
 		
 		if (vraw > thresh) {
 			
 			// find the intersection point:
 			step *= (thresh-vraw0)/(vraw - vraw0);
 			
-			v = vraw * amp * step;
+			float v = vraw * amp * step / t;
 			
 			color += cloud * v;
 			color += copper;
@@ -644,6 +643,7 @@ void main() {
 		} 
 		
 		// accumulate color
+		float v = vraw * amp * step / t;
 		color += cloud * v;
 		
 		// move to next point
