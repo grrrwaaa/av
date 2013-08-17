@@ -573,7 +573,7 @@ vec3 spherical(float az, float el) {
 
 float near = 0.1; //0.1;
 float far = 2.;
-float step = (far - near) * 0.02;
+float step = (far - near) * 0.01;
 float eps = step * 0.1;
 vec3 epsx = vec3(eps,0,0);
 vec3 epsy = vec3(0,eps,0);
@@ -618,7 +618,7 @@ void main() {
 		
 		// is next point out of range?
 		float t1 = t + step;
-		step = step * 1.2;
+		step = step * 1.5;
 		vec3 p1 = ro + t1 * rd;
 		// accumulate color
 		color += mix(lo, hi, v * 2.) * v;
