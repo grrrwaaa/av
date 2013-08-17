@@ -578,7 +578,7 @@ vec3 spherical(float az, float el) {
 
 float near = 0.3; //0.1;
 float far = 2.;
-float step = (far - near) * 0.002;
+float step = (far - near) * 0.02;
 float eps = step * 0.1;
 vec3 epsx = vec3(eps,0,0);
 vec3 epsy = vec3(0,eps,0);
@@ -612,40 +612,44 @@ void main() {
 	
 	float t = near;
 	float c = 0.;
-	float amp = 0.5;
+	float amp = 0.05;
 	
 	vec3 p = ro + rd * t;
+	float vraw0 = 0.;
+	float thresh = 3.;
 	
 	for (;t < far;) {
-		// get density at current point
-		float vraw = texture3D(voxels, p * data_scale / far).r;
-		float v = vraw * 0.1 * amp;
 		
 		// is next point out of range?
 		float t1 = t + step;
-		step = step * 1.25;
+		//step = step * 1.25;
 		vec3 p1 = ro + t1 * rd;
-		// accumulate color
-		color += mix(lo, hi, v * 2.) * v;
 		
-		/*
-		if (p1.x < 0. || p1.x > 1. || p1.y < 0. || p1.y > 1. || p1.z < 0. || p1.z > 1.) {
-			// accumulate only a portion of it
-			float a = 0.5;
+		// get density at current point
+		float vraw = texture3D(voxels, p1 * data_scale / far).r;
+		float v = vraw * amp;
+		
+		if (vraw > thresh) {
+			// find the intersection point:
+			float tinterp = (thresh-vraw0)/(vraw - vraw0);
+			float tnew = t + tinterp * (t1 - t);
 			
-			//color += v*0.5;
+			p1 = ro + tnew * rd;
+			vraw = texture3D(voxels, p1 * data_scale / far).r;
+			v = vraw * amp;
+			
+			color += v; //mix(lo, hi, v * 2.) * v;
+			
+			//color = vec3(v * 4.); //vec3(tinterp);
+			
 			break;
 		} 
-		*/
 		
-		if (vraw > 3.) {
-			step = step * 0.75;
-		}
-		if (vraw > 4.) { // && vraw < 2.) {
-			break;
-		}
+		// accumulate color
+		color += v; //mix(lo, hi, v * 2.) * v;
 		
 		// move to next point
+		vraw0 = vraw;
 		p = p1;
 		t = t1;
 	}
