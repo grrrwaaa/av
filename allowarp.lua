@@ -638,6 +638,7 @@ void main() {
 				vraw = texture3D(voxels, p1 * data_scale / far).r;
 				if (vraw > thresh) {
 					color += mix(lo, hi, v * 2.) * v;
+					break;
 				}
 			}
 			
