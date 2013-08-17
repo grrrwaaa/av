@@ -638,7 +638,7 @@ void main() {
 			v = vraw * amp * step;
 			
 			color += cloud * v;
-			color.g += copper
+			color += copper;
 			
 			break;
 		} 
