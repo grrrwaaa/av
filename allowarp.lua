@@ -706,7 +706,7 @@ function draw()
 		end
 	end
 	
-	--run_gol() voxels = vd
+	run_gol() voxels = vd
 	--update_voxels()
 	
 	gl.MatrixMode(gl.PROJECTION)
