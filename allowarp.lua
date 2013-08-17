@@ -596,7 +596,7 @@ vec3 ambient = vec3(0.1, 0.1, 0.1);
 vec3 up = vec3(0., 1., 0.);
 
 vec3 hi = vec3(0.1, 0, 0);
-vec3 lo = vec3(0, 1, 1);
+vec3 lo = vec3(0, 0.2, 1);
 
 void main() {
 	vec3 color = vec3(0, 0, 0);
@@ -638,7 +638,7 @@ void main() {
 			v = vraw * amp * step;
 			
 			color += mix(lo, hi, v) * v;
-			color.g += 0.5;
+			color.g += vec3(0.2, 0.5, 0.);
 			
 			break;
 		} 
