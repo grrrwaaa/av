@@ -622,7 +622,7 @@ void main() {
 		
 		// is next point out of range?
 		float t1 = t + step;
-		//step = step * 1.25;
+		step = step * 1.25;
 		vec3 p1 = ro + t1 * rd;
 		
 		// get density at current point
