@@ -814,7 +814,7 @@ end
 function loadpollocks()
 	local SIZE_X = 400 --862
 	local SIZE_Y = 400 --1062
-	local SIZE_Z = 100 --1027
+	local SIZE_Z = 400 --1027
 	local sizeToRead = SIZE_X * SIZE_Y * SIZE_Z
 	local volumeData = ffi.new("char[?]", sizeToRead)
 	local filename = pollockpath .. "DistanceData-400x400x400" --"DistanceData-100x100x100"
