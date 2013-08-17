@@ -631,7 +631,7 @@ void main() {
 		
 		if (vraw > thresh) {
 			// find the intersection point:
-			float tinterp = (thresh-vraw0)/(vraw - vraw0);
+			float tinterp = 1. - (thresh-vraw0)/(vraw - vraw0);
 			float tnew = t + tinterp * (t1 - t);
 			
 			p1 = ro + tnew * rd;
@@ -640,7 +640,7 @@ void main() {
 			
 			//color += v; //mix(lo, hi, v * 2.) * v;
 			
-			color = vec3(v * 4.); //vec3(tinterp);
+			color = vec3(vraw / thresh); //vec3(tinterp);
 			
 			break;
 		} 
