@@ -42,6 +42,7 @@ typedef struct shared {
 	char hdr[5];
 	quat view;
 	vec3 eye;
+	double t;
 } shared;
 ]]
 
@@ -682,6 +683,7 @@ function draw()
 		--shared.at = vec3(0, 0, now())
 		shared.view = quat.fromEuler(a, 0, 0) 
 		shared.eye = vec3(0.5, 0.5, 0.5) + shared.view:uz() * 0.1
+		shared.t = now()
 		--print(shared.eye)
 		--print(shared.at, shared.eye)
 		--shared.at = shared.eye + dir * 0.1
@@ -747,7 +749,7 @@ function draw()
 		s:uniform("eye", shared.eye.x, shared.eye.y, shared.eye.z)
 		s:uniform("view", shared.view.x, shared.view.y, shared.view.z, shared.view.w)
 		s:uniform("data_scale", data_scale.x, data_scale.y, data_scale.z)
-		s:uniform("thresh", sin(now()) * 4 + 6)
+		s:uniform("thresh", sin(shared.t) * 4 + 6)
 		--
 		voxels:bind(1)
 		--[[
