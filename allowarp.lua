@@ -81,7 +81,7 @@ local allo = {
 ---[[
 local ADDRESS = "tcp://192.168.0.15:5557"
 local ismaster = false
-if allo.hostname == "grrrwaaa.local" then
+if false and  allo.hostname == "grrrwaaa.local" then
 	ismaster = true
 	ADDRESS = "tcp://192.168.0.150:5557"
 elseif allo.hostname == "photon" then
