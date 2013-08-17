@@ -612,7 +612,7 @@ void main() {
 	
 	float t = near;
 	float c = 0.;
-	float amp = 0.05;
+	float amp = 1.;
 	
 	vec3 p = ro + rd * t;
 	float vraw0 = 0.;
@@ -627,26 +627,15 @@ void main() {
 		
 		// get density at current point
 		float vraw = texture3D(voxels, p1 * data_scale / far).r;
-		float v = vraw * amp;
+		float v = vraw * amp * step;
 		
 		if (vraw > thresh) {
 			
 			// find the intersection point:
-			float tinterp = (thresh-vraw0)/(vraw - vraw0);
+			step *= (thresh-vraw0)/(vraw - vraw0);
 			
-			color += v * tinterp;
+			color += vraw * amp * step;
 			
-			/*
-			float tnew = t + tinterp * (t1 - t);
-			
-			p1 = ro + tnew * rd;
-			vraw = texture3D(voxels, p1 * data_scale / far).r;
-			v = vraw * amp;
-			
-			//color += v; //mix(lo, hi, v * 2.) * v;
-			
-			color = vec3(vraw / thresh); //vec3(tinterp);
-			*/
 			break;
 		} 
 		
