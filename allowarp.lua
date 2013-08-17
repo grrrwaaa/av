@@ -581,7 +581,7 @@ vec3 spherical(float az, float el) {
 float near = 0.3; //0.1;
 float far = 2.;
 float step = (far - near) * 0.001;
-float eps = 0.001;
+float eps = 1./400.;
 vec3 epsx = vec3(eps,0,0);
 vec3 epsy = vec3(0,eps,0);
 vec3 epsz = vec3(0,0,eps);
@@ -764,7 +764,7 @@ function draw()
 		s:uniform("eye", shared.eye.x, shared.eye.y, shared.eye.z)
 		s:uniform("view", shared.view.x, shared.view.y, shared.view.z, shared.view.w)
 		s:uniform("data_scale", data_scale.x, data_scale.y, data_scale.z)
-		s:uniform("thresh", cos(shared.t * 0.2) * 3 + 4)
+		s:uniform("thresh", 0.5) --cos(shared.t * 0.2) * 3 + 4)
 		--
 		voxels:bind(1)
 		--[[
