@@ -749,7 +749,7 @@ function draw()
 		s:uniform("eye", shared.eye.x, shared.eye.y, shared.eye.z)
 		s:uniform("view", shared.view.x, shared.view.y, shared.view.z, shared.view.w)
 		s:uniform("data_scale", data_scale.x, data_scale.y, data_scale.z)
-		s:uniform("thresh", sin(shared.t * 0.2) * 3 + 5)
+		s:uniform("thresh", sin(shared.t * 0.2) * 3 + 4)
 		--
 		voxels:bind(1)
 		--[[
