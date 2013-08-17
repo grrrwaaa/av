@@ -638,15 +638,15 @@ void main() {
 			vraw = texture3D(voxels, p1 * data_scale / far).r;
 			v = vraw * amp;
 			
-			color += v; //mix(lo, hi, v * 2.) * v;
+			//color += v; //mix(lo, hi, v * 2.) * v;
 			
-			//color = vec3(v * 4.); //vec3(tinterp);
+			color = vec3(v * 4.); //vec3(tinterp);
 			
 			break;
 		} 
 		
 		// accumulate color
-		color += v; //mix(lo, hi, v * 2.) * v;
+		//color += v; //mix(lo, hi, v * 2.) * v;
 		
 		// move to next point
 		vraw0 = vraw;
