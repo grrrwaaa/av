@@ -614,7 +614,7 @@ void main() {
 	
 	float t = near;
 	float c = 0.;
-	float amp = 2.;
+	float amp = 0.5;
 	
 	vec3 p = ro + rd * t;
 	float vraw0 = 0.;
@@ -683,7 +683,7 @@ function draw()
 		
 		--shared.at = vec3(0, 0, now())
 		shared.view = quat.fromEuler(a, 0, 0) 
-		shared.eye = vec3(0.5, 0.5, 0.5) + shared.view:uz() * 0.1
+		shared.eye = vec3(0.5, 0.5, 0.5) + shared.view:uz() * 0.4
 		shared.t = now()
 		--print(shared.eye)
 		--print(shared.at, shared.eye)
@@ -750,7 +750,7 @@ function draw()
 		s:uniform("eye", shared.eye.x, shared.eye.y, shared.eye.z)
 		s:uniform("view", shared.view.x, shared.view.y, shared.view.z, shared.view.w)
 		s:uniform("data_scale", data_scale.x, data_scale.y, data_scale.z)
-		s:uniform("thresh", sin(shared.t * 0.2) * 3 + 4)
+		s:uniform("thresh", cos(shared.t * 0.2) * 3 + 4)
 		--
 		voxels:bind(1)
 		--[[
