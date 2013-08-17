@@ -681,7 +681,7 @@ function draw()
 		
 		--shared.at = vec3(0, 0, now())
 		shared.view = quat.fromEuler(a, 0, 0) 
-		shared.eye = vec3(0.5, 0.5, 0.5) --+ shared.view:uz() * 0.1
+		shared.eye = vec3(0.5, 0.5, 0.5) + shared.view:uz() * 0.01
 		--print(shared.eye)
 		--print(shared.at, shared.eye)
 		--shared.at = shared.eye + dir * 0.1
