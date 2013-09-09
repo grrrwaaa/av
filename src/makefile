@@ -8,7 +8,7 @@ DIR_LIB = "win32/lib"
 # xcopy /Y suppresses the "Overwrite?" warnings 
 
 build: 
-	cl /MT /O2 /D__WINDOWS_DS__ /I$(DIR_INCLUDE) /I"rtaudio-4.0.11" /I"rtaudio-4.0.11/include" /I"lpeg-0.11" /I"include" av.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp lpeg-0.11/*.c /link /LIBPATH:$(DIR_LIB) lua51.lib glut32.lib Dsound.lib ole32.lib user32.lib
+	cl /MT /O2 /D__WINDOWS_DS__ /I$(DIR_INCLUDE) /I"rtaudio-4.0.11" /I"rtaudio-4.0.11/include" /I"lpeg-0.11" /I"include" av.cpp av_audio.cpp rtaudio-4.0.11/RtAudio.cpp lpeg-0.11/*.c /link /LIBPATH:$(DIR_LIB) lua51.lib glut32.lib libsndfile-1.lib Dsound.lib ole32.lib user32.lib
 	xcopy av.exe .. /Y
 	xcopy *.dll .. /Y
 	del *.exe 
