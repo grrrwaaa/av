@@ -98,8 +98,8 @@ function spawn(filename)
 	L:getfield(-1, "preload")
 	L:pushcfunction(C.luaopen_lpeg)
 	L:setfield(-2, "lpeg")
-	L:pushcfunction(C.luaopen_http_parser)
-	L:setfield(-2, "http.parser")
+	--L:pushcfunction(C.luaopen_http_parser)
+	--L:setfield(-2, "http.parser")
 	L:settop(0)
 	
 	states[filename] = L
